@@ -1,6 +1,6 @@
-# Umits - a unitconverter that is worse than GNU Units
+# Umits - a unitconverter that is worse than GNU Units, but for android.
 
-I got fed up with the GUIs of all unit converters on Android. To convert units you need a keyboard to type the units and a key to press when you want to convert. No clunky UIs. 
+I got fed up with the GUIs of all unit converters on Android. To convert units you need a keyboard to type the units and a key to press when you want to convert. No clunky UIs. I don't want to go through menus to convert 6ft,2in to m.
 
 So I started writing a unit converter. In the beginning it was a simple linear converter. Then one day someone pointed me to GNU Units and I got nerd-sniped. So what can it do?
 
@@ -41,7 +41,7 @@ oh
 
     65mi/(12mi/h) in h,min -> 5h 25min
 
-It also saves the previous results as $[no]. The example above is $2 in our session.
+It also saves the previous results as $[nr]. The example above is $2 in our session.
 
     $2 in d
     
