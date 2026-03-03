@@ -1,14 +1,42 @@
+Umits - a unit converter and algebraic engine
+Copyright (C) 2026 Linus Björnstam
 
-Dual Licensing Notice
-This software is available under two different licenses. You may choose which one you wish to use:
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-Option 1: GNU General Public License v3 (GPLv3)
-This is the standard open-source license. It allows you to study, modify, and redistribute the software, provided that any derivative works are also licensed under GPLv3 and the source code is made available. The text of the GPLv3 can be found in the text file gpl-3.0.txt.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-Option 2: App Store Distribution License
-If you wish to distribute this software through a digital marketplace (such as the Apple App Store) whose Terms of Service are incompatible with the GPLv3, you may use this license instead.
-Under this license:
- * Grant of Rights: You are granted a non-exclusive, non-transferable right to compile and publish the software to a digital app store.
- * Permitted Modifications: You may only make the technical modifications strictly necessary to comply with the app store’s submission requirements (e.g., bundle IDs, API keys, or signing certificates).
- * Restrictions: You may not modify the source code's functionality, create derivative works for other purposes, or redistribute the source code. All rights not expressly granted are reserved by the original author.
- * No Sublicensing: You may not sublicense these rights to any third party.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+---
+
+App Store Distribution Exception
+(Additional Permission under Section 7 of the GNU General Public License, version 3)
+
+As a special exception to the GPLv3, the copyright holders grant you permission to
+compile and publish this software to a digital marketplace (such as the Apple App
+Store) whose Terms of Service or Digital Rights Management (DRM) requirements would
+otherwise conflict with the conditions of the GPLv3.
+
+This exception applies strictly under the following conditions:
+
+* Permitted Modifications: You may only make the technical modifications strictly
+  necessary to comply with the digital marketplace’s submission requirements (e.g.,
+  modifying bundle IDs, API keys, or signing certificates).
+* Restrictions: You may not modify the software's core functionality or create
+  derivative works for other purposes under this exception. Any such modifications
+  immediately void this exception, and the resulting work becomes subject entirely
+  to the standard terms of the GPLv3, including the requirement to release the
+  complete corresponding source code.
+* No Sublicensing: You may not sublicense the specific rights granted by this
+  exception to any third party.
+
+If you modify this program, you may extend this exception to your version of the
+program, but you are not obligated to do so. If you do not wish to do so, delete
+this exception statement from your version.
