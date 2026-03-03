@@ -28,12 +28,10 @@ You can skip "in unit" and have Umits select a unit for you, but it will not alw
 12h - 45min -> 40440s
 ```
 
-`
-
 
 ### Adding units of the same dimension
 
-    6000m + 50ft in mi -> 0.3822924 mi
+    6000m + 50ft in mi -> 3,737697 mi
     
 ### Dimension removal
 
