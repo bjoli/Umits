@@ -1,4 +1,4 @@
-# Umits - a unitconverter that is worse than GNU Units, but for android (maui)
+# Umits - a unit converter that is worse than GNU Units, but for android (maui)
 
 (This is not avaliable in the play store yet. I am waiting for my verification)
 
