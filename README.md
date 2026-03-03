@@ -83,7 +83,7 @@ in min -> 0.3263773 min
 
 ## Supported dimensions
 
-Length, mass, time, current, temperature, bytes and photometry.
+Length (m), mass(kg), time(s), current(A), temperature(K), bits(b) and luminous intensity(cd).
 
 All other units are derived from those. 
 
@@ -217,3 +217,11 @@ a light mode
 
 and a dark mode
 ![Dark mode](Screenshot_dark.png)
+
+## Planned features
+Entities, like planets (earth.mass, jupiter.radius) or a lot more info on elements or molecules (water.boiling_point, ammonia.thermal_conductivity). The dot syntax is chosen because it is easy to type on a phone keyboard. 
+
+Macros. say we have the macro to add two en entities' masses: massplus[e1, e2] = {e1}.mass + {E2}.mass which expands wrapped in parentheses to not give any nasty surprises. Use like so massplus[earth.mass, jupiter.mass].
+
+User units, entities and macros. the user should be able to define their own things. If I need a lot of info about puff pastry in my calculations I should be able to define that, together with macros to abstract away the tough calculations. 
+
