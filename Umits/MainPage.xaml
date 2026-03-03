@@ -64,6 +64,7 @@
             </Grid>
 
             <Border x:Name="ErrorBubble"
+                    StyleClass="ErrorBubble"
                     Grid.Row="0"
                     IsVisible="False">
                 <Border.GestureRecognizers>
@@ -82,7 +83,7 @@
             </BoxView>
 
             <Grid ColumnDefinitions="2*, 96*, 2*" RowDefinitions="5*, 90*, 5*">
-                <Border x:Name="InfoPanel"
+                <Border x:Name="InfoPanel"  
                         StyleClass="InfoPanel"
                         Grid.Row="1"
                         Grid.Column="1">

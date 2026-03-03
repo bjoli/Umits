@@ -479,7 +479,7 @@ module Engine =
                                         if Math.Abs(valueInUnit) > 1e-9 || outputParts.Count = 0 then
                                             outputParts.Add $"%s{formatNum valueInUnit} %s{tStr}"
 
-                                String.Join(" ", outputParts)
+                                String.Join(", ", outputParts)
                                 
                 | Result.Error e -> $"Math Error (Left): %s{e}"
             | Failure(msg, _, _) -> $"Syntax Error (Left): %s{msg}"
