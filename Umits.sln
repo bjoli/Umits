@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Lib", "Lib\Lib.fsproj", "{5A8435B2-1384-4535-9E0B-F8532662629E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umits", "Umits\Umits.csproj", "{8040FB79-99BF-4C76-8467-2B9AFE08A07B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5A8435B2-1384-4535-9E0B-F8532662629E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A8435B2-1384-4535-9E0B-F8532662629E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A8435B2-1384-4535-9E0B-F8532662629E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A8435B2-1384-4535-9E0B-F8532662629E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8040FB79-99BF-4C76-8467-2B9AFE08A07B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8040FB79-99BF-4C76-8467-2B9AFE08A07B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8040FB79-99BF-4C76-8467-2B9AFE08A07B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8040FB79-99BF-4C76-8467-2B9AFE08A07B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

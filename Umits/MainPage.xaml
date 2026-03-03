@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:idk="clr-namespace:Indiko.Maui.Controls.Markdown;assembly=Indiko.Maui.Controls.Markdown"
+             x:Class="Umits.MainPage">
+    <Grid>
+
+        <Grid RowDefinitions="*, Auto" Padding="15">
+
+            <Border Grid.Row="0"
+                    x:Name="HistoryPanel"
+                    StyleClass="HistoryPanel">
+
+                <Grid RowDefinitions="*, Auto" Padding="15" VerticalOptions="Fill">
+                    <CollectionView
+                        x:Name="HistoryCollectionView"
+                        Grid.Row="0"
+                        VerticalOptions="Fill">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <VerticalStackLayout Padding="5,8" Margin="0,2">
+                                    <VerticalStackLayout.GestureRecognizers>
+                                        <TapGestureRecognizer Tapped="OnHistoryItemTapped"
+                                                              CommandParameter="{Binding Query}" />
+                                    </VerticalStackLayout.GestureRecognizers>
+
+                                    <VerticalStackLayout.Behaviors>
+                                        <toolkit:TouchBehavior LongPressCompleted="OnItemLongPressed" />
+                                    </VerticalStackLayout.Behaviors>
+
+                                    <HorizontalStackLayout Spacing="6">
+                                        <Label Text="{Binding Id, StringFormat='${0}'}"
+                                               StyleClass="HistoryHeader"/>
+                                        <Label Text="{Binding Query}"
+                                               StyleClass="HistoryHeader"/>
+                                    </HorizontalStackLayout>
+                                    <Label Text="{Binding Result}"
+                                           StyleClass="HistoryItem"/> 
+                                </VerticalStackLayout>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+
+                </Grid>
+            </Border>
+
+            <Grid Grid.Row="1" ColumnDefinitions="*, Auto, Auto">
+                <Border Grid.Column="0"
+                        StyleClass  ="InputPanel">
+
+                    <Editor x:Name="InputEntry"
+                            Placeholder="e.g., 10 km in mi"
+                            TextChanged="OnInputTextChanged"
+                            Completed="OnConvertClicked" />
+                </Border>
+
+                <Button Grid.Column="1"  Text="Go!" Margin="10,0,0,0"
+                        CornerRadius="8" Clicked="OnConvertClicked" />
+                <Button Grid.Column="2"  Text=" i " Margin="10,0,0,0"
+                        CornerRadius="8" Clicked="OnInfoClicked" />
+            </Grid>
+
+            <Border x:Name="ErrorBubble"
+                    Grid.Row="0"
+                    IsVisible="False">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnErrorBubbleTapped" />
+                </Border.GestureRecognizers>
+                <Label x:Name="ErrorLabel" StyleClass="ErrorLabel"/>
+            </Border>
+
+        </Grid>
+        <Grid Grid.RowSpan="2" ZIndex="10" IsVisible="False" x:Name="OverlayContainer">
+
+            <BoxView StyleClass="OverlayDimmer">
+                <BoxView.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnOverlayTapped" />
+                </BoxView.GestureRecognizers>
+            </BoxView>
+
+            <Grid ColumnDefinitions="2*, 96*, 2*" RowDefinitions="5*, 90*, 5*">
+                <Border x:Name="InfoPanel"
+                        StyleClass="InfoPanel"
+                        Grid.Row="1"
+                        Grid.Column="1">
+                    <Grid RowDefinitions="Auto, *">
+
+                        <Grid Grid.Row="0" 
+                              ColumnDefinitions="Auto, Auto, *, Auto" 
+                              ColumnSpacing="10"
+                              Margin="0,10,0,10"
+                              HorizontalOptions="Fill">
+        
+                            <Button Grid.Column="0" Text="Documentation" Clicked="OnDocumentationClicked" />
+                            <Button Grid.Column="1" Text="Licenses" Clicked="OnLicensesClicked" />
+        
+                            <Button Grid.Column="3" Text="X" Clicked="CloseInfoView" StyleClass="CloseButton"/>
+                        </Grid>
+
+                        <ScrollView x:Name="InfoScroll"
+                                    Grid.Row="1" 
+                                    Orientation="Vertical" 
+                                    VerticalScrollBarVisibility="Default">
+                            <idk:MarkdownView x:Name="InfoMarkdownView" />
+                        </ScrollView>
+
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </Grid>
+    </Grid>
+</ContentPage>

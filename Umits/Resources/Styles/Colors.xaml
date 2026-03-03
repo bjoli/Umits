@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    <Color x:Key="ButtonText">Black</Color>
+    <Color x:Key="ButtonBackground">#ffc200</Color>
+    
+    <Color x:Key="PageBackgroundLight">#F3F4F6</Color>
+    <Color x:Key="PageBackgroundDark">#121212</Color>
+
+    <Color x:Key="PanelBackgroundLight">White</Color>
+    <Color x:Key="PanelBackgroundDark">#1E1E1E</Color>
+
+    <Color x:Key="InfoPanelBackgroundLight">#E5E7EB</Color>
+    <Color x:Key="InfoPanelBackgroundDark">#2D2D2D</Color>
+
+    <Color x:Key="PanelStrokeLight">#E5E7EB</Color>
+    <Color x:Key="PanelStrokeDark">#333333</Color>
+
+    <Color x:Key="InputBorderStrokeLight">#D1D5DB</Color>
+    <Color x:Key="InputBorderStrokeDark">#444444</Color>
+
+    <Color x:Key="PrimaryTextLight">Black</Color>
+    <Color x:Key="PrimaryTextDark">White</Color>
+
+    <Color x:Key="SecondaryTextLight">DimGray</Color>
+    <Color x:Key="SecondaryTextDark">#A1A1AA</Color>
+
+    <Color x:Key="ErrorBackgroundLight">#FEE2E2</Color>
+    <Color x:Key="ErrorBackgroundDark">#450a0a</Color>
+
+    <Color x:Key="ErrorStrokeLight">#EF4444</Color>
+    <Color x:Key="ErrorStrokeDark">#b91c1c</Color>
+
+    <Color x:Key="ErrorTextLight">#B91C1C</Color>
+    <Color x:Key="ErrorTextDark">#fca5a5</Color>
+
+</ResourceDictionary>

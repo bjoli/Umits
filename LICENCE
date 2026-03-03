@@ -1,0 +1,14 @@
+
+Dual Licensing Notice
+This software is available under two different licenses. You may choose which one you wish to use:
+
+Option 1: GNU General Public License v3 (GPLv3)
+This is the standard open-source license. It allows you to study, modify, and redistribute the software, provided that any derivative works are also licensed under GPLv3 and the source code is made available. The text of the GPLv3 can be found in the text file gpl-3.0.txt.
+
+Option 2: App Store Distribution License
+If you wish to distribute this software through a digital marketplace (such as the Apple App Store) whose Terms of Service are incompatible with the GPLv3, you may use this license instead.
+Under this license:
+ * Grant of Rights: You are granted a non-exclusive, non-transferable right to compile and publish the software to a digital app store.
+ * Permitted Modifications: You may only make the technical modifications strictly necessary to comply with the app store’s submission requirements (e.g., bundle IDs, API keys, or signing certificates).
+ * Restrictions: You may not modify the source code's functionality, create derivative works for other purposes, or redistribute the source code. All rights not expressly granted are reserved by the original author.
+ * No Sublicensing: You may not sublicense these rights to any third party.
