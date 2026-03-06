@@ -1,0 +1,47 @@
+%sphere { 
+    circumference=2*pi*$.radius 
+    surface_area=4*pi*$.radius^2 
+    volume=(4/3)*pi*$.radius^3 
+}
+
+%planet(sphere) { 
+    density=$.mass/$.volume 
+}
+
+%substance { 
+    mass=$.molar_mass 
+}
+
+// Planets
+mercury(planet) { radius=2439.7km mass=3.3011e23kg }
+venus(planet) { radius=6051.8km mass=4.8675e24kg }
+earth(planet) { radius=6371km mass=5.9722e24kg }
+mars(planet) { radius=3389.5km mass=6.4171e23kg }
+jupiter(planet) { radius=69911km mass=1.8982e27kg }
+saturn(planet) { radius=58232km mass=5.6834e26kg }
+uranus(planet) { radius=25362km mass=8.6810e25kg }
+neptune(planet) { radius=24622km mass=1.02413e26kg }
+
+// Elements
+hydrogen(substance) { molar_mass=1.008g symbol="H" atomic_number=1 }
+helium(substance) { molar_mass=4.0026g symbol="He" atomic_number=2 }
+carbon(substance) { molar_mass=12.011g symbol="C" atomic_number=6 }
+nitrogen(substance) { molar_mass=14.007g symbol="N" atomic_number=7 }
+oxygen(substance) { molar_mass=15.999g symbol="O" atomic_number=8 }
+sodium(substance) { molar_mass=22.990g symbol="Na" atomic_number=11 }
+chlorine(substance) { molar_mass=35.45g symbol="Cl" atomic_number=17 }
+iron(substance) { molar_mass=55.845g symbol="Fe" atomic_number=26 }
+cobalt(substance) { molar_mass=58.933g symbol="Co" atomic_number=27 }
+uranium(substance) { molar_mass=238.029g symbol="U" atomic_number=92 }
+
+// Molecules
+water(substance) { molar_mass=18.015g formula="H2O" }
+nacl(substance) { molar_mass=58.44g formula="NaCl" }
+ethanol(substance) { molar_mass=46.07g formula="C2H5OH" }
+
+// Blood Panel / Biology
+glucose(substance) { molar_mass=180.156g formula="C6H12O6" }
+cholesterol(substance) { molar_mass=386.654g formula="C27H46O" }
+triglycerides(substance) { molar_mass=885.43g }
+urea(substance) { molar_mass=60.056g formula="CH4N2O" }
+

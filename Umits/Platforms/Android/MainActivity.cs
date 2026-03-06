@@ -17,6 +17,7 @@ public class MainActivity : MauiAppCompatActivity
     {
         WindowCompat.SetDecorFitsSystemWindows(Window, false);
         KeyboardService.StartListening(this);
+        Umits.ConfigurationLoader.loadAll();
         base.OnCreate(savedInstanceState);
     }
 }

@@ -28,9 +28,11 @@
         <ApplicationId>org.bjoli.umits</ApplicationId>
 
         <!-- Versions -->
-        <ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
-        <ApplicationVersion>1</ApplicationVersion>
+        <ApplicationDisplayVersion>6</ApplicationDisplayVersion>
+        <ApplicationVersion>6</ApplicationVersion>
 
+        
+        
         <!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
         <WindowsPackageType>None</WindowsPackageType>
 
@@ -75,11 +77,24 @@
     </ItemGroup>
 
     <PropertyGroup Condition="'$(Configuration)' =='Release'">
-        <AndroidNdkDirectory>/home/linus/Program/Android/ndk/29.0.14206865</AndroidNdkDirectory>
-        <RuntimeIdentifiers>android-arm64;android-x64</RuntimeIdentifiers>
+        <RuntimeIdentifiers>android-arm64</RuntimeIdentifiers>
         <PublishTrimmed>false</PublishTrimmed>
-        <TrimMode>partial</TrimMode>
         <RunAOTCompilation>false</RunAOTCompilation>
+
+       <PublishTrimmed>false</PublishTrimmed>
+        <TrimMode>none</TrimMode>
+
+       <RunAOTCompilation>false</RunAOTCompilation>
+        <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+        <AndroidPackageFormat>aab</AndroidPackageFormat>
+
+        <AndroidKeyStore>True</AndroidKeyStore>
+        <AndroidSigningKeyStore>upload-key.keystore</AndroidSigningKeyStore>
+        <AndroidSigningKeyAlias>upload-alias</AndroidSigningKeyAlias>
     </PropertyGroup>
 
     <!--<ItemGroup>

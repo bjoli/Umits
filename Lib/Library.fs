@@ -77,7 +77,8 @@ of the standard algebraic rule of exponents.
 *)
 
 module Engine =
-    
+    open EntityParser
+    open MacroParser
     // --- 1. Core Dimensions ---
     type Dims = Map<string, int>
 
@@ -387,8 +388,8 @@ module Engine =
         unitDb["degC"] <- { Scale = 1.0; Offset = 273.15; Dims = Temp }
         unitDb["degF"] <- { Scale = 5.0/9.0; Offset = 273.15 - (32.0 * 5.0/9.0); Dims = Temp }
 
-    let _ = initializeDb ()
-
+    let _ = 
+        initializeDb ()
     //  Conversion Logic
     let formatNum (n: float) =
         n.ToString("G7").Replace("−", "-")
@@ -415,8 +416,44 @@ module Engine =
             let resultValue = value / (snd bestUnit)
             $"%s{formatNum resultValue} %s{fst bestUnit}"
 
+    let rec resolveProperties (input: string) : string =
+        let propRegex = Regex(@"([a-zA-Z_]\w*)\.([a-zA-Z_]\w*)")
+        let mutable current = input
+        let mutable changed = true
+        let mutable pass = 1
+
+        while changed do
+            printfn "\n--- Pass %d ---" pass
+            printfn "Input to regex: '%s'" current
+            changed <- false
+            current <- propRegex.Replace(current, MatchEvaluator(fun m ->
+                let entityName = m.Groups[1].Value
+                let propName = m.Groups[2].Value
+                printfn $"  -> Regex matched! Entity: '%s{entityName}', Property: '%s{propName}'"
+
+                match EntityParser.entities.TryGetValue(entityName) with
+                | true, props ->
+                    match props.TryFind(propName) with
+                    | Some value ->
+                        printfn "  -> SUCCESS: Found '%s.%s' = '%s'" entityName propName value
+                        changed <- true
+                        value // Replaces "earth.mass" with "(5.972*10^24)kg"
+                    | None ->
+                        printfn "  -> FAIL: Entity '%s' exists, but has no property '%s'" entityName propName
+                        m.Value
+                | false, _ ->
+                    printfn "FAIL. No entity named '%s'" entityName
+                    m.Value
+            ))
+        current
+
+
     let convertQuery (query: string) =
-        let decFixed = Regex.Replace(query.Trim(), @"(?<=\d),(?=\d)", ".")
+        // First we expand all the macros, and entities. This is really just pure text substitution
+        let macroExpanded = MacroParser.expand query
+        let fullyExpanded = resolveProperties macroExpanded
+        printf $"%s{fullyExpanded}"
+        let decFixed = Regex.Replace(fullyExpanded.Trim(), @"(?<=\d),(?=\d)", ".")
         let parts = Regex.Split(decFixed, @"(?i)\s+in\s+")
         
         match parts with

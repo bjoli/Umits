@@ -1,0 +1,134 @@
+%element { }
+
+# Period 1
+hydrogen(element) { standard_atomic_weight=1.008u melting_point=13.99K boiling_point=20.271K density=0.08988kg/m^3 radius=53pm speed_of_sound=1310m/s specific_heat_capacity=14300J/(kg*K) }
+helium(element) { standard_atomic_weight=4.0026u melting_point=0.95K boiling_point=4.22K density=0.1786kg/m^3 radius=31pm speed_of_sound=970m/s specific_heat_capacity=5193J/(kg*K) }
+
+# Period 2
+lithium(element) { standard_atomic_weight=6.94u melting_point=453.65K boiling_point=1603K density=534kg/m^3 radius=167pm speed_of_sound=6000m/s specific_heat_capacity=3582J/(kg*K) }
+beryllium(element) { standard_atomic_weight=9.0122u melting_point=1560K boiling_point=2742K density=1850kg/m^3 radius=112pm speed_of_sound=13000m/s specific_heat_capacity=1825J/(kg*K) }
+boron(element) { standard_atomic_weight=10.81u melting_point=2349K boiling_point=4200K density=2080kg/m^3 radius=87pm speed_of_sound=16200m/s specific_heat_capacity=1026J/(kg*K) }
+carbon(element) { standard_atomic_weight=12.011u melting_point=3800K boiling_point=4300K density=2267kg/m^3 radius=67pm speed_of_sound=18350m/s specific_heat_capacity=710J/(kg*K) }
+nitrogen(element) { standard_atomic_weight=14.007u melting_point=63.15K boiling_point=77.36K density=1.2506kg/m^3 radius=56pm speed_of_sound=353m/s specific_heat_capacity=1040J/(kg*K) }
+oxygen(element) { standard_atomic_weight=15.999u melting_point=54.36K boiling_point=90.18K density=1.429kg/m^3 radius=48pm speed_of_sound=330m/s specific_heat_capacity=918J/(kg*K) }
+fluorine(element) { standard_atomic_weight=18.998u melting_point=53.48K boiling_point=85.03K density=1.696kg/m^3 radius=42pm specific_heat_capacity=824J/(kg*K) }
+neon(element) { standard_atomic_weight=20.180u melting_point=24.56K boiling_point=27.10K density=0.9002kg/m^3 radius=38pm speed_of_sound=435m/s specific_heat_capacity=1030J/(kg*K) }
+
+# Period 3
+sodium(element) { standard_atomic_weight=22.990u melting_point=370.94K boiling_point=1156.09K density=968kg/m^3 radius=190pm speed_of_sound=3200m/s specific_heat_capacity=1228J/(kg*K) }
+magnesium(element) { standard_atomic_weight=24.305u melting_point=923K boiling_point=1363K density=1738kg/m^3 radius=145pm speed_of_sound=4940m/s specific_heat_capacity=1023J/(kg*K) }
+aluminum(element) { standard_atomic_weight=26.982u melting_point=933.47K boiling_point=2743K density=2700kg/m^3 radius=118pm speed_of_sound=5000m/s specific_heat_capacity=897J/(kg*K) }
+silicon(element) { standard_atomic_weight=28.085u melting_point=1687K boiling_point=3538K density=2329kg/m^3 radius=111pm speed_of_sound=8433m/s specific_heat_capacity=705J/(kg*K) }
+phosphorus(element) { standard_atomic_weight=30.974u melting_point=317.3K boiling_point=553.7K density=1823kg/m^3 radius=98pm specific_heat_capacity=769J/(kg*K) }
+sulfur(element) { standard_atomic_weight=32.06u melting_point=388.36K boiling_point=717.8K density=2070kg/m^3 radius=88pm specific_heat_capacity=710J/(kg*K) }
+chlorine(element) { standard_atomic_weight=35.45u melting_point=171.6K boiling_point=239.11K density=3.2kg/m^3 radius=79pm speed_of_sound=206m/s specific_heat_capacity=479J/(kg*K) }
+argon(element) { standard_atomic_weight=39.95u melting_point=83.81K boiling_point=87.30K density=1.784kg/m^3 radius=71pm speed_of_sound=319m/s specific_heat_capacity=520J/(kg*K) }
+
+# Period 4
+potassium(element) { standard_atomic_weight=39.098u melting_point=336.7K boiling_point=1032K density=862kg/m^3 radius=243pm speed_of_sound=2000m/s specific_heat_capacity=757J/(kg*K) }
+calcium(element) { standard_atomic_weight=40.078u melting_point=1115K boiling_point=1757K density=1550kg/m^3 radius=194pm speed_of_sound=3810m/s specific_heat_capacity=647J/(kg*K) }
+scandium(element) { standard_atomic_weight=44.956u melting_point=1814K boiling_point=3109K density=2985kg/m^3 radius=162pm specific_heat_capacity=568J/(kg*K) }
+titanium(element) { standard_atomic_weight=47.867u melting_point=1941K boiling_point=3560K density=4506kg/m^3 radius=147pm speed_of_sound=4140m/s specific_heat_capacity=520J/(kg*K) }
+vanadium(element) { standard_atomic_weight=50.942u melting_point=2183K boiling_point=3680K density=6000kg/m^3 radius=134pm speed_of_sound=4560m/s specific_heat_capacity=489J/(kg*K) }
+chromium(element) { standard_atomic_weight=51.996u melting_point=2180K boiling_point=2944K density=7190kg/m^3 radius=128pm speed_of_sound=5940m/s specific_heat_capacity=449J/(kg*K) }
+manganese(element) { standard_atomic_weight=54.938u melting_point=1519K boiling_point=2334K density=7210kg/m^3 radius=127pm speed_of_sound=5150m/s specific_heat_capacity=479J/(kg*K) }
+iron(element) { standard_atomic_weight=55.845u melting_point=1811K boiling_point=3134K density=7874kg/m^3 radius=126pm speed_of_sound=5120m/s specific_heat_capacity=449J/(kg*K) }
+cobalt(element) { standard_atomic_weight=58.933u melting_point=1768K boiling_point=3200K density=8900kg/m^3 radius=125pm speed_of_sound=4720m/s specific_heat_capacity=421J/(kg*K) }
+nickel(element) { standard_atomic_weight=58.693u melting_point=1728K boiling_point=3003K density=8908kg/m^3 radius=124pm speed_of_sound=4900m/s specific_heat_capacity=444J/(kg*K) }
+copper(element) { standard_atomic_weight=63.546u melting_point=1357.77K boiling_point=2835K density=8960kg/m^3 radius=128pm speed_of_sound=3810m/s specific_heat_capacity=385J/(kg*K) }
+zinc(element) { standard_atomic_weight=65.38u melting_point=692.68K boiling_point=1180K density=7140kg/m^3 radius=138pm speed_of_sound=3850m/s specific_heat_capacity=388J/(kg*K) }
+gallium(element) { standard_atomic_weight=69.723u melting_point=302.91K boiling_point=2477K density=5910kg/m^3 radius=135pm speed_of_sound=2740m/s specific_heat_capacity=371J/(kg*K) }
+germanium(element) { standard_atomic_weight=72.63u melting_point=1211.4K boiling_point=3106K density=5323kg/m^3 radius=122pm speed_of_sound=5400m/s specific_heat_capacity=320J/(kg*K) }
+arsenic(element) { standard_atomic_weight=74.922u melting_point=1090K boiling_point=887K density=5727kg/m^3 radius=119pm specific_heat_capacity=329J/(kg*K) }
+selenium(element) { standard_atomic_weight=78.971u melting_point=494K boiling_point=958K density=4819kg/m^3 radius=120pm speed_of_sound=3350m/s specific_heat_capacity=321J/(kg*K) }
+bromine(element) { standard_atomic_weight=79.904u melting_point=265.8K boiling_point=332.0K density=3102.8kg/m^3 radius=114pm speed_of_sound=206m/s specific_heat_capacity=474J/(kg*K) }
+krypton(element) { standard_atomic_weight=83.798u melting_point=115.78K boiling_point=119.93K density=3.749kg/m^3 radius=110pm speed_of_sound=1120m/s specific_heat_capacity=248J/(kg*K) }
+
+# Period 5
+rubidium(element) { standard_atomic_weight=85.468u melting_point=312.45K boiling_point=961K density=1532kg/m^3 radius=265pm speed_of_sound=1300m/s specific_heat_capacity=363J/(kg*K) }
+strontium(element) { standard_atomic_weight=87.62u melting_point=1050K boiling_point=1650K density=2630kg/m^3 radius=219pm specific_heat_capacity=300J/(kg*K) }
+yttrium(element) { standard_atomic_weight=88.906u melting_point=1799K boiling_point=3203K density=4472kg/m^3 radius=212pm speed_of_sound=3300m/s specific_heat_capacity=298J/(kg*K) }
+zirconium(element) { standard_atomic_weight=91.224u melting_point=2128K boiling_point=4650K density=6520kg/m^3 radius=206pm speed_of_sound=3800m/s specific_heat_capacity=278J/(kg*K) }
+niobium(element) { standard_atomic_weight=92.906u melting_point=2750K boiling_point=5017K density=8570kg/m^3 radius=198pm speed_of_sound=3480m/s specific_heat_capacity=265J/(kg*K) }
+molybdenum(element) { standard_atomic_weight=95.95u melting_point=2896K boiling_point=4912K density=10280kg/m^3 radius=190pm speed_of_sound=5400m/s specific_heat_capacity=251J/(kg*K) }
+technetium(element) { standard_atomic_weight=98u melting_point=2430K boiling_point=4538K density=11500kg/m^3 radius=183pm speed_of_sound=16200m/s specific_heat_capacity=210J/(kg*K) }
+ruthenium(element) { standard_atomic_weight=101.07u melting_point=2607K boiling_point=4423K density=12370kg/m^3 radius=178pm speed_of_sound=5970m/s specific_heat_capacity=238J/(kg*K) }
+rhodium(element) { standard_atomic_weight=102.91u melting_point=2237K boiling_point=3968K density=12450kg/m^3 radius=173pm speed_of_sound=4700m/s specific_heat_capacity=243J/(kg*K) }
+palladium(element) { standard_atomic_weight=106.42u melting_point=1828.05K boiling_point=3236K density=12023kg/m^3 radius=169pm speed_of_sound=3070m/s specific_heat_capacity=244J/(kg*K) }
+silver(element) { standard_atomic_weight=107.87u melting_point=1234.93K boiling_point=2435K density=10490kg/m^3 radius=165pm speed_of_sound=2680m/s specific_heat_capacity=235J/(kg*K) }
+cadmium(element) { standard_atomic_weight=112.41u melting_point=594.22K boiling_point=1040K density=8650kg/m^3 radius=161pm speed_of_sound=2310m/s specific_heat_capacity=231J/(kg*K) }
+indium(element) { standard_atomic_weight=114.82u melting_point=429.74K boiling_point=2345K density=7310kg/m^3 radius=156pm speed_of_sound=1215m/s specific_heat_capacity=233J/(kg*K) }
+tin(element) { standard_atomic_weight=118.71u melting_point=505.08K boiling_point=2875K density=7265kg/m^3 radius=145pm speed_of_sound=2730m/s specific_heat_capacity=228J/(kg*K) }
+antimony(element) { standard_atomic_weight=121.76u melting_point=903.78K boiling_point=1860K density=6697kg/m^3 radius=133pm speed_of_sound=3420m/s specific_heat_capacity=207J/(kg*K) }
+tellurium(element) { standard_atomic_weight=127.60u melting_point=722.66K boiling_point=1261K density=6240kg/m^3 radius=123pm speed_of_sound=2610m/s specific_heat_capacity=202J/(kg*K) }
+iodine(element) { standard_atomic_weight=126.90u melting_point=386.85K boiling_point=457.4K density=4933kg/m^3 radius=115pm specific_heat_capacity=214J/(kg*K) }
+xenon(element) { standard_atomic_weight=131.29u melting_point=161.40K boiling_point=165.05K density=5.894kg/m^3 radius=108pm speed_of_sound=1090m/s specific_heat_capacity=158J/(kg*K) }
+
+# Period 6
+cesium(element) { standard_atomic_weight=132.91u melting_point=301.7K boiling_point=944K density=1930kg/m^3 radius=298pm specific_heat_capacity=240J/(kg*K) }
+barium(element) { standard_atomic_weight=137.33u melting_point=1000K boiling_point=2118K density=3510kg/m^3 radius=253pm specific_heat_capacity=204J/(kg*K) }
+lanthanum(element) { standard_atomic_weight=138.91u melting_point=1193K boiling_point=3737K density=6146kg/m^3 radius=195pm specific_heat_capacity=195J/(kg*K) }
+cerium(element) { standard_atomic_weight=140.12u melting_point=1068K boiling_point=3716K density=6770kg/m^3 radius=185pm specific_heat_capacity=192J/(kg*K) }
+praseodymium(element) { standard_atomic_weight=140.91u melting_point=1208K boiling_point=3403K density=6770kg/m^3 radius=247pm specific_heat_capacity=193J/(kg*K) }
+neodymium(element) { standard_atomic_weight=144.24u melting_point=1297K boiling_point=3347K density=7010kg/m^3 radius=206pm specific_heat_capacity=190J/(kg*K) }
+promethium(element) { standard_atomic_weight=145u melting_point=1315K boiling_point=3273K density=7260kg/m^3 radius=205pm specific_heat_capacity=185J/(kg*K) }
+samarium(element) { standard_atomic_weight=150.36u melting_point=1345K boiling_point=2076K density=7520kg/m^3 radius=238pm specific_heat_capacity=197J/(kg*K) }
+europium(element) { standard_atomic_weight=151.96u melting_point=1099K boiling_point=1802K density=5264kg/m^3 radius=231pm specific_heat_capacity=182J/(kg*K) }
+gadolinium(element) { standard_atomic_weight=157.25u melting_point=1585K boiling_point=3273K density=7900kg/m^3 radius=233pm specific_heat_capacity=236J/(kg*K) }
+terbium(element) { standard_atomic_weight=158.93u melting_point=1629K boiling_point=3396K density=8230kg/m^3 radius=225pm specific_heat_capacity=182J/(kg*K) }
+dysprosium(element) { standard_atomic_weight=162.50u melting_point=1680K boiling_point=2840K density=8540kg/m^3 radius=228pm specific_heat_capacity=170J/(kg*K) }
+holmium(element) { standard_atomic_weight=164.93u melting_point=1734K boiling_point=2873K density=8790kg/m^3 radius=226pm specific_heat_capacity=165J/(kg*K) }
+erbium(element) { standard_atomic_weight=167.26u melting_point=1802K boiling_point=3141K density=9066kg/m^3 radius=226pm specific_heat_capacity=168J/(kg*K) }
+thulium(element) { standard_atomic_weight=168.93u melting_point=1818K boiling_point=2223K density=9320kg/m^3 radius=222pm specific_heat_capacity=160J/(kg*K) }
+ytterbium(element) { standard_atomic_weight=173.05u melting_point=1097K boiling_point=1469K density=6900kg/m^3 radius=222pm specific_heat_capacity=155J/(kg*K) }
+lutetium(element) { standard_atomic_weight=174.97u melting_point=1925K boiling_point=3675K density=9841kg/m^3 radius=217pm specific_heat_capacity=154J/(kg*K) }
+hafnium(element) { standard_atomic_weight=178.49u melting_point=2506K boiling_point=4876K density=13310kg/m^3 radius=208pm speed_of_sound=3010m/s specific_heat_capacity=144J/(kg*K) }
+tantalum(element) { standard_atomic_weight=180.95u melting_point=3290K boiling_point=5731K density=16690kg/m^3 radius=200pm speed_of_sound=3400m/s specific_heat_capacity=140J/(kg*K) }
+tungsten(element) { standard_atomic_weight=183.84u melting_point=3695K boiling_point=6203K density=19250kg/m^3 radius=193pm speed_of_sound=5220m/s specific_heat_capacity=132J/(kg*K) }
+rhenium(element) { standard_atomic_weight=186.21u melting_point=3459K boiling_point=5903K density=21020kg/m^3 radius=188pm speed_of_sound=4700m/s specific_heat_capacity=137J/(kg*K) }
+osmium(element) { standard_atomic_weight=190.23u melting_point=3306K boiling_point=5285K density=22590kg/m^3 radius=185pm speed_of_sound=4940m/s specific_heat_capacity=130J/(kg*K) }
+iridium(element) { standard_atomic_weight=192.22u melting_point=2719K boiling_point=4403K density=22560kg/m^3 radius=180pm speed_of_sound=4825m/s specific_heat_capacity=131J/(kg*K) }
+platinum(element) { standard_atomic_weight=195.08u melting_point=2041.4K boiling_point=4098K density=21450kg/m^3 radius=177pm speed_of_sound=2800m/s specific_heat_capacity=133J/(kg*K) }
+gold(element) { standard_atomic_weight=196.97u melting_point=1337.33K boiling_point=3243K density=19300kg/m^3 radius=174pm speed_of_sound=2030m/s specific_heat_capacity=129J/(kg*K) }
+mercury(element) { standard_atomic_weight=200.59u melting_point=234.32K boiling_point=629.88K density=13534kg/m^3 radius=171pm speed_of_sound=1451m/s specific_heat_capacity=140J/(kg*K) }
+thallium(element) { standard_atomic_weight=204.38u melting_point=577K boiling_point=1746K density=11850kg/m^3 radius=156pm speed_of_sound=818m/s specific_heat_capacity=129J/(kg*K) }
+lead(element) { standard_atomic_weight=207.2u melting_point=600.61K boiling_point=2022K density=11340kg/m^3 radius=154pm speed_of_sound=1190m/s specific_heat_capacity=129J/(kg*K) }
+bismuth(element) { standard_atomic_weight=208.98u melting_point=544.7K boiling_point=1837K density=9780kg/m^3 radius=143pm speed_of_sound=1790m/s specific_heat_capacity=122J/(kg*K) }
+polonium(element) { standard_atomic_weight=209u melting_point=527K boiling_point=1235K density=9196kg/m^3 radius=135pm specific_heat_capacity=125J/(kg*K) }
+astatine(element) { standard_atomic_weight=210u melting_point=575K boiling_point=610K radius=127pm specific_heat_capacity=122J/(kg*K) }
+radon(element) { standard_atomic_weight=222u melting_point=202K boiling_point=211.5K density=9.73kg/m^3 radius=120pm specific_heat_capacity=94J/(kg*K) }
+
+# Period 7
+francium(element) { standard_atomic_weight=223u melting_point=300K boiling_point=950K radius=348pm specific_heat_capacity=100J/(kg*K) }
+radium(element) { standard_atomic_weight=226u melting_point=973K boiling_point=2010K density=5500kg/m^3 radius=283pm specific_heat_capacity=94J/(kg*K) }
+actinium(element) { standard_atomic_weight=227u melting_point=1323K boiling_point=3471K density=10070kg/m^3 radius=260pm specific_heat_capacity=120J/(kg*K) }
+thorium(element) { standard_atomic_weight=232.04u melting_point=2023K boiling_point=5061K density=11724kg/m^3 radius=237pm specific_heat_capacity=113J/(kg*K) }
+protactinium(element) { standard_atomic_weight=231.04u melting_point=1841K boiling_point=4300K density=15370kg/m^3 radius=243pm specific_heat_capacity=121J/(kg*K) }
+uranium(element) { standard_atomic_weight=238.03u melting_point=1405.3K boiling_point=4404K density=19100kg/m^3 radius=240pm speed_of_sound=3155m/s specific_heat_capacity=116J/(kg*K) }
+neptunium(element) { standard_atomic_weight=237u melting_point=912K boiling_point=4273K density=20450kg/m^3 radius=230pm specific_heat_capacity=119J/(kg*K) }
+plutonium(element) { standard_atomic_weight=244u melting_point=912.5K boiling_point=3505K density=19816kg/m^3 radius=243pm speed_of_sound=2260m/s specific_heat_capacity=130J/(kg*K) }
+americium(element) { standard_atomic_weight=243u melting_point=1449K boiling_point=2880K density=13670kg/m^3 radius=244pm specific_heat_capacity=111J/(kg*K) }
+curium(element) { standard_atomic_weight=247u melting_point=1613K boiling_point=3383K density=13510kg/m^3 radius=245pm specific_heat_capacity=114J/(kg*K) }
+berkelium(element) { standard_atomic_weight=247u melting_point=1259K boiling_point=2900K density=14780kg/m^3 radius=244pm }
+californium(element) { standard_atomic_weight=251u melting_point=1173K boiling_point=1743K density=15100kg/m^3 radius=245pm }
+einsteinium(element) { standard_atomic_weight=252u melting_point=1133K boiling_point=1269K density=8840kg/m^3 radius=245pm }
+fermium(element) { standard_atomic_weight=257u melting_point=1800K }
+mendelevium(element) { standard_atomic_weight=258u melting_point=1100K }
+nobelium(element) { standard_atomic_weight=259u melting_point=1100K }
+lawrencium(element) { standard_atomic_weight=266u melting_point=1900K }
+rutherfordium(element) { standard_atomic_weight=267u }
+dubnium(element) { standard_atomic_weight=268u }
+seaborgium(element) { standard_atomic_weight=269u }
+bohrium(element) { standard_atomic_weight=270u }
+hassium(element) { standard_atomic_weight=277u }
+meitnerium(element) { standard_atomic_weight=278u }
+darmstadtium(element) { standard_atomic_weight=281u }
+roentgenium(element) { standard_atomic_weight=282u }
+copernicium(element) { standard_atomic_weight=285u }
+nihonium(element) { standard_atomic_weight=286u }
+flerovium(element) { standard_atomic_weight=289u }
+moscovium(element) { standard_atomic_weight=290u }
+livermorium(element) { standard_atomic_weight=293u }
+tennessine(element) { standard_atomic_weight=294u }
+oganesson(element) { standard_atomic_weight=294u }
+

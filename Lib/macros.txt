@@ -1,0 +1,7 @@
+kilo[x] = {x} * 1000
+deci[x] = {x} / 10
+centi[x] = {x} / 100
+milli[x] = {x} / 1000
+micro[x] = {x} / 1000000
+nano[x] = {x} / 1e9
+

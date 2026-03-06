@@ -4,6 +4,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Lib", "Lib\Lib.fsproj", "{5
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Umits", "Umits\Umits.csproj", "{8040FB79-99BF-4C76-8467-2B9AFE08A07B}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Console", "Console\Console.fsproj", "{7F8DD482-2D00-496D-B685-A39A2CB07398}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{8040FB79-99BF-4C76-8467-2B9AFE08A07B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8040FB79-99BF-4C76-8467-2B9AFE08A07B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8040FB79-99BF-4C76-8467-2B9AFE08A07B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F8DD482-2D00-496D-B685-A39A2CB07398}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F8DD482-2D00-496D-B685-A39A2CB07398}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F8DD482-2D00-496D-B685-A39A2CB07398}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F8DD482-2D00-496D-B685-A39A2CB07398}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
