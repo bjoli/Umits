@@ -4,7 +4,7 @@
 
 I got fed up with the GUIs of all unit converters on Android. To convert units you need a keyboard to type the units and a key to press when you want to convert. No clunky UIs. I don't want to go through menus to convert 6ft,2in to m.
 
-So I started writing a unit converter. In the beginning it was a simple linear converter. Then one day someone pointed me to GNU Units and I got nerd-sniped. So what can it do?
+So I started writing a unit converter. In the beginning it was a simple linear converter. Then one day someone pointed me to GNU Units and I got nerd-sniped into reading about dimension analysis.  So what can it do?
 
 ## Demo
 
@@ -28,6 +28,13 @@ You can skip "in unit" and have Umits select a unit for you, but it will not alw
 12h - 45min -> 40440s
 ```
 
+### what is a dimension? 
+
+In the world of unit conversion and physics, a dimension is the fundamental physical nature of a quantity, regardless of the units used to measure it. 
+
+A good example is length. Meter, inch, furlong and lightyear each describe the same thing. Every one of those units can be described in terms of the other. 
+
+Like in algebra, if we have A² and B, we can multiply them and divide them, but we cannot add or subtract. 15m + 15ft is no problem because they reduce to the same thing.  15m + 10s does not work. 15m/10s however is the same as 5,4km/h. You cannot do 10kg + 10m³, but you can get the density by doing 1kg/m³.
 
 ### Adding units of the same dimension
 
@@ -43,7 +50,7 @@ oh
 
 It also saves the previous results as $[nr]. The example above is $2 in our session.
 
-    $2 in d
+    $2 in d -> 0,2256944 d
     
 ### Complex queries 
 
@@ -209,6 +216,32 @@ I don't want to write a pretty list. Here is the source code. The m2 and m3 is d
 ```
 
 Also supported are degC and degF together with standard gravity (gn), the speed of light (c) and pi (pi).
+
+## logarithmic units (not released yet, have patience)
+
+These are not units per se, but macros. The common way we think about dB is dB sound pressure level (dBSPL), which is defined like this:
+
+```
+dBSPL[pressure] = 20 * log10({pressure} / 20uPa)
+
+```
+
+The other dB versions are defined as:
+
+```
+// Power (Reference: 1 Watt and 1 milliWatt)
+dBW[power] = 10 * log10({power} / 1W) * 1 dB
+dBm[power] = 10 * log10({power} / 1mW) * 1dB
+
+// Voltage (Reference: 1 Volt)
+dBV[voltage] = 20 * log10({voltage} / 1V) * 1dB
+```
+
+Where dB is a dimensionless unit. 
+
+This means we have to treat them specially: we cannot just say 5W in dBW. 
+
+This is true for _all_ logarithmic units, like Niepers, decade, pH and stellar magnitude.
 
 ## Screenshot
 a light mode
