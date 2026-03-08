@@ -11,10 +11,9 @@
         <Compile Include="Library.fs"/>
     </ItemGroup>
 
-    <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <PropertyGroup Condition="'$(Configuration)' == 'Release' and '$(TargetFramework)' == 'net10.0-android'">
         <PublishTrimmed>false</PublishTrimmed>
         <TrimMode>none</TrimMode>
-
         <RunAOTCompilation>false</RunAOTCompilation>
 
     </PropertyGroup>

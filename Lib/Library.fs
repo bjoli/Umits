@@ -166,6 +166,7 @@ module Engine =
         | Mul of Expr * Expr
         | Div of Expr * Expr
         | Pow of Expr * Expr
+        | Func of string * Expr list
 
     let rec eval expr =
         match expr with
@@ -217,7 +218,48 @@ module Engine =
                 | Result.Ok vx -> applyPower 1.0 vx vy
                 | Result.Error e -> Result.Error e
             | _, Result.Error e -> Result.Error e
-
+        | Func(name, args) ->
+            // Helper to evaluate all arguments and fail fast on the first error
+            let rec evalAll acc remaining =
+                match remaining with
+                | [] -> Result.Ok (List.rev acc)
+                | h::t -> 
+                    match eval h with
+                    | Result.Ok v -> evalAll (v::acc) t
+                    | Result.Error e -> Result.Error e
+                    
+            match evalAll [] args with
+            | Result.Error e -> Result.Error e
+            | Result.Ok vals ->
+                let allDimensionless = vals |> List.forall (fun v -> Map.isEmpty v.Dims)
+                
+                match name.ToLower(), vals with
+                // 2-Argument Logarithm: log(base, value)
+                | "log", [baseVal; v] when allDimensionless ->
+                    Result.Ok (linear (Math.Log(v.Scale, baseVal.Scale)) Map.empty)
+                
+                // 1-Argument Functions
+                | ("log" | "log10"), [v] when allDimensionless -> 
+                    Result.Ok (linear (Math.Log10(v.Scale)) Map.empty)
+                | "ln", [v] when allDimensionless -> 
+                    Result.Ok (linear (Math.Log(v.Scale)) Map.empty)
+                | "sin", [v] when allDimensionless -> 
+                    Result.Ok (linear (Math.Sin(v.Scale)) Map.empty)
+                | "cos", [v] when allDimensionless -> 
+                    Result.Ok (linear (Math.Cos(v.Scale)) Map.empty)
+                | "tan", [v] when allDimensionless -> 
+                    Result.Ok (linear (Math.Tan(v.Scale)) Map.empty)
+                
+                // Functions that scale dimensions mathematically
+                | "sqrt", [v] -> 
+                    let hasOddPowers = v.Dims |> Map.exists (fun _ power -> power % 2 <> 0)
+                    if hasOddPowers then Result.Error "Cannot take the square root of an odd power dimension"
+                    else Result.Ok (linear (Math.Sqrt(v.Scale)) (v.Dims |> Map.map (fun _ p -> p / 2)))
+                
+                // Error Fallbacks
+                | funcName, _ when ["log"; "log10"; "ln"; "sin"; "cos"; "tan"] |> List.contains funcName && not allDimensionless ->
+                    Result.Error $"Arguments to '%s{name}' must be dimensionless"
+                | _ -> Result.Error $"Unknown function or invalid argument count: %s{name}"
     let opp = OperatorPrecedenceParser<Expr, unit, unit>()
     let pExpr = opp.ExpressionParser
 
@@ -235,6 +277,20 @@ module Engine =
             | None -> 
                 if numOpt.IsSome then preturn (Num num)
                 else fail "Expected number or unit"
+    // Define what makes a valid function name
+    let pFuncName =
+        many1Satisfy2 
+            (fun c -> isAsciiLetter c || c = '_')                   // First char: letter or underscore
+            (fun c -> isAsciiLetter c || isDigit c || c = '_')      // Rest: letter, digit, or underscore
+
+    // Parse a function
+    let pFunc =
+        pFuncName .>> spaces 
+        .>>. between 
+                (pstring "(" .>> spaces) 
+                (pstring ")" .>> spaces) 
+                (sepBy pExpr (pstring "," .>> spaces))
+        |>> fun (name, args) -> Func(name, args)
 
     opp.TermParser <- (pTerm .>> spaces) <|> between (pstring "(" .>> spaces) (pstring ")" .>> spaces) (pExpr |>> Group)
 
@@ -243,6 +299,10 @@ module Engine =
     opp.AddOperator(InfixOperator("*", spaces, 2, Associativity.Left, fun x y -> Mul(x, y)))
     opp.AddOperator(InfixOperator("/", spaces, 2, Associativity.Left, fun x y -> Div(x, y)))
     opp.AddOperator(InfixOperator("^", spaces, 3, Associativity.Right, fun x y -> Pow(x, y)))
+    opp.TermParser <- 
+        attempt pFunc 
+        <|> (pTerm .>> spaces) 
+        <|> between (pstring "(" .>> spaces) (pstring ")" .>> spaces) (pExpr |>> Group)
 
     let parseAliasToDef (exprStr: string) =
         match run (spaces >>. pExpr .>> eof) exprStr with
@@ -363,6 +423,9 @@ module Engine =
             ("rev", "2 * pi")
             ("rpm", "rev / min")
             
+            // decibel, dimensionless
+            ("dB", "1")
+            
             // Dimensionless ratios
             ("%", "0.01")
             //Parts per ...
@@ -423,35 +486,40 @@ module Engine =
         let mutable pass = 1
 
         while changed do
-            printfn "\n--- Pass %d ---" pass
-            printfn "Input to regex: '%s'" current
             changed <- false
             current <- propRegex.Replace(current, MatchEvaluator(fun m ->
                 let entityName = m.Groups[1].Value
                 let propName = m.Groups[2].Value
-                printfn $"  -> Regex matched! Entity: '%s{entityName}', Property: '%s{propName}'"
 
                 match EntityParser.entities.TryGetValue(entityName) with
                 | true, props ->
                     match props.TryFind(propName) with
                     | Some value ->
-                        printfn "  -> SUCCESS: Found '%s.%s' = '%s'" entityName propName value
                         changed <- true
                         value // Replaces "earth.mass" with "(5.972*10^24)kg"
                     | None ->
-                        printfn "  -> FAIL: Entity '%s' exists, but has no property '%s'" entityName propName
                         m.Value
                 | false, _ ->
-                    printfn "FAIL. No entity named '%s'" entityName
                     m.Value
             ))
         current
+        
+    // Run macro and entity expansion until there is no
+    // macro and unit expansion left
+    let rec preprocess (input: string) =
+        let afterMacros = MacroParser.expand input
+        let afterEntities = resolveProperties afterMacros
+        
+        if afterEntities = input then 
+            afterEntities 
+        else 
+            preprocess afterEntities    
 
 
     let convertQuery (query: string) =
-        // First we expand all the macros, and entities. This is really just pure text substitution
-        let macroExpanded = MacroParser.expand query
-        let fullyExpanded = resolveProperties macroExpanded
+        // This recursively expands macros and entities until there is no more expansion
+        // to be done. It can potentially loop forever.
+        let fullyExpanded = preprocess query
         printf $"%s{fullyExpanded}"
         let decFixed = Regex.Replace(fullyExpanded.Trim(), @"(?<=\d),(?=\d)", ".")
         let parts = Regex.Split(decFixed, @"(?i)\s+in\s+")

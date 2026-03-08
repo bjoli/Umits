@@ -138,8 +138,7 @@ public partial class MainPage
         }
 
         string resultStr = Engine.convertQuery(actualQuery);
-        bool isError = resultStr.StartsWith("Error") 
-                       || resultStr.StartsWith("Syntax Error");
+        bool isError = resultStr.Contains("Error");
 
         if (isError)
         {

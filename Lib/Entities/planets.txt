@@ -22,17 +22,6 @@ saturn(planet) { radius=58232km mass=5.6834e26kg }
 uranus(planet) { radius=25362km mass=8.6810e25kg }
 neptune(planet) { radius=24622km mass=1.02413e26kg }
 
-// Elements
-hydrogen(substance) { molar_mass=1.008g symbol="H" atomic_number=1 }
-helium(substance) { molar_mass=4.0026g symbol="He" atomic_number=2 }
-carbon(substance) { molar_mass=12.011g symbol="C" atomic_number=6 }
-nitrogen(substance) { molar_mass=14.007g symbol="N" atomic_number=7 }
-oxygen(substance) { molar_mass=15.999g symbol="O" atomic_number=8 }
-sodium(substance) { molar_mass=22.990g symbol="Na" atomic_number=11 }
-chlorine(substance) { molar_mass=35.45g symbol="Cl" atomic_number=17 }
-iron(substance) { molar_mass=55.845g symbol="Fe" atomic_number=26 }
-cobalt(substance) { molar_mass=58.933g symbol="Co" atomic_number=27 }
-uranium(substance) { molar_mass=238.029g symbol="U" atomic_number=92 }
 
 // Molecules
 water(substance) { molar_mass=18.015g formula="H2O" }

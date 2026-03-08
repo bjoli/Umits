@@ -2,17 +2,18 @@ namespace Umits
 
 open System.Text.RegularExpressions
 open System.Collections.Generic
+(*
 They follow a simple syntax. A template entity starts with a %. Properties from the template
 is simply copied verbatim into the entity. Properties are written inside curly braces as such:
 
-hydgrogen { molar_mass=xyzg speed_of_sound=23442furlongs/fortnight }
+hydrogen { molar_mass=xyzg speed_of_sound=23442furlongs/fortnight }
  
  A $ is replaced by the name of the entity, and is
 expanded in the entity body, and not in any templates. So a template %cubish { volume=$.width*$.length*$.height }
 
 We can then define proper_2m_cube(cubish) { width=2m height=2m length=2m } and volume is added for us. 
 
-Currently this uses Regex. I'm sorry. I had to fight Parsec a bit too much since I have no idea what I'm doing.
+Currently, this uses Regex. I'm sorry. I had to fight Parsec a bit too much since I have no idea what I'm doing.
  *)
 
 module EntityParser =
