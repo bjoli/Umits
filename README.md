@@ -1,6 +1,6 @@
 # Umits - a unit converter that is worse than GNU Units, but for android (maui)
 
-(This is not avaliable in the play store yet. I am waiting for my verification)
+(if you want to participate in closed testing, send me an email at linus.internet@fastmail.se)
 
 I got fed up with the GUIs of all unit converters on Android. To convert units you need a keyboard to type the units and a key to press when you want to convert. No clunky UIs. I don't want to go through menus to convert 6ft,2in to m.
 
