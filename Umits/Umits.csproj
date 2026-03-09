@@ -28,8 +28,10 @@
         <ApplicationId>org.bjoli.umits</ApplicationId>
 
         <!-- Versions -->
-        <ApplicationDisplayVersion>6</ApplicationDisplayVersion>
-        <ApplicationVersion>6</ApplicationVersion>
+        <ApplicationDisplayVersion>7</ApplicationDisplayVersion>
+        <ApplicationVersion>7</ApplicationVersion>
+        <AndroidSdkDirectory>/home/linus/Program/Android/</AndroidSdkDirectory>
+          <JavaSdkDirectory>/usr/lib64/jvm/msopenjdk-21/</JavaSdkDirectory>
 
         
         
@@ -43,7 +45,6 @@
         <TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
     </PropertyGroup>
 
-    
 
     <ItemGroup>
         <!-- App Icon -->

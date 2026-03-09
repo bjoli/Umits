@@ -84,8 +84,7 @@ public static class KeyboardService
         
         public WindowInsetsCompat? OnApplyWindowInsets(View? v, WindowInsetsCompat? insets)
         {
-            if (insets is null || v is null)
-                throw new NullReferenceException();
+            if (v == null || insets == null) return insets;
             
             // Get keyboard height
             var imeInsets = insets.GetInsets(WindowInsetsCompat.Type.Ime());
@@ -97,7 +96,7 @@ public static class KeyboardService
             double keyboardHeight = imeInsets.Bottom / density;
 
             // Trigger the event
-            KeyboardHeightChanged.Invoke(null, keyboardHeight);
+            KeyboardHeightChanged?.Invoke(null, keyboardHeight);
 
             // Keep the UI from drawing under the status bar and navigation bar
             var systemBarInsets = insets.GetInsets(WindowInsetsCompat.Type.SystemBars());

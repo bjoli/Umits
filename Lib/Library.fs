@@ -77,8 +77,10 @@ of the standard algebraic rule of exponents.
 *)
 
 module Engine =
-    open EntityParser
-    open MacroParser
+    
+    // This can be used to set the format string.
+    // of course not thread safe.
+    let mutable formatString = "G7"
     // --- 1. Core Dimensions ---
     type Dims = Map<string, int>
 
@@ -472,7 +474,7 @@ module Engine =
         initializeDb ()
     //  Conversion Logic
     let formatNum (n: float) =
-        n.ToString("G7").Replace("−", "-")
+        n.ToString(formatString).Replace("−", "-") 
 
 
     let findBestUnit (dims: Dims) (value: float) =
@@ -500,7 +502,6 @@ module Engine =
         let propRegex = Regex(@"([a-zA-Z_]\w*)\.([a-zA-Z_]\w*)")
         let mutable current = input
         let mutable changed = true
-        let mutable pass = 1
 
         while changed do
             changed <- false
@@ -618,3 +619,8 @@ module Engine =
             | Failure(msg, _, _) -> $"Syntax Error: %s{msg}"
 
         | _ -> "Expression error. Too many \"in\"s?"
+    
+    let clearMacrosAndEntities() =
+        MacroParser.macros.Clear()
+        EntityParser.entities.Clear()
+

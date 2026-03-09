@@ -96,7 +96,30 @@ public partial class MainPage
     {
         base.OnAppearing();
         InfoMarkdownView.MarkdownText = await LoadMarkdownFileAsync("Documentation.md");
+        await LoadSettingsIntoEngine();
+    }
+    
+    private async Task LoadSettingsIntoEngine()
+    {
+        // 1. Apply Number Format String
+        // Assuming you exposed a public static property named 'formatString' on Engine
+        Engine.formatString = Preferences.Default.Get("NumberFormat", "G7");
 
+        // 2. Load Macros
+        string macrosPath = Path.Combine(FileSystem.AppDataDirectory, "user_macros.txt");
+        if (File.Exists(macrosPath))
+        {
+            string macrosText = await File.ReadAllTextAsync(macrosPath);
+            MacroParser.parseFile(macrosText);
+        }
+
+        // 3. Load Entities
+        string entitiesPath = Path.Combine(FileSystem.AppDataDirectory, "user_entities.txt");
+        if (File.Exists(entitiesPath))
+        {
+            string entitiesText = await File.ReadAllTextAsync(entitiesPath);
+            EntityParser.parseFiles([entitiesText]);
+        }
     }
     
     private async void OnPageLoaded(object sender, EventArgs e)
@@ -130,6 +153,14 @@ public partial class MainPage
             // If the index is out of bounds or invalid, leave the token as is
             return match.Value; 
         });
+        
+        // Clear the results.
+        if (rawQuery == "clear")
+        {
+            _history.Clear();
+            InputEntry.Text  = string.Empty;
+            return;
+        }
 
         string actualQuery = rawQuery;
         if (rawQuery.StartsWith("in ", StringComparison.OrdinalIgnoreCase) && _lastResult != null)
@@ -164,6 +195,58 @@ public partial class MainPage
         await InputEntry.HideKeyboardAsync();
         OverlayContainer.IsVisible = !OverlayContainer.IsVisible;
     }
+    
+    private void OnAutoParenClicked(object sender, EventArgs e)
+    {
+        string text = InputEntry.Text ?? string.Empty;
+        int cursor = InputEntry.CursorPosition;
+        int selLength = InputEntry.SelectionLength;
+
+        if (selLength > 0)
+        {
+            // Wrap selected text in parentheses
+            string before = text.Substring(0, cursor);
+            string selected = text.Substring(cursor, selLength);
+            string after = text.Substring(cursor + selLength);
+
+            InputEntry.Text = before + "(" + selected + ")" + after;
+            InputEntry.CursorPosition = cursor + selLength + 2; 
+        }
+        else
+        {
+            // Scan for which parenthesis to insert
+            int openCount = text.Count(c => c == '(');
+            int closeCount = text.Count(c => c == ')');
+
+            string parenToInsert = openCount > closeCount ? ")" : "(";
+            InsertTextAtCursor(parenToInsert);
+        }
+        
+        InputEntry.Focus();
+    }
+
+    private void OnOpenParenClicked(object sender, EventArgs e) => InsertTextAtCursor("(");
+    
+    private void OnCloseParenClicked(object sender, EventArgs e) => InsertTextAtCursor(")");
+
+    private void InsertTextAtCursor(string textToInsert)
+    {
+        string text = InputEntry.Text ?? string.Empty;
+        int cursor = InputEntry.CursorPosition;
+        int selLength = InputEntry.SelectionLength;
+
+        string before = text.Substring(0, cursor);
+        string after = text.Substring(cursor + selLength);
+
+        InputEntry.Text = before + textToInsert + after;
+        InputEntry.CursorPosition = cursor + textToInsert.Length;
+        InputEntry.Focus();
+    }
+
+    private async void OnSettingsClicked(object sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(SettingsPage));
+    }
 
     // When tapping a historyItem we copy the query into the text field
     private void OnHistoryItemTapped(object sender, TappedEventArgs e)
@@ -193,7 +276,7 @@ public partial class MainPage
 
         this.Padding = keyboardHeight < 1 
             ? new Thickness(0, 0, 0, keyboardHeight) 
-            : new Thickness(0, 0, 0, keyboardHeight -25);
+            : new Thickness(0, 0, 0, keyboardHeight - 25);
 
         if (_history.Count > 0)
         {

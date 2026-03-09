@@ -135,8 +135,6 @@ dBW(power), dBM(power) -> reference W and milliW respectively.
 dBV(voltage) -> reference voltage
 
 ```
-dBSPL(pressure) returns micropascals
-
 
 # Engine Behavior
 The engine is built on an Abstract Syntax Tree (AST) evaluated via a simple parser. It uses strict

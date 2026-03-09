@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Umits.SettingsPage"
+             Title="Settings">
+    <ScrollView Padding="20">
+        <VerticalStackLayout Spacing="15">
+            
+            <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,10">
+                <Label Grid.Column="0" Text="Settings" FontAttributes="Bold" FontSize="24" VerticalOptions="Center" />
+                <Button Grid.Column="1" Text="Close" Clicked="OnCloseClicked" CornerRadius="8" Padding="15,5" />
+            </Grid>
+
+            <Label Text="Number Format String" FontAttributes="Bold" />
+            <Entry x:Name="NumberFormatEntry" 
+                   Placeholder="e.g., G7" />
+
+            <Label Text="Macros" FontAttributes="Bold" />
+            <Editor x:Name="MacrosEditor" 
+                    Placeholder="Define macros here..." 
+                    HeightRequest="100"
+                    Focused="OnEditorFocused"
+                    Unfocused="OnEditorUnfocused" />
+
+            <Label Text="Entities" FontAttributes="Bold" />
+            <Editor x:Name="EntitiesEditor" 
+                    Placeholder="Define entities here..." 
+                    HeightRequest="100"
+                    Focused="OnEditorFocused"
+                    Unfocused="OnEditorUnfocused" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

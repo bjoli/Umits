@@ -24,11 +24,11 @@ ronto(x) = {x} * 1e-27
 quecto(x) = {x} * 1e-30
 
 // Power (Reference: 1 Watt and 1 milliWatt)
-dBW(power) = 10 * log10({power} / 1W) * 1 dB
-dBm(power) = 10 * log10({power} / 1mW) * 1dB
+dBW(power) = 10 * log10({power} / 1W)
+dBm(power) = 10 * log10({power} / 1mW)
 
 // Voltage (Reference: 1 Volt)
-dBV(voltage) = 20 * log10({voltage} / 1V) * 1 dB
+dBV(voltage) = 20 * log10({voltage} / 1V)
 
 // Acoustics (Reference: 20 micropascals)
-dBSPL(pressure) = 20 * log10({pressure} / 20uPa) * 1 dB
+dBSPL(pressure) = 20 * log10({pressure} / 20uPa)

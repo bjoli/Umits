@@ -94,7 +94,6 @@ module MacroParser =
         args.ToArray()
 
     let parseFile (content: string) =
-        macros.Clear()
         let lines = content.Split([|'\r'; '\n'|], System.StringSplitOptions.RemoveEmptyEntries)
         for line in lines do
             if not (line.StartsWith("//")) then
@@ -103,7 +102,6 @@ module MacroParser =
                     let name = m.Groups[1].Value
                     let args = m.Groups[2].Value.Split(',') |> Array.map (fun s -> s.Trim())
                     let body = m.Groups[3].Value.Trim()
-                    Console.WriteLine($"added: ${name}")
                     macros[name] <- (args, body)
 
     let rec expand (input: string) : string =
