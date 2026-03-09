@@ -28,6 +28,8 @@ You can skip "in unit" and have Umits select a unit for you, but it will not alw
 12h - 45min -> 40440s
 ```
 
+## Weird results?
+Above is just a benign example. Sometimes you can get really weird answers even for queries you thought were sane. If you forget the /h at the end, of (31l/m2)/1min in mm/h the reply is instead in Bequerel. If we reduce the above, it becomes (0,0031m3/1m2)/60s in mm/h, which becomes 0,0031m/60s. "in" is just a fancy divider, so specifying this in mm means the 0,0031m loses its unit, and left is 3.1/60s which becomes 0.05[...]/s which is read as N per second, i.e.
 ### what is a dimension? 
 
 In the world of unit conversion and physics, a dimension is the fundamental physical nature of a quantity, regardless of the units used to measure it. 
@@ -90,7 +92,7 @@ in min -> 0.3263773 min
 
 ## Supported dimensions
 
-Length (m), mass(kg), time(s), current(A), temperature(K), bits(b) and luminous intensity(cd).
+Length (m), mass(kg), time(s), current(A), temperature(K), bits(b), mol (mol) and luminous intensity(cd).
 
 All other units are derived from those. 
 
@@ -201,18 +203,6 @@ I don't want to write a pretty list. Here is the source code. The m2 and m3 is d
 ("ppm", "1e-6") 
 ("ppb", "1e-9")
 ("ppt", "1e-12")
-
-// Molar Masses (Mass of 1 mole of specific substances)
-("mol_water", "18.015 g")
-("mol_nacl", "58.44 g")
-("mol_ethanol", "46.07 g")
-
-// Common Blood Panel Substances
-("mol_glucose", "180.156 g")
-("mol_cholesterol", "386.654 g")
-("mol_triglycerides", "885.43 g")
-("mol_urea", "60.056 g")
-
 ```
 
 Also supported are degC and degF together with standard gravity (gn), the speed of light (c) and pi (pi).
@@ -230,8 +220,8 @@ The other dB versions are defined as:
 
 ```
 // Power (Reference: 1 Watt and 1 milliWatt)
-dBW[power] = 10 * log10({power} / 1W) * 1 dB
-dBm[power] = 10 * log10({power} / 1mW) * 1dB
+dBW(power) = 10 * log10({power} / 1W) * 1 dB
+dBm(power) = 10 * log10({power} / 1mW) * 1 dB
 
 // Voltage (Reference: 1 Volt)
 dBV[voltage] = 20 * log10({voltage} / 1V) * 1dB
@@ -242,6 +232,23 @@ Where dB is a dimensionless unit.
 This means we have to treat them specially: we cannot just say 5W in dBW. 
 
 This is true for _all_ logarithmic units, like Niepers, decade, pH and stellar magnitude.
+
+## Functions
+
+Umits specifies the following functions:
+
+```
+log(n, value) = does a logn on value
+
+log(value), log10(value)= one-argument versions of the function above. They do log10
+
+ln(value) is the same a log(e, value)
+
+sin, cos, tan = you know these
+
+sqrt = square root. 
+```
+
 
 ## Screenshot
 a light mode

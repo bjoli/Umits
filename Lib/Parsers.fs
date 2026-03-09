@@ -1,5 +1,6 @@
 namespace Umits
 
+open System
 open System.Text.RegularExpressions
 open System.Collections.Generic
 (*
@@ -58,49 +59,79 @@ module EntityParser =
                         k, v)
                     |> Map.ofSeq
                 entities[name] <- kvs
-
+                
 module MacroParser =
-    // Maps MacroName -> (ArgumentArray, TemplateString)
+
+    // Matches definitions in macros.txt: name(arg1, arg2) = body
+    let private defRegex = Regex(@"^([a-zA-Z_]\w*)\(([^)]+)\)\s*=\s*(.+)$", RegexOptions.Compiled)
+    
+    // Matches usage in queries using .NET balancing groups for nested parentheses
+    let private useRegex = Regex(@"([a-zA-Z_]\w*)\(((?>[^()]+|\((?<DEPTH>)|\)(?<-DEPTH>))*(?(DEPTH)(?!)))\)", RegexOptions.Compiled)
+
     let macros = Dictionary<string, string[] * string>()
 
+    // Safely splits arguments on commas, ignoring commas inside nested parentheses
+    let private splitArgs (argString: string) =
+        let mutable depth = 0
+        let mutable current = ""
+        let args = ResizeArray<string>()
+        
+        for c in argString do
+            match c with
+            | '(' -> 
+                depth <- depth + 1
+                current <- current + string c
+            | ')' -> 
+                depth <- depth - 1
+                current <- current + string c
+            | ',' when depth = 0 -> 
+                args.Add(current.Trim())
+                current <- ""
+            | _ -> 
+                current <- current + string c
+                
+        args.Add(current.Trim())
+        args.ToArray()
+
     let parseFile (content: string) =
-        let defRegex = Regex(@"^([a-zA-Z_]\w*)\[([^\]]+)\]\s*=\s*(.+)$", RegexOptions.Multiline)
-        for m in defRegex.Matches(content) do
-            let name = m.Groups[1].Value
-            let args = m.Groups[2].Value.Split(',') |> Array.map (fun s -> s.Trim())
-            let body = m.Groups[3].Value.Trim()
-            macros[name] <- (args, body)
+        macros.Clear()
+        let lines = content.Split([|'\r'; '\n'|], System.StringSplitOptions.RemoveEmptyEntries)
+        for line in lines do
+            if not (line.StartsWith("//")) then
+                let m = defRegex.Match(line)
+                if m.Success then
+                    let name = m.Groups[1].Value
+                    let args = m.Groups[2].Value.Split(',') |> Array.map (fun s -> s.Trim())
+                    let body = m.Groups[3].Value.Trim()
+                    Console.WriteLine($"added: ${name}")
+                    macros[name] <- (args, body)
 
     let rec expand (input: string) : string =
-        // Regex with balancing groups to match outer macro. I did not write this.
-        // someone who knows regex did.
-        let outerMacroRegex = Regex(@"([a-zA-Z_]\w*)\[((?:[^\[\]]|(?<open>\[)|(?<-open>\]))+(?(open)(?!)))\]")
-        let m = outerMacroRegex.Match(input)
+        let mutable current = input
+        let mutable changed = true
         
-        if m.Success then
-            let macroName = m.Groups[1].Value
-            let argsStr = m.Groups[2].Value
-            
-            match macros.TryGetValue(macroName) with
-            | true, (argNames, template) ->
-                // Split arguments. A sinple string split is not great, but it's my project. 
-                let providedArgs = argsStr.Split(',') |> Array.map (fun s -> s.Trim())
+        while changed do
+            changed <- false
+            current <- useRegex.Replace(current, MatchEvaluator(fun m ->
+                let name = m.Groups[1].Value
+                let argString = m.Groups[2].Value 
+                let args = splitArgs argString    
                 
-                let mutable expandedBody = template
-                for i = 0 to min (argNames.Length - 1) (providedArgs.Length - 1) do
-                    expandedBody <- expandedBody.Replace($"{{{argNames[i]}}}", providedArgs[i])
-                
-                // Wrap in parens and replace in the original string
-                let replacedStr = 
-                    input.Substring(0, m.Index) + 
-                    "(" + expandedBody + ")" + 
-                    input.Substring(m.Index + m.Length)
-                
-                // Recursively evaluate to handle macros outputting macros (Out -> In)
-                expand replacedStr
-            | false, _ -> 
-                // Macro not found, return as is and let soneone else handle ir
-                input
-        else
-            input
+                match macros.TryGetValue(name) with
+                | true, (defArgs, body) when args.Length = defArgs.Length ->
+                    changed <- true
+                    let mutable expanded = body
+                    for i in 0 .. args.Length - 1 do
+                        expanded <- expanded.Replace("{" + defArgs[i] + "}", "(" + args[i] + ")")
+                    "(" + expanded + ")" 
+                | _ ->
+                    // If it is not a macro, we expand whatever is inside the
+                    // parentheses
+                    let innerExpanded = expand argString
+                    if innerExpanded <> argString then
+                        changed <- true
+                    name + "(" + innerExpanded + ")"
+            ))
+        current
+
 

@@ -89,6 +89,7 @@ module Engine =
     let Info = Map ["Info", 1] //IT
     let I = Map ["I", 1] // current
     let Cd = Map ["Cd", 1] // photometry
+    let Mol = Map ["Mol", 1]
 
     let addDims (d1: Dims) (d2: Dims) : Dims =
         let keys = Seq.append (Map.keys d1) (Map.keys d2) |> Seq.distinct
@@ -291,7 +292,20 @@ module Engine =
                 (pstring ")" .>> spaces) 
                 (sepBy pExpr (pstring "," .>> spaces))
         |>> fun (name, args) -> Func(name, args)
+            
+    // Define a single "atomic" unit of the expression
+    // Did I tell you I don't really understand fParsec?
+    let pAtom = 
+        attempt pFunc 
+        <|> (pTerm .>> spaces) 
+        <|> between (pstring "(" .>> spaces) (pstring ")" .>> spaces) (pExpr |>> Group)
 
+    // Check that the next character isn't an explicit math operator
+    let pImplicitAtom = 
+        notFollowedBy (anyOf "+-*/^") >>. pAtom
+
+ 
+        
     opp.TermParser <- (pTerm .>> spaces) <|> between (pstring "(" .>> spaces) (pstring ")" .>> spaces) (pExpr |>> Group)
 
     opp.AddOperator(InfixOperator("+", spaces, 1, Associativity.Left, fun x y -> Add(x, y)))
@@ -299,10 +313,11 @@ module Engine =
     opp.AddOperator(InfixOperator("*", spaces, 2, Associativity.Left, fun x y -> Mul(x, y)))
     opp.AddOperator(InfixOperator("/", spaces, 2, Associativity.Left, fun x y -> Div(x, y)))
     opp.AddOperator(InfixOperator("^", spaces, 3, Associativity.Right, fun x y -> Pow(x, y)))
+    
     opp.TermParser <- 
-        attempt pFunc 
-        <|> (pTerm .>> spaces) 
-        <|> between (pstring "(" .>> spaces) (pstring ")" .>> spaces) (pExpr |>> Group)
+        pAtom .>>. many pImplicitAtom
+        |>> fun (first, rest) ->
+            List.fold (fun acc next -> Mul(acc, next)) first rest
 
     let parseAliasToDef (exprStr: string) =
         match run (spaces >>. pExpr .>> eof) exprStr with
@@ -322,6 +337,7 @@ module Engine =
             ("b", linear 1.0 Info)
             ("K", linear 1.0 Temp)
             ("cd", linear 1.0 Cd)
+            ("mol", linear 1.0 Mol)
             
             ("gn", linear 9.80665 (subDims L (addDims T T)))
             ("pi", linear Math.PI Map.empty)
@@ -380,6 +396,7 @@ module Engine =
             ("psi", "lbf / in2")
             
             ("J", "N * m")
+            ("Nm", "J")
             ("W", "J / s")
             ("Wh", "W * h")
             ("hp", "745.6998715822702 W")
@@ -520,7 +537,6 @@ module Engine =
         // This recursively expands macros and entities until there is no more expansion
         // to be done. It can potentially loop forever.
         let fullyExpanded = preprocess query
-        printf $"%s{fullyExpanded}"
         let decFixed = Regex.Replace(fullyExpanded.Trim(), @"(?<=\d),(?=\d)", ".")
         let parts = Regex.Split(decFixed, @"(?i)\s+in\s+")
         
