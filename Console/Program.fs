@@ -34,11 +34,11 @@ let rec repl (historyIdx: int) (history: Map<int, string>) (lastResult: string o
         let result = Engine.convertQuery query
         
         // Don't bind errors to the history variables
-        if result.StartsWith("Error") || result.Contains("Error:") || result.Contains("Error (") then
-            printfn "%s" result
+        if result.Contains("Error") then
+            printfn $"%s{result}"
             repl historyIdx history lastResult
         else
-            printfn "$%d = %s" historyIdx result
+            printfn $"$%d{historyIdx} = %s{result}"
             let newHistory = Map.add historyIdx result history
             repl (historyIdx + 1) newHistory (Some result)
 
