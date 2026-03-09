@@ -3,8 +3,6 @@ namespace Umits
 module ConfigurationLoader =
     open System.IO
     open System.Reflection
-    open EntityParser
-    open MacroParser
 
     let private readResource (name: string) =
         let assembly = Assembly.GetExecutingAssembly()

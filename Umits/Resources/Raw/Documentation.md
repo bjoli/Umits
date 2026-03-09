@@ -5,7 +5,7 @@ Basic Syntax
 
 \[expression\] in \[target_unit\]
 
-if no "in" is found, a suiting unit will be provided for you. 
+if no "in" is found, a suiting unit will be reduced to a suiting unit. Sometimes SI base units, sometimes other tings.
 
 ## Mathematical Operators:
 Supported operators follow standard order of operations: +, -, *, /, ^, and (). Fractional exponents are supported
@@ -76,7 +76,7 @@ any base unit or mapped alias. Yes, the kilomile (kmi) is supported.
 +---------------------+-------------------------------------+
 | Pressure (M/(L⋅T2)) | Pa, bar, atm, psi                   |
 +---------------------+-------------------------------------+
-| Energy (M⋅L2/T2)    | J, cal, BTU, eV                     |
+| Energy (M⋅L2/T2)    | J, Nm, cal, BTU, eV                 |
 +---------------------+-------------------------------------+
 | Power (M⋅L2/T3)     | W, Wh, hp                           |
 +---------------------+-------------------------------------+
@@ -86,11 +86,17 @@ any base unit or mapped alias. Yes, the kilomile (kmi) is supported.
 | Category                   | Units          |
 +----------------------------+----------------+
 | Charge (I⋅T)               | C              |
++----------------------------+----------------+
 | Voltage (M⋅L2/(I⋅T3))      | V              |
++----------------------------+----------------+
 | Resistance (M⋅L2/(I2⋅T3))  | ohm            |
++----------------------------+----------------+
 | Capacitance (I2⋅T4/(M⋅L2)) | F              |
++----------------------------+----------------+
 | Inductance (M⋅L2/(I2⋅T2))  | H              |
++----------------------------+----------------+
 | Mag. Flux (M⋅L2/(I⋅T2))    | W              |
++----------------------------+----------------+
 | Mag. Field (M/(I⋅T2))      | tesla, T_tesla |
 +----------------------------+----------------+
 
@@ -111,22 +117,26 @@ any base unit or mapped alias. Yes, the kilomile (kmi) is supported.
 ### Constants
 +------------------+-------------+
 | gravity          | gn          |
++------------------+-------------+
 | pi               | pi          |
++------------------+-------------+
 | speed of light   | c           |
++------------------+-------------+
 | plancks constant | plank, hbar |
 +------------------+-------------+
 
 
-### Molar Masses(M)
-+--------------------+-----------------------------------------------------------+
-| Common blood panel | mol_glucose, mol_cholesterol, mol_triglycerides, mol_urea |
-+--------------------+-----------------------------------------------------------+
-| Other              | mol_ethanol, mol_water, mol_nacl                          |
-+--------------------+-----------------------------------------------------------+
+### Logarithmic units
 
-(Note: Molar masses are mapped directly to Mass (M) to allow seamless conversion to metric
-weights, enabling standard syntax like mmol_chol / L without requiring a dedicated 
-Amount of Substance dimension).
+So far only dB is supported. They do not behave like other units, but as functions/macros:
+```
+dBSPL(pressure) - reference micropascalse
+dBW(power), dBM(power) -> reference W and milliW respectively.
+dBV(voltage) -> reference voltage
+
+```
+dBSPL(pressure) returns micropascals
+
 
 # Engine Behavior
 The engine is built on an Abstract Syntax Tree (AST) evaluated via a simple parser. It uses strict

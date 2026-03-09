@@ -1,16 +1,34 @@
-kilo[x] = {x} * 1000
-deci[x] = {x} / 10
-centi[x] = {x} / 100
-milli[x] = {x} / 1000
-micro[x] = {x} / 1000000
-nano[x] = {x} / 1e9
+quetta(x) = {x} * 1e30
+ronna(x) = {x} * 1e27
+yotta(x) = {x} * 1e24
+zetta(x) = {x} * 1e21
+exa(x) = {x} * 1e18
+peta(x) = {x} * 1e15
+tera(x) = {x} * 1e12
+giga(x) = {x} * 1e9
+mega(x) = {x} * 1e6
+kilo(x) = {x} * 1e3
+hecto(x) = {x} * 1e2
+deca(x) = {x} * 1e1
+deci(x) = {x} * 1e-1
+centi(x) = {x} * 1e-2
+milli(x) = {x} * 1e-3
+micro(x) = {x} * 1e-6
+nano(x) = {x} * 1e-9
+pico(x) = {x} * 1e-12
+femto(x) = {x} * 1e-15
+atto(x) = {x} * 1e-18
+zepto(x) = {x} * 1e-21
+yocto(x) = {x} * 1e-24
+ronto(x) = {x} * 1e-27
+quecto(x) = {x} * 1e-30
 
 // Power (Reference: 1 Watt and 1 milliWatt)
-dBW[power] = 10 * log10({power} / 1W)
-dBm[power] = 10 * log10({power} / 1mW)
+dBW(power) = 10 * log10({power} / 1W) * 1 dB
+dBm(power) = 10 * log10({power} / 1mW) * 1dB
 
 // Voltage (Reference: 1 Volt)
-dBV[voltage] = 20 * log10({voltage} / 1V)
+dBV(voltage) = 20 * log10({voltage} / 1V) * 1 dB
 
 // Acoustics (Reference: 20 micropascals)
-dBSPL[pressure] = 20 * log10({pressure} / 20uPa)
+dBSPL(pressure) = 20 * log10({pressure} / 20uPa) * 1 dB
