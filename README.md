@@ -6,9 +6,7 @@ I got fed up with the GUIs of all unit converters on Android. To convert units y
 
 So I started writing a unit converter. In the beginning it was a simple linear converter. Then one day someone pointed me to GNU Units and I got nerd-sniped into reading about dimension analysis.  So what can it do?
 
-## Demo
-
-### Syntax
+## Syntax
 
 expr in unit:
 
@@ -28,8 +26,35 @@ You can skip "in unit" and have Umits select a unit for you, but it will not alw
 12h - 45min -> 40440s
 ```
 
-## Weird results?
-Above is just a benign example. Sometimes you can get really weird answers even for queries you thought were sane. If you forget the /h at the end, of (31l/m2)/1min in mm/h the reply is instead in Bequerel. If we reduce the above, it becomes (0,0031m3/1m2)/60s in mm/h, which becomes 0,0031m/60s. "in" is just a fancy divider, so specifying this in mm means the 0,0031m loses its unit, and left is 3.1/60s which becomes 0.05[...]/s which is read as N per second, i.e.
+While many people think of units like km/h or m/s like one units, they are compound units.
+
+```
+12km/h/12km/h -> 7,716049E-08 (T^-2)
+
+compared to
+
+12km/h/(12km/h) -> 1
+
+```
+
+if you know algebra, think of "in ng/l" as a division that doesn't cancel units,, and unquantified units as one of that unit. Something like this "2kg/1yr/(3m3/1s)/(1ng/1l). 
+
+### Decimal separator
+
+Both , and . are treated as decimal separators. 
+
+### Result bindings
+
+when a calculation is successful, the result of that calculation is bound to a numbered variable $[num]. You can then reference that result in a latee calculation. If the calculation above was the first calculation of the session, it would have been bound to $0. Then we can do
+
+```
+$0 in ng/M3 -> 21125,39 ng/m3
+``
+
+
+### Weird results?
+Sometimes you can get really weird answers even for queries you thought were sane. If you forget the /h at the end, of "(31l/m2)/1min in mm/h" the reply is instead in Bequerel. If we reduce the above, it becomes (0,0031m3/1m2)/60s in mm/h, which becomes 0,0031m/60s. "in" is just a fancy divider, so specifying this in mm means the 0,0031m loses its unit, and left is 3.1/60s which becomes 0.05[...]/s which is read as N per second, i.e. Bequerel (or if unit definitions in Units worked differently, Herz). 
+
 ### what is a dimension? 
 
 In the world of unit conversion and physics, a dimension is the fundamental physical nature of a quantity, regardless of the units used to measure it. 
@@ -102,7 +127,8 @@ All SI prefixes (?) are supported. The kilometer gets the symbol km. The petamet
 
 ## Powers
 
-Powers are supported, and as such we have support for are and volume. m^2 and m^3 are supported and work like they should. Any unit followed by a whole number is interpreted as a power: ft2 = ft^2
+any unit ending in a whole number is a shorthand for ^. "1m3" is the same as "1m^3". If you want negative powers or fractions you need to use the full syntax. "10^-3" or "10^0,5".
+
 
 ## Derived units
 
@@ -155,6 +181,7 @@ I don't want to write a pretty list. Here is the source code. The m2 and m3 is d
 ("psi", "lbf / in2")
 
 ("J", "N * m")
+("Nm", "J")
 ("W", "J / s")
 ("Wh", "W * h")
 ("hp", "745.6998715822702 W")
