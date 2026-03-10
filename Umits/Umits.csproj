@@ -89,6 +89,10 @@
         <AndroidKeyStore>True</AndroidKeyStore>
         <AndroidSigningKeyStore>upload-key.keystore</AndroidSigningKeyStore>
         <AndroidSigningKeyAlias>upload-alias</AndroidSigningKeyAlias>
+<DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <AndroidManagedSymbols>false</AndroidManagedSymbols>
+    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     </PropertyGroup>
 
     <!--<ItemGroup>
