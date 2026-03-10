@@ -50,7 +50,6 @@ version.
 
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
-using Android.Icu.Text;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Platform;
 using Indiko.Maui.Controls.Markdown.Theming;
@@ -58,13 +57,11 @@ using Indiko.Maui.Controls.Markdown.Theming;
 namespace Umits;
 
 // Data model for the CollectionView binding
-public class HistoryItem(int id, string query, string result, bool isError)
+public class HistoryItem(int id, string query, string result)
 {
     public int Id { get; set; } = id;
     public string Query { get; set; } = query;
     public string Result { get; set; } = result;
-    public bool IsError { get; set; } = isError;
-
 
 }
 
@@ -83,7 +80,6 @@ public partial class MainPage
         HistoryCollectionView.ItemsSource = _history;
         
         Application.Current!.RequestedThemeChanged += OnRequestedThemeChanged;
-        KeyboardService.KeyboardHeightChanged += OnKeyboardHeightChanged!;
 
         ChangeMarkdownViewTheme();
 
@@ -96,6 +92,7 @@ public partial class MainPage
     {
         base.OnAppearing();
         InfoMarkdownView.MarkdownText = await LoadMarkdownFileAsync("Documentation.md");
+        KeyboardService.KeyboardHeightChanged += OnKeyboardHeightChanged!;
         await LoadSettingsIntoEngine();
     }
     
@@ -178,7 +175,7 @@ public partial class MainPage
         }
 
         // Update state
-        _history.Add(new HistoryItem(_history.Count, actualQuery, resultStr, isError));
+        _history.Add(new HistoryItem(_history.Count, actualQuery, resultStr));
 
 
         _lastResult = resultStr;
@@ -228,6 +225,11 @@ public partial class MainPage
     private void OnOpenParenClicked(object sender, EventArgs e) => InsertTextAtCursor("(");
     
     private void OnCloseParenClicked(object sender, EventArgs e) => InsertTextAtCursor(")");
+    
+    private void OnSlashClicked(object sender, EventArgs e)  => InsertTextAtCursor("/");
+    
+    private void OnFreedomCurrencyClicked(object sender, EventArgs e)  => InsertTextAtCursor("$");
+
 
     private void InsertTextAtCursor(string textToInsert)
     {
@@ -386,4 +388,6 @@ public partial class MainPage
     {
         OverlayContainer.IsVisible = false;
     }
+
+    
 }
