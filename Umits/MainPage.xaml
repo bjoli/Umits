@@ -50,6 +50,7 @@
     
                 <Border Grid.Row="0" Grid.Column="0" StyleClass="InputPanel">
                     <Editor x:Name="InputEntry"
+                            Text=""
                             Placeholder="e.g., 10 km in mi"
                             TextChanged="OnInputTextChanged"
                             Completed="OnConvertClicked" />
@@ -64,12 +65,24 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
-                    <Button Grid.Column="0" Text="( )" Clicked="OnAutoParenClicked" 
-                            FontSize="10" Opacity="0.6" Padding="6,2" HeightRequest="24" />
-                    <Button Grid.Column="1" Text="(" Clicked="OnOpenParenClicked" 
-                            FontSize="10" Opacity="0.6" Padding="6,2" HeightRequest="24" />
-                    <Button Grid.Column="2" Text=")" Clicked="OnCloseParenClicked" 
-                            FontSize="10" Opacity="0.6" Padding="6,2" HeightRequest="24" />
+                    <Grid Grid.Row="0" Grid.Column="0">
+
+                        <Border HeightRequest="24" StyleClass="ParenButton">
+                            <Label Text="( )" StyleClass="ParenLabel"/>
+        
+                            <Border.Behaviors>
+                                <toolkit:TouchBehavior
+                                    LongPressDuration="250"
+                                    LongPressCompleted="OnParenLongPressCompleted"
+                                    CurrentTouchStateChanged="OnParenTouchStateChanged" />
+                            </Border.Behaviors>
+        
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnAutoParenTapped" />
+                                <PanGestureRecognizer PanUpdated="OnParenPanUpdated" />
+                            </Border.GestureRecognizers>
+                        </Border>
+                    </Grid>
                     <Button Grid.Column="3" Text="/" Clicked="OnSlashClicked" 
                             FontSize="10" Opacity="0.6" Padding="6,2" HeightRequest="24" />
                     <Button Grid.Column="4" Text="$" Clicked="OnFreedomCurrencyClicked" 
@@ -136,5 +149,20 @@
 
             </Grid>
         </Grid>
+        
+        <Border x:Name="InlineParenPopup"
+                StyleClass="ParenPopup"
+                IsVisible="False"
+                HorizontalOptions="Start" VerticalOptions="End"
+                Margin="20,0,0,50" 
+                StrokeShape="RoundRectangle 8" ZIndex="10">
+            <Border.Shadow>
+                <Shadow Brush="Black" Opacity="0.3" Offset="0,4" Radius="5" />
+            </Border.Shadow>
+            <HorizontalStackLayout Spacing="0">
+                <Label x:Name="PopupLeftParen" Text="(" FontSize="20" Padding="15,10" BackgroundColor="Transparent" />
+                <Label x:Name="PopupRightParen" Text=")" FontSize="20" Padding="15,10" BackgroundColor="Transparent" />
+            </HorizontalStackLayout>
+        </Border>
     </Grid>
 </ContentPage>

@@ -20,10 +20,12 @@ Currently, this uses Regex. I'm sorry. I had to fight Parsec a bit too much sinc
 module EntityParser =
     let templates = Dictionary<string, string>()
     let entities = Dictionary<string, Map<string, string>>()
-
-    let parseFiles (fileContents: string seq) =
+    
+    let clearEntities () =
         templates.Clear()
         entities.Clear()
+
+    let parseFiles (fileContents: string seq) =
         
         let fullText = String.concat "\n" fileContents
         // The regex to read entity names and {}-blocks

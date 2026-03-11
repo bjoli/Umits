@@ -83,7 +83,6 @@ public partial class MainPage
 
         ChangeMarkdownViewTheme();
 
-        InputEntry.Focus();
         this.Loaded += OnPageLoaded!;
         
     }
@@ -91,6 +90,8 @@ public partial class MainPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        InputEntry.Focus();
+
         InfoMarkdownView.MarkdownText = await LoadMarkdownFileAsync("Documentation.md");
         KeyboardService.KeyboardHeightChanged += OnKeyboardHeightChanged!;
         await LoadSettingsIntoEngine();
@@ -193,34 +194,152 @@ public partial class MainPage
         OverlayContainer.IsVisible = !OverlayContainer.IsVisible;
     }
     
-    private void OnAutoParenClicked(object sender, EventArgs e)
+    private void OnAutoParenTapped(object sender, TappedEventArgs e)
+{
+    string text = string.IsNullOrEmpty(InputEntry.Text) ? string.Empty : InputEntry.Text;
+    int cursor = Math.Max(0, Math.Min(InputEntry.CursorPosition, text.Length));
+    int selLength = InputEntry.SelectionLength;
+
+    if (selLength > 0)
     {
-        string text = InputEntry.Text ?? string.Empty;
-        int cursor = InputEntry.CursorPosition;
-        int selLength = InputEntry.SelectionLength;
+        // Wrap selected text in parentheses
+        string before = text.Substring(0, cursor);
+        string selected = text.Substring(cursor, selLength);
+        string after = text.Substring(cursor + selLength);
 
-        if (selLength > 0)
+        InputEntry.Text = before + "(" + selected + ")" + after;
+        InputEntry.CursorPosition = cursor + selLength + 2; 
+        InputEntry.Focus();
+        return;
+    }
+
+    string textBeforeCursor = text.Substring(0, cursor);
+    int openCount = textBeforeCursor.Count(c => c == '(');
+    int closeCount = textBeforeCursor.Count(c => c == ')');
+
+    // HARD RULE: Never close if there are no unmatched open parentheses.
+    if (openCount <= closeCount)
+    {
+        InsertTextAtCursor("(");
+        return;
+    }
+
+    // Heuristics for when there ARE unmatched open parentheses
+    char? leftChar = null;
+    for (int i = cursor - 1; i >= 0; i--)
+    {
+        if (!char.IsWhiteSpace(textBeforeCursor[i]))
         {
-            // Wrap selected text in parentheses
-            string before = text.Substring(0, cursor);
-            string selected = text.Substring(cursor, selLength);
-            string after = text.Substring(cursor + selLength);
+            leftChar = textBeforeCursor[i];
+            break;
+        }
+    }
 
-            InputEntry.Text = before + "(" + selected + ")" + after;
-            InputEntry.CursorPosition = cursor + selLength + 2; 
+    string parenToInsert = "("; // Default to open
+
+    if (leftChar.HasValue)
+    {
+        char c = leftChar.Value;
+
+        if (c == '+' || c == '-' || c == '*' || c == '/' || c == '^' || c == '(')
+        {
+            parenToInsert = "(";
+        }
+        else if (char.IsDigit(c) || c == ')' || c == '.' || c == ',')
+        {
+            parenToInsert = ")";
+        }
+        else if (char.IsLetter(c) || c == '_')
+        {
+            // Check if the word is a function or macro
+            var wordMatch = System.Text.RegularExpressions.Regex.Match(textBeforeCursor, @"[a-zA-Z_][a-zA-Z0-9_]*\s*$");
+            if (wordMatch.Success)
+            {
+                string lastWord = wordMatch.Value.Trim();
+                string[] standardFunctions = { "sqrt", "ln", "sin", "cos", "log", "log10" };
+                // Todo: fix so that it checks for macros as well
+                bool isFunctionOrMacro = standardFunctions.Contains(lastWord); 
+
+                parenToInsert = isFunctionOrMacro ? "(" : ")";
+            }
+            else
+            {
+                parenToInsert = ")";
+            }
+        }
+    }
+
+    InsertTextAtCursor(parenToInsert);
+}
+
+   
+    private string _selectedSwipeParen = string.Empty;
+private bool _isPanning = false;
+
+private void OnParenLongPressCompleted(object sender, LongPressCompletedEventArgs e)
+{
+    InlineParenPopup.IsVisible = true;
+}
+
+private void OnParenPanUpdated(object sender, PanUpdatedEventArgs e)
+{
+    if (e.StatusType == GestureStatus.Started || e.StatusType == GestureStatus.Running)
+    {
+        _isPanning = true;
+
+        // Ignore all swipe movements if the long-press timer hasn't finished
+        if (!InlineParenPopup.IsVisible) return; 
+
+        if (e.TotalX < -10)
+        {
+            PopupLeftParen.BackgroundColor = Colors.LightGray; 
+            PopupRightParen.BackgroundColor = Colors.Transparent;
+            _selectedSwipeParen = "(";
+        }
+        else if (e.TotalX > 10)
+        {
+            PopupRightParen.BackgroundColor = Colors.LightGray;
+            PopupLeftParen.BackgroundColor = Colors.Transparent;
+            _selectedSwipeParen = ")";
         }
         else
         {
-            // Scan for which parenthesis to insert
-            int openCount = text.Count(c => c == '(');
-            int closeCount = text.Count(c => c == ')');
+            PopupLeftParen.BackgroundColor = Colors.Transparent;
+            PopupRightParen.BackgroundColor = Colors.Transparent;
+            _selectedSwipeParen = string.Empty;
+        }
+    }
+    else if (e.StatusType == GestureStatus.Completed || e.StatusType == GestureStatus.Canceled)
+    {
+        _isPanning = false;
+        ProcessParenSelection();
+    }
+}
 
-            string parenToInsert = openCount > closeCount ? ")" : "(";
-            InsertTextAtCursor(parenToInsert);
+private void OnParenTouchStateChanged(object sender, TouchStateChangedEventArgs e)
+{
+    if (e.State == TouchState.Default && !_isPanning) 
+    {
+        ProcessParenSelection();
+    }
+}
+
+private void ProcessParenSelection()
+{
+    if (InlineParenPopup.IsVisible)
+    {
+        if (!string.IsNullOrEmpty(_selectedSwipeParen))
+        {
+            InsertTextAtCursor(_selectedSwipeParen);
         }
         
-        InputEntry.Focus();
+        InlineParenPopup.IsVisible = false;
+        PopupLeftParen.BackgroundColor = Colors.Transparent;
+        PopupRightParen.BackgroundColor = Colors.Transparent;
+        _selectedSwipeParen = string.Empty;
     }
+}
+    
 
     private void OnOpenParenClicked(object sender, EventArgs e) => InsertTextAtCursor("(");
     
@@ -233,7 +352,7 @@ public partial class MainPage
 
     private void InsertTextAtCursor(string textToInsert)
     {
-        string text = InputEntry.Text ?? string.Empty;
+        string text = InputEntry.Text;
         int cursor = InputEntry.CursorPosition;
         int selLength = InputEntry.SelectionLength;
 
@@ -247,6 +366,7 @@ public partial class MainPage
 
     private async void OnSettingsClicked(object sender, EventArgs e)
     {
+        await InputEntry.HideKeyboardAsync();
         await Shell.Current.GoToAsync(nameof(SettingsPage));
     }
 

@@ -46,6 +46,7 @@
         <Setter Property="TextColor" Value="{AppThemeBinding 
                                                    Light={StaticResource PrimaryTextLight},
                                                    Dark={StaticResource PrimaryTextDark}}" />
+
         <Setter Property="FontSize" Value="18" />
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="LineBreakMode" Value="WordWrap" />
@@ -80,8 +81,39 @@
         <Setter Property="Padding" Value="10,0"/>
         <Setter Property="StrokeShape" Value="RoundRectangle 8" />
     </Style>
-     
-    <Style Class="OverlayDimmer" TargetType="BoxView">
+    
+    <Style Class="ParenButton" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding {StaticResource ButtonBackground}}" />
+        
+        <Setter Property="Padding" Value="10,5" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+        <Setter Property="Opacity" Value="0.6" />
+    </Style>
+
+    <Style Class="ParenPopup" TargetType="Border">
+        
+        <Setter Property="BackgroundColor"
+                Value="{AppThemeBinding 
+                       Light={StaticResource PanelBackgroundLight}, 
+                       Dark={StaticResource PanelBackgroundDark}}"/>
+        <Setter Property="Stroke"
+                Value="{AppThemeBinding
+                       Light={StaticResource PanelStrokeLight},
+                       Dark={StaticResource PanelStrokeDark}}"/>
+        
+    </Style>
+    <Style Class="ParenLabel" TargetType="Label">
+        
+        <Setter Property="TextColor" Value="{AppThemeBinding {StaticResource ButtonText}}" />
+        <Setter Property="BackgroundColor" Value="{AppThemeBinding {StaticResource ButtonBackground}}" />
+        <Setter Property="FontSize" Value="10" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="VerticalOptions" Value="Center"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        
+    </Style>
+
+        <Style Class="OverlayDimmer" TargetType="BoxView">
         <Setter Property="BackgroundColor" Value="Black" />
         <Setter Property="Opacity" Value="0.4" />
     </Style>

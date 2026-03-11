@@ -28,8 +28,8 @@
         <ApplicationId>org.bjoli.umits</ApplicationId>
 
         <!-- Versions -->
-        <ApplicationDisplayVersion>7</ApplicationDisplayVersion>
-        <ApplicationVersion>7</ApplicationVersion>
+        <ApplicationDisplayVersion>9</ApplicationDisplayVersion>
+        <ApplicationVersion>9</ApplicationVersion>
         <AndroidSdkDirectory>/home/linus/Program/Android/</AndroidSdkDirectory>
         <JavaSdkDirectory>/usr/lib64/jvm/msopenjdk-21/</JavaSdkDirectory>
 
@@ -73,6 +73,10 @@
 
     <ItemGroup>
       <ProjectReference Include="..\Lib\Lib.fsproj" IsTrimmable="false"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="ParenPopup : Popup.cs" />
     </ItemGroup>
 
     <PropertyGroup Condition="'$(Configuration)' =='Release' OR '$(Configuration)' == 'AppStore'">

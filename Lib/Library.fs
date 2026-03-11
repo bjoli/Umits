@@ -542,6 +542,7 @@ module Engine =
         let parts = Regex.Split(decFixed, @"(?i)\s+in\s+")
         
         match parts with
+        // Here we have a LHS with an expression and a RHS that is on the right side of the "in"
         | [| lhs; rhs |] ->
             let leftStr = lhs.Replace(",", " + ")
             let rightStrs = rhs.Split(',') |> Array.map (fun s -> s.Trim())
@@ -605,6 +606,7 @@ module Engine =
                                 
                 | Result.Error e -> $"Math Error (Left): %s{e}"
             | Failure(msg, _, _) -> $"Syntax Error (Left): %s{msg}"
+        // no "in", so we just reduce it.
         | [| expr |] ->
             match run (spaces >>. pExpr .>> eof) expr with
             | Success(leftAst, _, _) ->
@@ -622,5 +624,5 @@ module Engine =
     
     let clearMacrosAndEntities() =
         MacroParser.macros.Clear()
-        EntityParser.entities.Clear()
+        EntityParser.clearEntities()
 
