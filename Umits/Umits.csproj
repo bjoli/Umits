@@ -33,8 +33,7 @@
         <AndroidSdkDirectory>/home/linus/Program/Android/</AndroidSdkDirectory>
         <JavaSdkDirectory>/usr/lib64/jvm/msopenjdk-21/</JavaSdkDirectory>
 
-        
-        
+
         <!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
         <WindowsPackageType>None</WindowsPackageType>
 
@@ -53,7 +52,7 @@
         <MauiIcon Include="Resources\AppIcon\appicon.svg" Color="#FFD700"/>
 
         <!-- Splash Screen -->
-        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#ffc200" BaseSize="128,128" />
+        <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#ffc200" BaseSize="128,128"/>
 
         <!-- Custom Fonts -->
         <MauiFont Include="Resources\Fonts\*"/>
@@ -63,20 +62,20 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="CommunityToolkit.Maui" Version="14.0.1" />
-        <PackageReference Include="CommunityToolkit.Maui.Core" Version="14.0.1" />
-        <PackageReference Include="Indiko.Maui.Controls.Markdown" Version="1.5.0" />
-        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.41" />
+        <PackageReference Include="CommunityToolkit.Maui" Version="14.0.1"/>
+        <PackageReference Include="CommunityToolkit.Maui.Core" Version="14.0.1"/>
+        <PackageReference Include="Indiko.Maui.Controls.Markdown" Version="1.5.0"/>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.41"/>
         <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0"/>
 
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Lib\Lib.fsproj" IsTrimmable="false"/>
+        <ProjectReference Include="..\Lib\Lib.fsproj" IsTrimmable="false"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="ParenPopup : Popup.cs" />
+        <Compile Remove="ParenPopup : Popup.cs"/>
     </ItemGroup>
 
     <PropertyGroup Condition="'$(Configuration)' =='Release' OR '$(Configuration)' == 'AppStore'">
@@ -87,16 +86,16 @@
 
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)' == 'AppStore'">        
+    <PropertyGroup Condition="'$(Configuration)' == 'AppStore'">
         <AndroidPackageFormat>aab</AndroidPackageFormat>
 
         <AndroidKeyStore>True</AndroidKeyStore>
         <AndroidSigningKeyStore>upload-key.keystore</AndroidSigningKeyStore>
         <AndroidSigningKeyAlias>upload-alias</AndroidSigningKeyAlias>
-<DebugSymbols>false</DebugSymbols>
-    <DebugType>none</DebugType>
-    <AndroidManagedSymbols>false</AndroidManagedSymbols>
-    <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+        <DebugSymbols>false</DebugSymbols>
+        <DebugType>none</DebugType>
+        <AndroidManagedSymbols>false</AndroidManagedSymbols>
+        <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     </PropertyGroup>
 
     <!--<ItemGroup>

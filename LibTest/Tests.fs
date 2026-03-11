@@ -1,6 +1,5 @@
 ﻿module Tests
 
-open System
 open Umits
 open Xunit
 
@@ -8,16 +7,15 @@ open Xunit
 
 type Fixture() =
     do
-        Umits.ConfigurationLoader.loadAll()
+        Umits.ConfigurationLoader.loadAll ()
         ()
-    
+
 
 
 type EngineTest(fixture: Fixture) =
-    let run query = 
-        Engine.convertQuery query
-    
-    
+    let run query = Engine.convertQuery query
+
+
     [<Fact>]
     let ``Basic arithmetic evaluates correctly`` () =
         Assert.Equal("25", run "5 * 5")
@@ -38,7 +36,7 @@ type EngineTest(fixture: Fixture) =
     [<Fact>]
     let ``Implicit unit composition evaluates correctly`` () =
         // Adjust the expected string to match how your engine formats unit output
-        Assert.Equal("5 (L^1 * M^1)", run "5 kg m") 
+        Assert.Equal("5 (L^1 * M^1)", run "5 kg m")
         Assert.Equal("10 J", run "10 N m") // If your engine auto-resolves to J
 
     [<Fact>]
@@ -50,15 +48,15 @@ type EngineTest(fixture: Fixture) =
     let ``Macros expand and evaluate correctly`` () =
         // Adjust expected values based on your engine's decimal rounding
         Assert.Equal("16.9897 dB", run "dBW(50W)")
-        
+
     [<Fact>]
     let ``Complex dimensional analysis and implicit multiplication`` () =
         // Nested parentheses with derived unit conversion
         Assert.Equal("25 N", run "(10 kg * (5 m / 2 s^2)) in N")
-        
+
         // Implicit multiplication with mixed dimension strings
         Assert.Equal("30 (L^2 * M^1)", run "5(2 kg)(3 m^2)")
-        
+
         // Prefix cancellation across division
         Assert.Equal("10000 m/s", run "10 km / 1 s in m/s")
         Assert.Equal("1", run "1 kg / 1000 g")
@@ -80,10 +78,11 @@ type EngineTest(fixture: Fixture) =
     let ``Expected error handling for invalid operations`` () =
         // The specific safeguard we built for square roots of odd powers
         Assert.Contains("odd power", run "sqrt(5 m^3)")
-        
+
         // Adding incompatible units
         Assert.Contains("Dimension", run "5m + 5kg")
-        
+
         // Logarithm of a dimensioned quantity (since log requires a dimensionless ratio)
         Assert.Contains("dimensionless", run "log10(50 W)")
+
     interface IClassFixture<Fixture>

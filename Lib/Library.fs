@@ -77,85 +77,127 @@ of the standard algebraic rule of exponents.
 *)
 
 module Engine =
-    
+
     // This can be used to set the format string.
     // of course not thread safe.
     let mutable formatString = "G7"
     // --- 1. Core Dimensions ---
     type Dims = Map<string, int>
 
-    let L = Map ["L", 1] // Length
-    let M = Map ["M", 1] //mass
-    let T = Map ["T", 1] //time
-    let Temp = Map ["Temp", 1] //temp
-    let Info = Map ["Info", 1] //IT
-    let I = Map ["I", 1] // current
-    let Cd = Map ["Cd", 1] // photometry
-    let Mol = Map ["Mol", 1]
+    let L = Map [ "L", 1 ] // Length
+    let M = Map [ "M", 1 ] //mass
+    let T = Map [ "T", 1 ] //time
+    let Temp = Map [ "Temp", 1 ] //temp
+    let Info = Map [ "Info", 1 ] //IT
+    let I = Map [ "I", 1 ] // current
+    let Cd = Map [ "Cd", 1 ] // photometry
+    let Mol = Map [ "Mol", 1 ]
 
     let addDims (d1: Dims) (d2: Dims) : Dims =
         let keys = Seq.append (Map.keys d1) (Map.keys d2) |> Seq.distinct
-        keys 
-        |> Seq.map (fun k -> k, (Map.tryFind k d1 |> Option.defaultValue 0) + (Map.tryFind k d2 |> Option.defaultValue 0))
+
+        keys
+        |> Seq.map (fun k ->
+            k,
+            (Map.tryFind k d1 |> Option.defaultValue 0)
+            + (Map.tryFind k d2 |> Option.defaultValue 0))
         |> Seq.filter (fun (_, v) -> v <> 0)
         |> Map.ofSeq
 
     let subDims (d1: Dims) (d2: Dims) : Dims =
         let keys = Seq.append (Map.keys d1) (Map.keys d2) |> Seq.distinct
-        keys 
-        |> Seq.map (fun k -> k, (Map.tryFind k d1 |> Option.defaultValue 0) - (Map.tryFind k d2 |> Option.defaultValue 0))
+
+        keys
+        |> Seq.map (fun k ->
+            k,
+            (Map.tryFind k d1 |> Option.defaultValue 0)
+            - (Map.tryFind k d2 |> Option.defaultValue 0))
         |> Seq.filter (fun (_, v) -> v <> 0)
         |> Map.ofSeq
 
     // --- 2. UnitDef & Database ---
-    type UnitDef = { Scale: float; Offset: float; Dims: Dims }
-    let linear scale dims = { Scale = scale; Offset = 0.0; Dims = dims }
+    type UnitDef =
+        { Scale: float
+          Offset: float
+          Dims: Dims }
 
-    let prefixes = 
-        [
-            ("Q", 1e30); ("R", 1e27); ("Y", 1e24); ("Z", 1e21)
-            ("E", 1e18); ("P", 1e15); ("T", 1e12); ("G", 1e9)
-            ("M", 1e6); ("k", 1e3); ("h", 1e2); ("da", 1e1)
-            ("d", 1e-1); ("c", 1e-2); ("m", 1e-3); ("u", 1e-6)
-            ("n", 1e-9); ("p", 1e-12); ("f", 1e-15); ("a", 1e-18)
-            ("z", 1e-21); ("y", 1e-24); ("r", 1e-27); ("q", 1e-30)
-            ("Yi", 1208925819614629174706176.0)
-            ("Zi", 1180591620717411303424.0)
-            ("Ei", 1152921504606846976.0)
-            ("Pi", 1125899906842624.0)
-            ("Ti", 1099511627776.0)
-            ("Gi", 1073741824.0)
-            ("Mi", 1048576.0)
-            ("Ki", 1024.0); ("ki", 1024.0)
-        ] |> List.sortByDescending (fun (p, _) -> p.Length)
+    let linear scale dims =
+        { Scale = scale
+          Offset = 0.0
+          Dims = dims }
+
+    let prefixes =
+        [ ("Q", 1e30)
+          ("R", 1e27)
+          ("Y", 1e24)
+          ("Z", 1e21)
+          ("E", 1e18)
+          ("P", 1e15)
+          ("T", 1e12)
+          ("G", 1e9)
+          ("M", 1e6)
+          ("k", 1e3)
+          ("h", 1e2)
+          ("da", 1e1)
+          ("d", 1e-1)
+          ("c", 1e-2)
+          ("m", 1e-3)
+          ("u", 1e-6)
+          ("n", 1e-9)
+          ("p", 1e-12)
+          ("f", 1e-15)
+          ("a", 1e-18)
+          ("z", 1e-21)
+          ("y", 1e-24)
+          ("r", 1e-27)
+          ("q", 1e-30)
+          ("Yi", 1208925819614629174706176.0)
+          ("Zi", 1180591620717411303424.0)
+          ("Ei", 1152921504606846976.0)
+          ("Pi", 1125899906842624.0)
+          ("Ti", 1099511627776.0)
+          ("Gi", 1073741824.0)
+          ("Mi", 1048576.0)
+          ("Ki", 1024.0)
+          ("ki", 1024.0) ]
+        |> List.sortByDescending (fun (p, _) -> p.Length)
 
     let unitDb = Dictionary<string, UnitDef>()
 
     let rec resolveSingleUnit (u: string) =
-        if unitDb.ContainsKey(u) then Some unitDb[u]
+        if unitDb.ContainsKey(u) then
+            Some unitDb[u]
         else
             // Check if the string ends with a number (e.g., "in2", "cm3")
             let powerMatch = Regex.Match(u, @"^([a-zA-Z_]+)(\d+)$")
+
             if powerMatch.Success then
                 let baseStr = powerMatch.Groups[1].Value
                 let power = float powerMatch.Groups[2].Value
-                
+
                 // Recursively resolve the base unit and apply the exponent
                 match resolveSingleUnit baseStr with
                 | Some b ->
-                    let newDims = 
-                        b.Dims 
-                        |> Map.map (fun _ v -> v * int power) 
-                        |> Map.filter (fun _ v -> v <> 0)
-                    Some { Scale = b.Scale ** power; Offset = 0.0; Dims = newDims }
+                    let newDims =
+                        b.Dims |> Map.map (fun _ v -> v * int power) |> Map.filter (fun _ v -> v <> 0)
+
+                    Some
+                        { Scale = b.Scale ** power
+                          Offset = 0.0
+                          Dims = newDims }
                 | None -> None
             else
                 // Fallback to checking for SI prefixes
                 match prefixes |> List.tryFind (fun (p, _) -> u.StartsWith(p)) with
-                | Some (p, mult) ->
+                | Some(p, mult) ->
                     let baseUnit = u.Substring(p.Length)
+
                     match resolveSingleUnit baseUnit with
-                    | Some b -> Some { Scale = b.Scale * mult; Offset = b.Offset; Dims = b.Dims }
+                    | Some b ->
+                        Some
+                            { Scale = b.Scale * mult
+                              Offset = b.Offset
+                              Dims = b.Dims }
                     | None -> None
                 | None -> None
 
@@ -173,46 +215,82 @@ module Engine =
 
     let rec eval expr =
         match expr with
-        | Num n -> Result.Ok (linear n Map.empty)
-        | UnitCoeff(coeff, def) -> Result.Ok { Scale = coeff * def.Scale; Offset = def.Offset; Dims = def.Dims }
+        | Num n -> Result.Ok(linear n Map.empty)
+        | UnitCoeff(coeff, def) ->
+            Result.Ok
+                { Scale = coeff * def.Scale
+                  Offset = def.Offset
+                  Dims = def.Dims }
         | Group e -> eval e
-        | Add(x, y) -> 
+        | Add(x, y) ->
             match eval x, eval y with
-            | Result.Ok vx, Result.Ok vy -> 
-                if vx.Dims = vy.Dims then Result.Ok { Scale = vx.Scale + vy.Scale; Offset = vx.Offset; Dims = vx.Dims }
-                else Result.Error "Dimensional mismatch in addition"
-            | Result.Error e, _ | _, Result.Error e -> Result.Error e
-        | Sub(x, y) -> 
+            | Result.Ok vx, Result.Ok vy ->
+                if vx.Dims = vy.Dims then
+                    Result.Ok
+                        { Scale = vx.Scale + vy.Scale
+                          Offset = vx.Offset
+                          Dims = vx.Dims }
+                else
+                    Result.Error "Dimensional mismatch in addition"
+            | Result.Error e, _
+            | _, Result.Error e -> Result.Error e
+        | Sub(x, y) ->
             match eval x, eval y with
-            | Result.Ok vx, Result.Ok vy -> 
-                if vx.Dims = vy.Dims then Result.Ok { Scale = vx.Scale - vy.Scale; Offset = vx.Offset; Dims = vx.Dims }
-                else Result.Error "Dimensional mismatch in subtraction"
-            | Result.Error e, _ | _, Result.Error e -> Result.Error e
-        | Mul(x, y) -> 
+            | Result.Ok vx, Result.Ok vy ->
+                if vx.Dims = vy.Dims then
+                    Result.Ok
+                        { Scale = vx.Scale - vy.Scale
+                          Offset = vx.Offset
+                          Dims = vx.Dims }
+                else
+                    Result.Error "Dimensional mismatch in subtraction"
+            | Result.Error e, _
+            | _, Result.Error e -> Result.Error e
+        | Mul(x, y) ->
             match eval x, eval y with
-            | Result.Ok vx, Result.Ok vy -> Result.Ok { Scale = vx.Scale * vy.Scale; Offset = 0.0; Dims = addDims vx.Dims vy.Dims }
-            | Result.Error e, _ | _, Result.Error e -> Result.Error e
-        | Div(x, y) -> 
+            | Result.Ok vx, Result.Ok vy ->
+                Result.Ok
+                    { Scale = vx.Scale * vy.Scale
+                      Offset = 0.0
+                      Dims = addDims vx.Dims vy.Dims }
+            | Result.Error e, _
+            | _, Result.Error e -> Result.Error e
+        | Div(x, y) ->
             match eval x, eval y with
-            | Result.Ok vx, Result.Ok vy -> Result.Ok { Scale = vx.Scale / vy.Scale; Offset = 0.0; Dims = subDims vx.Dims vy.Dims }
-            | Result.Error e, _ | _, Result.Error e -> Result.Error e
+            | Result.Ok vx, Result.Ok vy ->
+                Result.Ok
+                    { Scale = vx.Scale / vy.Scale
+                      Offset = 0.0
+                      Dims = subDims vx.Dims vy.Dims }
+            | Result.Error e, _
+            | _, Result.Error e -> Result.Error e
         | Pow(x, y) ->
             let applyPower coeff (def: UnitDef) (vy: UnitDef) =
-                if not (Map.isEmpty vy.Dims) then Result.Error "Exponent must be dimensionless"
+                if not (Map.isEmpty vy.Dims) then
+                    Result.Error "Exponent must be dimensionless"
                 else
                     let power = vy.Scale
                     let mutable isValid = true
-                    let isInteger (v: float) = Math.Abs(v - Math.Round(v)) < 1e-6 
-                    let newDims = 
-                        def.Dims 
-                        |> Map.map (fun _ v -> 
+                    let isInteger (v: float) = Math.Abs(v - Math.Round(v)) < 1e-6
+
+                    let newDims =
+                        def.Dims
+                        |> Map.map (fun _ v ->
                             let nv = float v * power
-                            if not (isInteger nv) then isValid <- false
+
+                            if not (isInteger nv) then
+                                isValid <- false
+
                             int (Math.Round(nv)))
                         |> Map.filter (fun _ v -> v <> 0)
-                    
-                    if not isValid then Result.Error "Fractional exponent resulted in non-integer dimensions"
-                    else Result.Ok { Scale = coeff * (def.Scale ** power); Offset = 0.0; Dims = newDims }
+
+                    if not isValid then
+                        Result.Error "Fractional exponent resulted in non-integer dimensions"
+                    else
+                        Result.Ok
+                            { Scale = coeff * (def.Scale ** power)
+                              Offset = 0.0
+                              Dims = newDims }
 
             match x, eval y with
             | UnitCoeff(coeff, def), Result.Ok vy -> applyPower coeff def vy
@@ -225,44 +303,46 @@ module Engine =
             // Helper to evaluate all arguments and fail fast on the first error
             let rec evalAll acc remaining =
                 match remaining with
-                | [] -> Result.Ok (List.rev acc)
-                | h::t -> 
+                | [] -> Result.Ok(List.rev acc)
+                | h :: t ->
                     match eval h with
-                    | Result.Ok v -> evalAll (v::acc) t
+                    | Result.Ok v -> evalAll (v :: acc) t
                     | Result.Error e -> Result.Error e
-                    
+
             match evalAll [] args with
             | Result.Error e -> Result.Error e
             | Result.Ok vals ->
                 let allDimensionless = vals |> List.forall (fun v -> Map.isEmpty v.Dims)
-                
+
                 match name.ToLower(), vals with
                 // 2-Argument Logarithm: log(base, value)
-                | "log", [baseVal; v] when allDimensionless ->
-                    Result.Ok (linear (Math.Log(v.Scale, baseVal.Scale)) Map.empty)
-                
+                | "log", [ baseVal; v ] when allDimensionless ->
+                    Result.Ok(linear (Math.Log(v.Scale, baseVal.Scale)) Map.empty)
+
                 // 1-Argument Functions
-                | ("log" | "log10"), [v] when allDimensionless -> 
-                    Result.Ok (linear (Math.Log10(v.Scale)) Map.empty)
-                | "ln", [v] when allDimensionless -> 
-                    Result.Ok (linear (Math.Log(v.Scale)) Map.empty)
-                | "sin", [v] when allDimensionless -> 
-                    Result.Ok (linear (Math.Sin(v.Scale)) Map.empty)
-                | "cos", [v] when allDimensionless -> 
-                    Result.Ok (linear (Math.Cos(v.Scale)) Map.empty)
-                | "tan", [v] when allDimensionless -> 
-                    Result.Ok (linear (Math.Tan(v.Scale)) Map.empty)
-                
+                | ("log" | "log10"), [ v ] when allDimensionless -> Result.Ok(linear (Math.Log10(v.Scale)) Map.empty)
+                | "ln", [ v ] when allDimensionless -> Result.Ok(linear (Math.Log(v.Scale)) Map.empty)
+                | "sin", [ v ] when allDimensionless -> Result.Ok(linear (Math.Sin(v.Scale)) Map.empty)
+                | "cos", [ v ] when allDimensionless -> Result.Ok(linear (Math.Cos(v.Scale)) Map.empty)
+                | "tan", [ v ] when allDimensionless -> Result.Ok(linear (Math.Tan(v.Scale)) Map.empty)
+
                 // Functions that scale dimensions mathematically
-                | "sqrt", [v] -> 
+                | "sqrt", [ v ] ->
                     let hasOddPowers = v.Dims |> Map.exists (fun _ power -> power % 2 <> 0)
-                    if hasOddPowers then Result.Error "Cannot take the square root of an odd power dimension"
-                    else Result.Ok (linear (Math.Sqrt(v.Scale)) (v.Dims |> Map.map (fun _ p -> p / 2)))
-                
+
+                    if hasOddPowers then
+                        Result.Error "Cannot take the square root of an odd power dimension"
+                    else
+                        Result.Ok(linear (Math.Sqrt(v.Scale)) (v.Dims |> Map.map (fun _ p -> p / 2)))
+
                 // Error Fallbacks
-                | funcName, _ when ["log"; "log10"; "ln"; "sin"; "cos"; "tan"] |> List.contains funcName && not allDimensionless ->
+                | funcName, _ when
+                    [ "log"; "log10"; "ln"; "sin"; "cos"; "tan" ] |> List.contains funcName
+                    && not allDimensionless
+                    ->
                     Result.Error $"Arguments to '%s{name}' must be dimensionless"
                 | _ -> Result.Error $"Unknown function or invalid argument count: %s{name}"
+
     let opp = OperatorPrecedenceParser<Expr, unit, unit>()
     let pExpr = opp.ExpressionParser
 
@@ -272,54 +352,53 @@ module Engine =
         (opt pfloat .>> spaces .>>. opt pUnitStr)
         >>= fun (numOpt, strOpt) ->
             let num = defaultArg numOpt 1.0
+
             match strOpt with
             | Some s ->
                 match resolveSingleUnit s with
                 | Some def -> preturn (UnitCoeff(num, def))
                 | None -> fail $"Unknown unit or constant: '%s{s}'"
-            | None -> 
-                if numOpt.IsSome then preturn (Num num)
-                else fail "Expected number or unit"
+            | None ->
+                if numOpt.IsSome then
+                    preturn (Num num)
+                else
+                    fail "Expected number or unit"
     // Define what makes a valid function name
     let pFuncName =
-        many1Satisfy2 
-            (fun c -> isAsciiLetter c || c = '_')                   // First char: letter or underscore
-            (fun c -> isAsciiLetter c || isDigit c || c = '_')      // Rest: letter, digit, or underscore
+        many1Satisfy2 (fun c -> isAsciiLetter c || c = '_') (fun  // First char: letter or underscore
+                                                                 c -> isAsciiLetter c || isDigit c || c = '_') // Rest: letter, digit, or underscore
 
     // Parse a function
     let pFunc =
-        pFuncName .>> spaces 
-        .>>. between 
-                (pstring "(" .>> spaces) 
-                (pstring ")" .>> spaces) 
-                (sepBy pExpr (pstring "," .>> spaces))
+        pFuncName .>> spaces
+        .>>. between (pstring "(" .>> spaces) (pstring ")" .>> spaces) (sepBy pExpr (pstring "," .>> spaces))
         |>> fun (name, args) -> Func(name, args)
-            
+
     // Define a single "atomic" unit of the expression
     // Did I tell you I don't really understand fParsec?
-    let pAtom = 
-        attempt pFunc 
-        <|> (pTerm .>> spaces) 
+    let pAtom =
+        attempt pFunc
+        <|> (pTerm .>> spaces)
         <|> between (pstring "(" .>> spaces) (pstring ")" .>> spaces) (pExpr |>> Group)
 
     // Check that the next character isn't an explicit math operator
-    let pImplicitAtom = 
-        notFollowedBy (anyOf "+-*/^") >>. pAtom
+    let pImplicitAtom = notFollowedBy (anyOf "+-*/^") >>. pAtom
 
- 
-        
-    opp.TermParser <- (pTerm .>> spaces) <|> between (pstring "(" .>> spaces) (pstring ")" .>> spaces) (pExpr |>> Group)
+
+
+    opp.TermParser <-
+        (pTerm .>> spaces)
+        <|> between (pstring "(" .>> spaces) (pstring ")" .>> spaces) (pExpr |>> Group)
 
     opp.AddOperator(InfixOperator("+", spaces, 1, Associativity.Left, fun x y -> Add(x, y)))
     opp.AddOperator(InfixOperator("-", spaces, 1, Associativity.Left, fun x y -> Sub(x, y)))
     opp.AddOperator(InfixOperator("*", spaces, 2, Associativity.Left, fun x y -> Mul(x, y)))
     opp.AddOperator(InfixOperator("/", spaces, 2, Associativity.Left, fun x y -> Div(x, y)))
     opp.AddOperator(InfixOperator("^", spaces, 3, Associativity.Right, fun x y -> Pow(x, y)))
-    
-    opp.TermParser <- 
+
+    opp.TermParser <-
         pAtom .>>. many pImplicitAtom
-        |>> fun (first, rest) ->
-            List.fold (fun acc next -> Mul(acc, next)) first rest
+        |>> fun (first, rest) -> List.fold (fun acc next -> Mul(acc, next)) first rest
 
     let parseAliasToDef (exprStr: string) =
         match run (spaces >>. pExpr .>> eof) exprStr with
@@ -331,170 +410,185 @@ module Engine =
 
     // --- 4. Database Initialization ---
     let private initializeDb () =
-        let primitives = [
-            ("m", linear 1.0 L)
-            ("s", linear 1.0 T); 
-            ("kg", linear 1.0 M)
-            ("A", linear 1.0 I)
-            ("b", linear 1.0 Info)
-            ("K", linear 1.0 Temp)
-            ("cd", linear 1.0 Cd)
-            ("mol", linear 1.0 Mol)
-            
-            ("gn", linear 9.80665 (subDims L (addDims T T)))
-            ("pi", linear Math.PI Map.empty)
-            ("c", linear 299792458.0 (subDims L T))
-        ]
-        for (name, def) in primitives do unitDb[name] <- def
+        let primitives =
+            [ ("m", linear 1.0 L)
+              ("s", linear 1.0 T)
+              ("kg", linear 1.0 M)
+              ("A", linear 1.0 I)
+              ("b", linear 1.0 Info)
+              ("K", linear 1.0 Temp)
+              ("cd", linear 1.0 Cd)
+              ("mol", linear 1.0 Mol)
 
-        let aliases = [
-            ("min", "60 s")
-            ("h", "60 min"); ("hr", "1 h")
-            ("d", "24 h"); ("day", "1 d")
-            ("wk", "7 d"); ("week", "1 wk")
-            ("yr", "31557600 s"); ("year", "1 yr")
-            
-            // Length
-            ("in", "0.0254 m")
-            ("ft", "12 in")
-            ("yd", "3 ft")
-            ("mi", "5280 ft")
-            ("nmi", "1852 m")
-            ("au", "149597870700 m")
-            ("ly", "c * 1 yr")
-            ("pc", "3.085677581491367e16 m")
-            
-            // These are the base units for area. Units derived from these are solved at parse-time.
-            // ie ft2 = ft^2
-            // This will make all areas are volumes output in m2 and m3 unless
-            // specified. This is fine. 
-            ("m2", "m^2")
-            ("m3", "m^3")
-            
-            // Volume
-            ("l", "0.001 m3")
-            ("gal", "3.78541 l")
-            ("qt", "0.25 gal")
-            ("pt", "0.5 qt")
-            ("fl_oz", "0.0625 pt")
-            
-            // area
-            ("ha", "10000 m2")
-            ("are", "100m2")
-            ("acre", "4046.8 m2")
-            
-            ("g", "0.001 kg")
-            ("lb", "0.453592 kg")
-            ("oz", "0.0625 lb")
-            ("ton", "1000 kg")
-            ("u", "1.66053906660e-27 kg")
-            ("amu", "1 u")
-            
-            ("N", "kg * m / s^2")
-            ("lbf", "1 lb * gn")
-            ("Pa", "N / m^2")
-            ("bar", "100000 Pa")
-            ("atm", "101325 Pa")
-            ("psi", "lbf / in2")
-            
-            ("J", "N * m")
-            ("Nm", "J")
-            ("W", "J / s")
-            ("Wh", "W * h")
-            ("hp", "745.6998715822702 W")
-            ("cal", "4.184 J")
-            ("BTU", "1055.05585262 J")
-            ("eV", "1.602176634e-19 J")
+              ("gn", linear 9.80665 (subDims L (addDims T T)))
+              ("pi", linear Math.PI Map.empty)
+              ("c", linear 299792458.0 (subDims L T)) ]
 
-            ("C", "A * s")
-            ("V", "W / A")
-            ("ohm", "V / A")
-            ("F", "C / V")
-            ("H", "V * s / A")
-            ("Wb", "V * s")
-            ("tesla", "Wb / m2")
-            ("T_tesla", "1 tesla")
-            
-            // IT
-            ("B", "8 b")
-            
-            // Photometry
-            ("sr", "1")          // Steradian (solid angle)
-            ("lm", "cd * sr")    // Lumen (luminous flux)
-            ("lx", "lm / m2")    // Lux (illuminance)
-            
-            // Constants
-            ("planck", "6.62607015e-34 J * s")
-            ("hbar", "planck / (2 * pi)")
-            
-             // Radioactivity
-            ("Sv", "J / kg")
-            ("Gy", "J / kg")
-            ("rem", "0.01 Sv")
-            ("rad_dose", "0.01 Gy")
-            ("Bq", "1 / s")
-            ("Ci", "3.7e10 Bq")
-            ("R", "2.58e-4 C / kg")
-             
-             // Angles & Rotation (Dimensionless)
-            ("rad", "1")
-            ("deg", "pi / 180")
-            ("rev", "2 * pi")
-            ("rpm", "rev / min")
-            
-            // decibel, dimensionless
-            ("dB", "1")
-            
-            // Dimensionless ratios
-            ("%", "0.01")
-            //Parts per ...
-            ("ppm", "1e-6") 
-            ("ppb", "1e-9")
-            ("ppt", "1e-12")
-            
-            // Molar Masses (Mass of 1 mole of specific substances)
-            ("mol_water", "18.015 g")
-            ("mol_nacl", "58.44 g")
-            ("mol_ethanol", "46.07 g")
-            
-            // Common Blood Panel Substances
-            ("mol_glucose", "180.156 g")
-            ("mol_cholesterol", "386.654 g")
-            ("mol_triglycerides", "885.43 g")
-            ("mol_urea", "60.056 g")
-        ]
-        
+        for (name, def) in primitives do
+            unitDb[name] <- def
+
+        let aliases =
+            [ ("min", "60 s")
+              ("h", "60 min")
+              ("hr", "1 h")
+              ("d", "24 h")
+              ("day", "1 d")
+              ("wk", "7 d")
+              ("week", "1 wk")
+              ("yr", "31557600 s")
+              ("year", "1 yr")
+
+              // Length
+              ("in", "0.0254 m")
+              ("ft", "12 in")
+              ("yd", "3 ft")
+              ("mi", "5280 ft")
+              ("nmi", "1852 m")
+              ("au", "149597870700 m")
+              ("ly", "c * 1 yr")
+              ("pc", "3.085677581491367e16 m")
+
+              // These are the base units for area. Units derived from these are solved at parse-time.
+              // ie ft2 = ft^2
+              // This will make all areas are volumes output in m2 and m3 unless
+              // specified. This is fine.
+              ("m2", "m^2")
+              ("m3", "m^3")
+
+              // Volume
+              ("l", "0.001 m3")
+              ("gal", "3.78541 l")
+              ("qt", "0.25 gal")
+              ("pt", "0.5 qt")
+              ("fl_oz", "0.0625 pt")
+
+              // area
+              ("ha", "10000 m2")
+              ("are", "100m2")
+              ("acre", "4046.8 m2")
+
+              ("g", "0.001 kg")
+              ("lb", "0.453592 kg")
+              ("oz", "0.0625 lb")
+              ("ton", "1000 kg")
+              ("u", "1.66053906660e-27 kg")
+              ("amu", "1 u")
+
+              ("N", "kg * m / s^2")
+              ("lbf", "1 lb * gn")
+              ("Pa", "N / m^2")
+              ("bar", "100000 Pa")
+              ("atm", "101325 Pa")
+              ("psi", "lbf / in2")
+
+              ("J", "N * m")
+              ("Nm", "J")
+              ("W", "J / s")
+              ("Wh", "W * h")
+              ("hp", "745.6998715822702 W")
+              ("cal", "4.184 J")
+              ("BTU", "1055.05585262 J")
+              ("eV", "1.602176634e-19 J")
+
+              ("C", "A * s")
+              ("V", "W / A")
+              ("ohm", "V / A")
+              ("F", "C / V")
+              ("H", "V * s / A")
+              ("Wb", "V * s")
+              ("tesla", "Wb / m2")
+              ("T_tesla", "1 tesla")
+
+              // IT
+              ("B", "8 b")
+
+              // Photometry
+              ("sr", "1") // Steradian (solid angle)
+              ("lm", "cd * sr") // Lumen (luminous flux)
+              ("lx", "lm / m2") // Lux (illuminance)
+
+              // Constants
+              ("planck", "6.62607015e-34 J * s")
+              ("hbar", "planck / (2 * pi)")
+
+              // Radioactivity
+              ("Sv", "J / kg")
+              ("Gy", "J / kg")
+              ("rem", "0.01 Sv")
+              ("rad_dose", "0.01 Gy")
+              ("Bq", "1 / s")
+              ("Ci", "3.7e10 Bq")
+              ("R", "2.58e-4 C / kg")
+
+              // Angles & Rotation (Dimensionless)
+              ("rad", "1")
+              ("deg", "pi / 180")
+              ("rev", "2 * pi")
+              ("rpm", "rev / min")
+
+              // decibel, dimensionless
+              ("dB", "1")
+
+              // Dimensionless ratios
+              ("%", "0.01")
+              //Parts per ...
+              ("ppm", "1e-6")
+              ("ppb", "1e-9")
+              ("ppt", "1e-12")
+
+              // Molar Masses (Mass of 1 mole of specific substances)
+              ("mol_water", "18.015 g")
+              ("mol_nacl", "58.44 g")
+              ("mol_ethanol", "46.07 g")
+
+              // Common Blood Panel Substances
+              ("mol_glucose", "180.156 g")
+              ("mol_cholesterol", "386.654 g")
+              ("mol_triglycerides", "885.43 g")
+              ("mol_urea", "60.056 g") ]
+
         for (name, exprStr) in aliases do
             unitDb[name] <- parseAliasToDef exprStr
 
-        unitDb["degC"] <- { Scale = 1.0; Offset = 273.15; Dims = Temp }
-        unitDb["degF"] <- { Scale = 5.0/9.0; Offset = 273.15 - (32.0 * 5.0/9.0); Dims = Temp }
+        unitDb["degC"] <-
+            { Scale = 1.0
+              Offset = 273.15
+              Dims = Temp }
 
-    let _ = 
-        initializeDb ()
+        unitDb["degF"] <-
+            { Scale = 5.0 / 9.0
+              Offset = 273.15 - (32.0 * 5.0 / 9.0)
+              Dims = Temp }
+
+    let _ = initializeDb ()
     //  Conversion Logic
     let formatNum (n: float) =
-        n.ToString(formatString).Replace("−", "-") 
+        n.ToString(formatString).Replace("−", "-")
 
 
     let findBestUnit (dims: Dims) (value: float) =
-        let matchingUnits = 
-            unitDb 
+        let matchingUnits =
+            unitDb
             |> Seq.filter (fun kvp -> kvp.Value.Dims = dims && kvp.Value.Offset = 0.0)
             |> Seq.map (fun kvp -> kvp.Key, kvp.Value.Scale)
             |> Seq.toList
-    
+
         if matchingUnits.IsEmpty then
-            let dimStr = dims |> Map.toSeq |> Seq.map (fun (k, v) -> $"%s{k}^%d{v}") |> String.concat " * "
+            let dimStr =
+                dims
+                |> Map.toSeq
+                |> Seq.map (fun (k, v) -> $"%s{k}^%d{v}")
+                |> String.concat " * "
+
             $"%s{formatNum value} (%s{dimStr})"
         else
-            let bestUnit = 
+            let bestUnit =
                 matchingUnits
                 |> List.sortBy (fun (name, scale) -> (abs (scale - 1.0), name.Length))
                 |> List.head
-                // |> List.minBy (fun (_, scale) -> 
-                //     let v = Math.Abs(value / scale)
-                //     if v >= 1.0 then v else 1.0 / v)
+            // |> List.minBy (fun (_, scale) ->
+            //     let v = Math.Abs(value / scale)
+            //     if v >= 1.0 then v else 1.0 / v)
             let resultValue = value / (snd bestUnit)
             $"%s{formatNum resultValue} %s{fst bestUnit}"
 
@@ -505,33 +599,36 @@ module Engine =
 
         while changed do
             changed <- false
-            current <- propRegex.Replace(current, MatchEvaluator(fun m ->
-                let entityName = m.Groups[1].Value
-                let propName = m.Groups[2].Value
 
-                match EntityParser.entities.TryGetValue(entityName) with
-                | true, props ->
-                    match props.TryFind(propName) with
-                    | Some value ->
-                        changed <- true
-                        value // Replaces "earth.mass" with "(5.972*10^24)kg"
-                    | None ->
-                        m.Value
-                | false, _ ->
-                    m.Value
-            ))
+            current <-
+                propRegex.Replace(
+                    current,
+                    MatchEvaluator(fun m ->
+                        let entityName = m.Groups[1].Value
+                        let propName = m.Groups[2].Value
+
+                        match EntityParser.entities.TryGetValue(entityName) with
+                        | true, props ->
+                            match props.TryFind(propName) with
+                            | Some value ->
+                                changed <- true
+                                value // Replaces "earth.mass" with "(5.972*10^24)kg"
+                            | None -> m.Value
+                        | false, _ -> m.Value)
+                )
+
         current
-        
+
     // Run macro and entity expansion until there is no
     // macro and unit expansion left
     let rec preprocess (input: string) =
         let afterMacros = MacroParser.expand input
         let afterEntities = resolveProperties afterMacros
-        
-        if afterEntities = input then 
-            afterEntities 
-        else 
-            preprocess afterEntities    
+
+        if afterEntities = input then
+            afterEntities
+        else
+            preprocess afterEntities
 
 
     let convertQuery (query: string) =
@@ -540,31 +637,42 @@ module Engine =
         let fullyExpanded = preprocess query
         let decFixed = Regex.Replace(fullyExpanded.Trim(), @"(?<=\d),(?=\d)", ".")
         let parts = Regex.Split(decFixed, @"(?i)\s+in\s+")
-        
+
         match parts with
         // Here we have a LHS with an expression and a RHS that is on the right side of the "in"
         | [| lhs; rhs |] ->
             let leftStr = lhs.Replace(",", " + ")
             let rightStrs = rhs.Split(',') |> Array.map (fun s -> s.Trim())
+
             match run (spaces >>. pExpr .>> eof) leftStr with
             | Success(leftAst, _, _) ->
                 match eval leftAst with
                 | Result.Ok leftDef ->
-                    let rightResults = 
-                        rightStrs 
-                        |> Array.map (fun s -> 
+                    let rightResults =
+                        rightStrs
+                        |> Array.map (fun s ->
                             match run (spaces >>. pExpr .>> eof) s with
                             | Success(ast, _, _) -> eval ast
                             | Failure(msg, _, _) -> Result.Error $"Syntax Error in target '%s{s}': %s{msg}")
-                    
-                    let hasErrors = rightResults |> Array.tryPick (function Result.Error e -> Some e | _ -> None)
+
+                    let hasErrors =
+                        rightResults
+                        |> Array.tryPick (function
+                            | Result.Error e -> Some e
+                            | _ -> None)
+
                     match hasErrors with
                     | Some e -> $"Math Error (Right): %s{e}"
                     | None ->
-                        let targetDefs = rightResults |> Array.choose (function Result.Ok d -> Some d | _ -> None)
-                        
+                        let targetDefs =
+                            rightResults
+                            |> Array.choose (function
+                                | Result.Ok d -> Some d
+                                | _ -> None)
+
                         if targetDefs.Length = 1 then
                             let rightDef = targetDefs[0]
+
                             if leftDef.Dims = rightDef.Dims then
                                 let baseVal = leftDef.Scale + leftDef.Offset
                                 let result = (baseVal - rightDef.Offset) / rightDef.Scale
@@ -572,38 +680,51 @@ module Engine =
                             else
                                 let mulDims = addDims leftDef.Dims rightDef.Dims
                                 let divDims = subDims leftDef.Dims rightDef.Dims
-                                let countDims d = d |> Map.toSeq |> Seq.sumBy (fun (_, v) -> abs v)
 
-                                let resultSI, resultDims = 
-                                    if countDims mulDims < countDims divDims then leftDef.Scale * rightDef.Scale, mulDims
-                                    else leftDef.Scale / rightDef.Scale, divDims
-                                
-                                if Map.isEmpty resultDims then $"%s{formatNum resultSI} (Dimensionless multiplier)"
-                                else findBestUnit resultDims resultSI
+                                let countDims d =
+                                    d |> Map.toSeq |> Seq.sumBy (fun (_, v) -> abs v)
+
+                                let resultSI, resultDims =
+                                    if countDims mulDims < countDims divDims then
+                                        leftDef.Scale * rightDef.Scale, mulDims
+                                    else
+                                        leftDef.Scale / rightDef.Scale, divDims
+
+                                if Map.isEmpty resultDims then
+                                    $"%s{formatNum resultSI} (Dimensionless multiplier)"
+                                else
+                                    findBestUnit resultDims resultSI
                         else
                             let allDimsMatch = targetDefs |> Array.forall (fun t -> t.Dims = leftDef.Dims)
-                            if not allDimsMatch then "Error: All output units must exactly match the input dimensions."
-                            elif leftDef.Dims = Temp then "Error: Mixed outputs not supported for temperatures."
+
+                            if not allDimsMatch then
+                                "Error: All output units must exactly match the input dimensions."
+                            elif leftDef.Dims = Temp then
+                                "Error: Mixed outputs not supported for temperatures."
                             else
                                 let mutable remaining = leftDef.Scale
                                 let outputParts = ResizeArray<string>()
-                                
+
                                 for i = 0 to targetDefs.Length - 1 do
                                     let tDef = targetDefs[i]
                                     let tStr = rightStrs[i]
-                                    
+
                                     if i < targetDefs.Length - 1 then
                                         let rounded = Math.Round(remaining / tDef.Scale, 9)
                                         let wholePart = Math.Truncate(rounded)
-                                        if wholePart <> 0.0 then outputParts.Add $"%g{wholePart} %s{tStr}"
+
+                                        if wholePart <> 0.0 then
+                                            outputParts.Add $"%g{wholePart} %s{tStr}"
+
                                         remaining <- remaining - (wholePart * tDef.Scale)
                                     else
                                         let valueInUnit = remaining / tDef.Scale
+
                                         if Math.Abs(valueInUnit) > 1e-9 || outputParts.Count = 0 then
                                             outputParts.Add $"%s{formatNum valueInUnit} %s{tStr}"
 
                                 String.Join(", ", outputParts)
-                                
+
                 | Result.Error e -> $"Math Error (Left): %s{e}"
             | Failure(msg, _, _) -> $"Syntax Error (Left): %s{msg}"
         // no "in", so we just reduce it.
@@ -611,18 +732,17 @@ module Engine =
             match run (spaces >>. pExpr .>> eof) expr with
             | Success(leftAst, _, _) ->
                 match eval leftAst with
-                | Result.Ok leftDef -> 
-                // Auto-simplify the left side since there are no target units
-                if Map.isEmpty leftDef.Dims then
-                    formatNum leftDef.Scale
-                else
-                    findBestUnit leftDef.Dims leftDef.Scale
+                | Result.Ok leftDef ->
+                    // Auto-simplify the left side since there are no target units
+                    if Map.isEmpty leftDef.Dims then
+                        formatNum leftDef.Scale
+                    else
+                        findBestUnit leftDef.Dims leftDef.Scale
                 | Result.Error e -> $"Math Error: %s{e}"
             | Failure(msg, _, _) -> $"Syntax Error: %s{msg}"
 
         | _ -> "Expression error. Too many \"in\"s?"
-    
-    let clearMacrosAndEntities() =
-        MacroParser.macros.Clear()
-        EntityParser.clearEntities()
 
+    let clearMacrosAndEntities () =
+        MacroParser.macros.Clear()
+        EntityParser.clearEntities ()

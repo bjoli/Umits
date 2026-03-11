@@ -1,4 +1,5 @@
 # Licenses
+
 ```
 Umits - a unit converter and algebraic engine
 Copyright (C) 2026 Linus Björnstam
@@ -49,6 +50,7 @@ this exception statement from your version.
 ### [FParsec](https://github.com/stephan-tolksdorf/fparsec) for parsing user input
 
 <https://github.com/stephan-tolksdorf/fparsec>
+
 ```
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that
 the following conditions are met:
@@ -102,7 +104,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ```
-
 
 ### Microsoft Maui and the Maui community toolkit
 

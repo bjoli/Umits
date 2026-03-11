@@ -1,6 +1,5 @@
 namespace Umits
 
-open System
 open System.Text.RegularExpressions
 open System.Collections.Generic
 (*
@@ -20,16 +19,17 @@ Currently, this uses Regex. I'm sorry. I had to fight Parsec a bit too much sinc
 module EntityParser =
     let templates = Dictionary<string, string>()
     let entities = Dictionary<string, Map<string, string>>()
-    
+
     let clearEntities () =
         templates.Clear()
         entities.Clear()
 
     let parseFiles (fileContents: string seq) =
-        
+
         let fullText = String.concat "\n" fileContents
         // The regex to read entity names and {}-blocks
-        let blockRegex = Regex(@"(%?[a-zA-Z_]\w*)\s*(?:\(([a-zA-Z_]\w*)\))?\s*\{([^}]*)\}", RegexOptions.Multiline)
+        let blockRegex =
+            Regex(@"(%?[a-zA-Z_]\w*)\s*(?:\(([a-zA-Z_]\w*)\))?\s*\{([^}]*)\}", RegexOptions.Multiline)
         // The block contents.
         let kvRegex = Regex(@"([a-zA-Z_]\w*)\s*=\s*(?:""([^""]*)""|(\S+))")
 
@@ -40,7 +40,7 @@ module EntityParser =
 
             // mutsble becayse we add any templatw values to it next.
             let mutable mergedBody = rawBody
-            
+
             // I should probably print some error message if the parent does not exist.
             if parent <> "" && templates.ContainsKey("%" + parent) then
                 mergedBody <- templates["%" + parent] + "\n" + mergedBody
@@ -51,24 +51,33 @@ module EntityParser =
             else
                 // SNow we expand $. to the actual entity name.
                 let expandedBody = mergedBody.Replace("$.", name + ".")
-                
-                let kvs = 
+
+                let kvs =
                     kvRegex.Matches(expandedBody)
                     |> Seq.cast<Match>
-                    |> Seq.map (fun kv -> 
+                    |> Seq.map (fun kv ->
                         let k = kv.Groups[1].Value
-                        let v = if kv.Groups[2].Success then kv.Groups[2].Value else kv.Groups[3].Value
+
+                        let v =
+                            if kv.Groups[2].Success then
+                                kv.Groups[2].Value
+                            else
+                                kv.Groups[3].Value
+
                         k, v)
                     |> Map.ofSeq
+
                 entities[name] <- kvs
-                
+
 module MacroParser =
 
     // Matches definitions in macros.txt: name(arg1, arg2) = body
-    let private defRegex = Regex(@"^([a-zA-Z_]\w*)\(([^)]+)\)\s*=\s*(.+)$", RegexOptions.Compiled)
-    
+    let private defRegex =
+        Regex(@"^([a-zA-Z_]\w*)\(([^)]+)\)\s*=\s*(.+)$", RegexOptions.Compiled)
+
     // Matches usage in queries using .NET balancing groups for nested parentheses
-    let private useRegex = Regex(@"([a-zA-Z_]\w*)\(((?>[^()]+|\((?<DEPTH>)|\)(?<-DEPTH>))*(?(DEPTH)(?!)))\)", RegexOptions.Compiled)
+    let private useRegex =
+        Regex(@"([a-zA-Z_]\w*)\(((?>[^()]+|\((?<DEPTH>)|\)(?<-DEPTH>))*(?(DEPTH)(?!)))\)", RegexOptions.Compiled)
 
     let macros = Dictionary<string, string[] * string>()
 
@@ -77,29 +86,31 @@ module MacroParser =
         let mutable depth = 0
         let mutable current = ""
         let args = ResizeArray<string>()
-        
+
         for c in argString do
             match c with
-            | '(' -> 
+            | '(' ->
                 depth <- depth + 1
                 current <- current + string c
-            | ')' -> 
+            | ')' ->
                 depth <- depth - 1
                 current <- current + string c
-            | ',' when depth = 0 -> 
+            | ',' when depth = 0 ->
                 args.Add(current.Trim())
                 current <- ""
-            | _ -> 
-                current <- current + string c
-                
+            | _ -> current <- current + string c
+
         args.Add(current.Trim())
         args.ToArray()
 
     let parseFile (content: string) =
-        let lines = content.Split([|'\r'; '\n'|], System.StringSplitOptions.RemoveEmptyEntries)
+        let lines =
+            content.Split([| '\r'; '\n' |], System.StringSplitOptions.RemoveEmptyEntries)
+
         for line in lines do
             if not (line.StartsWith("//")) then
                 let m = defRegex.Match(line)
+
                 if m.Success then
                     let name = m.Groups[1].Value
                     let args = m.Groups[2].Value.Split(',') |> Array.map (fun s -> s.Trim())
@@ -109,29 +120,36 @@ module MacroParser =
     let rec expand (input: string) : string =
         let mutable current = input
         let mutable changed = true
-        
+
         while changed do
             changed <- false
-            current <- useRegex.Replace(current, MatchEvaluator(fun m ->
-                let name = m.Groups[1].Value
-                let argString = m.Groups[2].Value 
-                let args = splitArgs argString    
-                
-                match macros.TryGetValue(name) with
-                | true, (defArgs, body) when args.Length = defArgs.Length ->
-                    changed <- true
-                    let mutable expanded = body
-                    for i in 0 .. args.Length - 1 do
-                        expanded <- expanded.Replace("{" + defArgs[i] + "}", "(" + args[i] + ")")
-                    "(" + expanded + ")" 
-                | _ ->
-                    // If it is not a macro, we expand whatever is inside the
-                    // parentheses
-                    let innerExpanded = expand argString
-                    if innerExpanded <> argString then
-                        changed <- true
-                    name + "(" + innerExpanded + ")"
-            ))
+
+            current <-
+                useRegex.Replace(
+                    current,
+                    MatchEvaluator(fun m ->
+                        let name = m.Groups[1].Value
+                        let argString = m.Groups[2].Value
+                        let args = splitArgs argString
+
+                        match macros.TryGetValue(name) with
+                        | true, (defArgs, body) when args.Length = defArgs.Length ->
+                            changed <- true
+                            let mutable expanded = body
+
+                            for i in 0 .. args.Length - 1 do
+                                expanded <- expanded.Replace("{" + defArgs[i] + "}", "(" + args[i] + ")")
+
+                            "(" + expanded + ")"
+                        | _ ->
+                            // If it is not a macro, we expand whatever is inside the
+                            // parentheses
+                            let innerExpanded = expand argString
+
+                            if innerExpanded <> argString then
+                                changed <- true
+
+                            name + "(" + innerExpanded + ")")
+                )
+
         current
-
-

@@ -48,9 +48,10 @@ do not wish to do so, delete this exception statement from your
 version.
 */
 
-namespace Umits;
+using Android.App;
+using Object = Java.Lang.Object;
 
-using System;
+namespace Umits;
 
 #if ANDROID
 using AndroidX.Core.View;
@@ -60,8 +61,8 @@ using View = Android.Views.View;
 
 /* This is just a workaround for main view resizing not working on android and maui.
  * I banged my head to a brick wall for days trying to get the standard resizing
- * ways to work, but in the end I gave up. 
-*/
+ * ways to work, but in the end I gave up.
+ */
 
 public static class KeyboardService
 {
@@ -69,7 +70,7 @@ public static class KeyboardService
 
 #if ANDROID
 
-    public static void StartListening(Android.App.Activity activity)
+    public static void StartListening(Activity activity)
     {
         var decorView = activity.Window?.DecorView;
 
@@ -78,22 +79,20 @@ public static class KeyboardService
         ViewCompat.SetOnApplyWindowInsetsListener(decorView, new KeyboardInsetsListener());
     }
 
-    private class KeyboardInsetsListener : Java.Lang.Object, IOnApplyWindowInsetsListener
+    private class KeyboardInsetsListener : Object, IOnApplyWindowInsetsListener
     {
-
-        
         public WindowInsetsCompat? OnApplyWindowInsets(View? v, WindowInsetsCompat? insets)
         {
             if (v == null || insets == null) return insets;
-            
+
             // Get keyboard height
             var imeInsets = insets.GetInsets(WindowInsetsCompat.Type.Ime());
-            
+
             if (imeInsets is null)
                 throw new NullReferenceException();
-            
-            double density = DeviceDisplay.MainDisplayInfo.Density;
-            double keyboardHeight = imeInsets.Bottom / density;
+
+            var density = DeviceDisplay.MainDisplayInfo.Density;
+            var keyboardHeight = imeInsets.Bottom / density;
 
             // Trigger the event
             KeyboardHeightChanged?.Invoke(null, keyboardHeight);
@@ -107,7 +106,7 @@ public static class KeyboardService
             return WindowInsetsCompat.Consumed;
         }
     }
-    
-    
+
+
 #endif
 }

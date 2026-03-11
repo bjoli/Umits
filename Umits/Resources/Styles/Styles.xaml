@@ -9,12 +9,13 @@
         <Setter Property="CornerRadius" Value="8" />
         <Setter Property="Padding" Value="10,5" />
     </Style>
-    
+
     <Style TargetType="ContentPage" ApplyToDerivedTypes="True">
-        <Setter Property="BackgroundColor" Value="{AppThemeBinding
+        <Setter Property="BackgroundColor"
+                Value="{AppThemeBinding
                           Light={StaticResource PageBackgroundLight},
-                          Dark={StaticResource PageBackgroundDark}}"/>
-        <Setter Property="Shell.NavBarIsVisible" Value="False"/>
+                          Dark={StaticResource PageBackgroundDark}}" />
+        <Setter Property="Shell.NavBarIsVisible" Value="False" />
     </Style>
 
     <Style TargetType="Editor">
@@ -22,28 +23,30 @@
                 Value="{AppThemeBinding 
                        Light={StaticResource PrimaryTextLight},
                        Dark={StaticResource PrimaryTextDark}}" />
-        <Setter Property="AutoSize" Value="TextChanges"/>
-        <Setter Property="MaximumHeightRequest" Value="120"/>
-        <Setter Property="IsSpellCheckEnabled" Value="False"/>
-    </Style>
-    
-    
-    <Style Class="CloseButton" TargetType="Button">
-        <Setter Property="BackgroundColor" Value="Red"></Setter>
+        <Setter Property="AutoSize" Value="TextChanges" />
+        <Setter Property="MaximumHeightRequest" Value="120" />
+        <Setter Property="IsSpellCheckEnabled" Value="False" />
     </Style>
 
-    
+
+    <Style Class="CloseButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Red" />
+    </Style>
+
+
     <!-- Drawing of HistoryItems -->
     <Style Class="HistoryHeader" TargetType="Label">
-        <Setter Property="TextColor" Value="{AppThemeBinding 
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding 
                                                    Light={StaticResource SecondaryTextLight},
                                                    Dark={StaticResource SecondaryTextDark}}" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="FontAttributes" Value="Bold" />
     </Style>
-    
+
     <Style Class="HistoryItem" TargetType="Label">
-        <Setter Property="TextColor" Value="{AppThemeBinding 
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding 
                                                    Light={StaticResource PrimaryTextLight},
                                                    Dark={StaticResource PrimaryTextDark}}" />
 
@@ -51,115 +54,115 @@
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="LineBreakMode" Value="WordWrap" />
     </Style>
-    
+
     <!-- History Panel -->
     <Style Class="HistoryPanel" TargetType="Border">
         <Setter Property="BackgroundColor"
                 Value="{AppThemeBinding 
                        Light={StaticResource PanelBackgroundLight}, 
-                       Dark={StaticResource PanelBackgroundDark}}"/>
+                       Dark={StaticResource PanelBackgroundDark}}" />
         <Setter Property="Stroke"
                 Value="{AppThemeBinding
                        Light={StaticResource PanelStrokeLight},
-                       Dark={StaticResource PanelStrokeDark}}"/>
-        <Setter Property="StrokeThickness" Value="1"/>
-        <Setter Property="Margin" Value="0,0,0,15"/>
+                       Dark={StaticResource PanelStrokeDark}}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Margin" Value="0,0,0,15" />
         <Setter Property="StrokeShape" Value="RoundRectangle 12" />
     </Style>
-   
+
     <!-- The input panel -->
     <Style Class="InputPanel" TargetType="Border">
         <Setter Property="BackgroundColor"
                 Value="{AppThemeBinding 
                        Light={StaticResource PanelBackgroundLight}, 
-                       Dark={StaticResource PanelBackgroundDark}}"/>
+                       Dark={StaticResource PanelBackgroundDark}}" />
         <Setter Property="Stroke"
                 Value="{AppThemeBinding
                        Light={StaticResource PanelStrokeLight},
-                       Dark={StaticResource PanelStrokeDark}}"/>
-        <Setter Property="StrokeThickness" Value="1"/>
-        <Setter Property="Padding" Value="10,0"/>
+                       Dark={StaticResource PanelStrokeDark}}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Padding" Value="10,0" />
         <Setter Property="StrokeShape" Value="RoundRectangle 8" />
     </Style>
-    
+
     <Style Class="ParenButton" TargetType="Border">
         <Setter Property="BackgroundColor" Value="{AppThemeBinding {StaticResource ButtonBackground}}" />
-        
+
         <Setter Property="Padding" Value="10,5" />
         <Setter Property="StrokeShape" Value="RoundRectangle 8" />
         <Setter Property="Opacity" Value="0.6" />
     </Style>
 
     <Style Class="ParenPopup" TargetType="Border">
-        
+
         <Setter Property="BackgroundColor"
                 Value="{AppThemeBinding 
                        Light={StaticResource PanelBackgroundLight}, 
-                       Dark={StaticResource PanelBackgroundDark}}"/>
+                       Dark={StaticResource PanelBackgroundDark}}" />
         <Setter Property="Stroke"
                 Value="{AppThemeBinding
                        Light={StaticResource PanelStrokeLight},
-                       Dark={StaticResource PanelStrokeDark}}"/>
-        
+                       Dark={StaticResource PanelStrokeDark}}" />
+
     </Style>
     <Style Class="ParenLabel" TargetType="Label">
-        
+
         <Setter Property="TextColor" Value="{AppThemeBinding {StaticResource ButtonText}}" />
         <Setter Property="BackgroundColor" Value="{AppThemeBinding {StaticResource ButtonBackground}}" />
         <Setter Property="FontSize" Value="10" />
         <Setter Property="HorizontalOptions" Value="Center" />
-        <Setter Property="VerticalOptions" Value="Center"/>
-        <Setter Property="FontAttributes" Value="Bold"/>
-        
+        <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="FontAttributes" Value="Bold" />
+
     </Style>
 
-        <Style Class="OverlayDimmer" TargetType="BoxView">
+    <Style Class="OverlayDimmer" TargetType="BoxView">
         <Setter Property="BackgroundColor" Value="Black" />
         <Setter Property="Opacity" Value="0.4" />
     </Style>
-    
+
     <Style Class="InfoPanel" TargetType="Border">
         <Setter Property="BackgroundColor"
                 Value="{AppThemeBinding 
                        Light={StaticResource InfoPanelBackgroundLight},
-                       Dark={StaticResource InfoPanelBackgroundDark}}"/>
+                       Dark={StaticResource InfoPanelBackgroundDark}}" />
         <Setter Property="Stroke"
                 Value="{AppThemeBinding
                        Light={StaticResource PanelStrokeLight},
-                       Dark={StaticResource PanelStrokeDark}}"/>
-        <Setter Property="StrokeThickness" Value="0"/>
-        <Setter Property="Padding" Value="10,0"/>
+                       Dark={StaticResource PanelStrokeDark}}" />
+        <Setter Property="StrokeThickness" Value="0" />
+        <Setter Property="Padding" Value="10,0" />
         <Setter Property="StrokeShape" Value="RoundRectangle 8" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="Black" 
-                        Opacity="0.3" 
-                        Offset="0,5" 
+                <Shadow Brush="Black"
+                        Opacity="0.3"
+                        Offset="0,5"
                         Radius="10" />
             </Setter.Value>
         </Setter>
     </Style>
-    
+
     <Style Class="ErrorBubble" TargetType="Border">
         <Setter Property="BackgroundColor"
                 Value="{AppThemeBinding 
                             Light={StaticResource ErrorBackgroundLight}, 
-                            Dark={StaticResource ErrorBackgroundDark}}"/>
+                            Dark={StaticResource ErrorBackgroundDark}}" />
         <Setter Property="HorizontalOptions" Value="Start" />
-        <Setter Property="Margin" Value="10,0,0,5"/>
-        <Setter Property="Opacity" Value="0"/>
-        <Setter Property="Padding" Value="10, 6"/>
+        <Setter Property="Margin" Value="10,0,0,5" />
+        <Setter Property="Opacity" Value="0" />
+        <Setter Property="Padding" Value="10, 6" />
         <Setter Property="Stroke"
                 Value="{AppThemeBinding 
                             Dark={StaticResource ErrorStrokeDark}, 
-                            Light={StaticResource ErrorStrokeLight}}"/>
-        <Setter Property="StrokeThickness" Value="1"/>
+                            Light={StaticResource ErrorStrokeLight}}" />
+        <Setter Property="StrokeThickness" Value="1" />
         <Setter Property="StrokeShape" Value="RoundRectangle 8" />
         <Setter Property="Shadow">
             <Setter.Value>
-                <Shadow Brush="Black" 
-                        Opacity="0.1" 
-                        Offset="0,2" 
+                <Shadow Brush="Black"
+                        Opacity="0.1"
+                        Offset="0,2"
                         Radius="4" />
             </Setter.Value>
         </Setter>
@@ -167,13 +170,13 @@
         <Setter Property="ZIndex" Value="5" />
     </Style>
     <Style Class="ErrorLabel" TargetType="Label">
-        <Setter Property="TextColor" Value="{AppThemeBinding
+        <Setter Property="TextColor"
+                Value="{AppThemeBinding
                             Light={StaticResource ErrorTextLight},
                             Dark={StaticResource ErrorTextDark}}" />
         <Setter Property="FontSize" Value="12" />
         <Setter Property="FontAttributes" Value="Bold" />
     </Style>
-   
 
 
 </ResourceDictionary>

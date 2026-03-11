@@ -4,7 +4,7 @@ open Umits
 
 let processInput (rawInput: string) (history: Map<int, string>) (lastResult: string option) =
     // 1. Handle implicit chaining if the query starts with "in "
-    let chainedInput = 
+    let chainedInput =
         if rawInput.StartsWith("in ", StringComparison.OrdinalIgnoreCase) then
             match lastResult with
             | Some res -> $"%s{res} %s{rawInput}"
@@ -15,6 +15,7 @@ let processInput (rawInput: string) (history: Map<int, string>) (lastResult: str
     // 2. Expand $N variables
     let evaluator (m: Match) =
         let index = int m.Groups[1].Value
+
         match Map.tryFind index history with
         | Some value -> value
         | None -> m.Value // Leave untouched if the index doesn't exist
@@ -24,15 +25,19 @@ let processInput (rawInput: string) (history: Map<int, string>) (lastResult: str
 let rec repl (historyIdx: int) (history: Map<int, string>) (lastResult: string option) =
     printf "> "
     let input = Console.ReadLine()
-    
-    if isNull input || input.Trim().ToLower() = "exit" || input.Trim().ToLower() = "quit" then
+
+    if
+        isNull input
+        || input.Trim().ToLower() = "exit"
+        || input.Trim().ToLower() = "quit"
+    then
         () // Exit loop
     elif String.IsNullOrWhiteSpace(input) then
         repl historyIdx history lastResult
     else
         let query = processInput (input.Trim()) history lastResult
         let result = Engine.convertQuery query
-        
+
         // Don't bind errors to the history variables
         if result.Contains("Error") then
             printfn $"%s{result}"
@@ -44,8 +49,7 @@ let rec repl (historyIdx: int) (history: Map<int, string>) (lastResult: string o
 
 [<EntryPoint>]
 let main _ =
-    Umits.ConfigurationLoader.loadAll()
+    Umits.ConfigurationLoader.loadAll ()
     printfn "Umits REPL. Type 'exit' to quit."
     repl 0 Map.empty None
     0
-

@@ -6,8 +6,8 @@
         <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
     </PropertyGroup>
     <ItemGroup>
-        <Compile Include="Parsers.fs" />
-        <Compile Include="ConfigurationLoader.fs" />
+        <Compile Include="Parsers.fs"/>
+        <Compile Include="ConfigurationLoader.fs"/>
         <Compile Include="Library.fs"/>
     </ItemGroup>
 
@@ -19,13 +19,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="FParsec" Version="2.0.0-beta2" />
+        <PackageReference Include="FParsec" Version="2.0.0-beta2"/>
     </ItemGroup>
 
-  <ItemGroup>
-    <EmbeddedResource Include="macros.txt" />
-    <EmbeddedResource Include="Entities\*.txt" />
-  </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="macros.txt"/>
+        <EmbeddedResource Include="Entities\*.txt"/>
+    </ItemGroup>
 
 
 </Project>
