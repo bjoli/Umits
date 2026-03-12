@@ -103,8 +103,14 @@
                 Value="{AppThemeBinding
                        Light={StaticResource PanelStrokeLight},
                        Dark={StaticResource PanelStrokeDark}}" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+        <Setter Property="ZIndex" Value="10"/>
+        
+        <Setter Property="HorizontalOptions" Value="Start"/>
+        <Setter Property="VerticalOptions" Value="Start"/>
 
     </Style>
+    
     <Style Class="ParenLabel" TargetType="Label">
 
         <Setter Property="TextColor" Value="{AppThemeBinding {StaticResource ButtonText}}" />

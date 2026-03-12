@@ -580,7 +580,7 @@ module Engine =
               ("lx", "lm / m2"); ("lux", "1 lx") // Lux (illuminance)
 
               // Other constants
-              ("e", Math.E.ToString())
+              ("e", "2.71828182846")
               ("planck", "6.62607015e-34 J * s")
               ("hbar", "planck / (2 * pi)")
 
