@@ -426,27 +426,61 @@ module Engine =
 
         for (name, def) in primitives do
             unitDb[name] <- def
+            
+        unitDb["degC"] <-
+            { Scale = 1.0
+              Offset = 273.15
+              Dims = Temp }
+
+        unitDb["degF"] <-
+            { Scale = 5.0 / 9.0
+              Offset = 273.15 - (32.0 * 5.0 / 9.0)
+              Dims = Temp }
 
         let aliases =
-            [ ("min", "60 s")
+            [ // First the constants that are used further down
+              ("pi", "3.141592653589793")
+              ("c", "299792458 m / s")
+              ("gn", "9.80665 m/s^2")
+                
+              
+              
+              ("min", "60 s")
+              ("minute", "1 min")
+              
               ("h", "60 min")
               ("hr", "1 h")
+              ("hour", "1 h")
+              
               ("d", "24 h")
               ("day", "1 d")
+              
               ("wk", "7 d")
               ("week", "1 wk")
+              
               ("yr", "31557600 s")
               ("year", "1 yr")
 
               // Length
+              ("meter", "1 m")
               ("in", "0.0254 m")
+              ("inch", "1 in")
               ("ft", "12 in")
+              ("foot", "12 in")
               ("yd", "3 ft")
+              ("yard", "1 yd")
               ("mi", "5280 ft")
+              ("mile", "1 mi")
+              ("miles", "1 mi")
               ("nmi", "1852 m")
               ("au", "149597870700 m")
               ("ly", "c * 1 yr")
+              ("lightyear", "1 ly")
               ("pc", "3.085677581491367e16 m")
+              
+              // old length units
+              ("fath", "6 ft"); ("fathom", "1 fath")           
+              ("fur", "660 ft"); ("furlong", "1 fur")          
 
               // These are the base units for area. Units derived from these are solved at parse-time.
               // ie ft2 = ft^2
@@ -456,75 +490,117 @@ module Engine =
               ("m3", "m^3")
 
               // Volume
-              ("l", "0.001 m3")
-              ("gal", "3.78541 l")
-              ("qt", "0.25 gal")
-              ("pt", "0.5 qt")
-              ("fl_oz", "0.0625 pt")
-
+              ("l", "0.001 m3"); ("litre", "1 l"); ("liter", "1 l")
+              
+              // non-metric
+              ("gal", "3.78541 l"); ("gallon", "1 gal")
+              ("qt", "0.25 gal"); ("quart", "1 qt")
+              ("pt", "0.5 qt"); ("pint", "1 pt")
+              ("fl_oz", "0.0625 pt"); ("fluid_ounce", "1 fl_oz")
+              ("fl_dr", "1/8 fl_oz")
+              ("gi", "4 fl_oz")
+              
+              // Cooking volume
+              ("tsp", "5ml"); ("teaspoon", "1 tsp")
+              ("tbsp", "15ml"); ("tablespoon", "1 tbsp")
+              ("cup", "250 ml")
+              
+              // non-metric
+              ("us_tsp", "4.92892159375 ml")
+              ("us_tbsp", "3 us_tsp")
+              ("us_cup", "16 us_tbsp")
+              
+              
               // area
-              ("ha", "10000 m2")
+              ("ha", "10000 m2"); ("hectare", "1 ha")
               ("are", "100m2")
               ("acre", "4046.8 m2")
 
-              ("g", "0.001 kg")
-              ("lb", "0.453592 kg")
-              ("oz", "0.0625 lb")
-              ("ton", "1000 kg")
+              // mass
+              ("g", "0.001 kg"); ("gram", "1 g")
+              ("t", "1000 kg"); ("ton", "1 t"); ("tonne", "1 t");
               ("u", "1.66053906660e-27 kg")
               ("amu", "1 u")
+              
+              // non-metric
+              ("slug", "14.5939029 kg")
+              ("lb", "0.453592 kg"); ("pound", "1 lb")
+              ("oz", "0.0625 lb"); ("ounce", "1 oz")
+              ("gr", "1/7000 lb"); ("grain", "1 gr") 
+              ("st", "14 lb"); ("stone", "1 st")
+              ("short_ton", "2000 lb")
+              ("long_ton", "2240 lb")
 
-              ("N", "kg * m / s^2")
+              // Pressure and force
+              ("N", "kg * m / s^2"); ("newton", "1 N")
               ("lbf", "1 lb * gn")
-              ("Pa", "N / m^2")
+              ("Pa", "N / m^2"); ("pascal", "1 Pa")
               ("bar", "100000 Pa")
-              ("atm", "101325 Pa")
+              ("atm", "101325 Pa"); ("atmosphere", "1 atm")
               ("psi", "lbf / in2")
+              ("mmHg", "133.322387415 Pa")
+              ("dyn", "1e-5 N")
+              ("kgf", "1 kg * gn")
+              ("R", "2.58e-4 degC / kg")
 
-              ("J", "N * m")
-              ("Nm", "J")
-              ("W", "J / s")
-              ("Wh", "W * h")
-              ("hp", "745.6998715822702 W")
-              ("cal", "4.184 J")
+              // Energy/work
+              ("J", "N * m"); ("joule", "1 J")
+              ("Nm", "1 J")
+              ("W", "J / s"); ("Watt", "1 W")
+              ("Wh", "W * h"); 
+              ("hp", "745.6998715822702 W"); ("horsepower", "1 hp")
+              ("cal", "4.184 J"); ("calorie", "1 cal")
               ("BTU", "1055.05585262 J")
               ("eV", "1.602176634e-19 J")
-
-              ("C", "A * s")
-              ("V", "W / A")
+              ("erg", "1e-7 J")
+                
+              // electricity
+              ("C", "A * s"); ("coulomb", "1 C")
+              ("V", "W / A"); ("volt", "1 V")
               ("ohm", "V / A")
-              ("F", "C / V")
-              ("H", "V * s / A")
-              ("Wb", "V * s")
+              ("F", "C / V"); ("farad", "1 F")
+              ("H", "V * s / A"); ("henry", "1 H")
+              ("Wb", "V * s"); ("weber", "1 Wb")
               ("tesla", "Wb / m2")
               ("T_tesla", "1 tesla")
+              ("G", "1e-4 tesla")
+              ("Mx", "1e-8 Wb")
+              ("Oe", "79.57747 A / m")
+              
+              // Viscosity
+              ("P", "0.1 Pa * s"); ("poise", "1 P")
+              ("St", "1e-4 m2 / s"); ("stokes", "1 St")
 
               // IT
-              ("B", "8 b")
+              ("B", "8 b"); ("byte", "1 B")
 
               // Photometry
               ("sr", "1") // Steradian (solid angle)
-              ("lm", "cd * sr") // Lumen (luminous flux)
-              ("lx", "lm / m2") // Lux (illuminance)
+              ("lm", "cd * sr"); ("lumen", "1 lm") // Lumen (luminous flux)
+              ("lx", "lm / m2"); ("lux", "1 lx") // Lux (illuminance)
 
-              // Constants
+              // Other constants
+              ("e", Math.E.ToString())
               ("planck", "6.62607015e-34 J * s")
               ("hbar", "planck / (2 * pi)")
 
               // Radioactivity
-              ("Sv", "J / kg")
-              ("Gy", "J / kg")
+              ("Sv", "J / kg"); ("sievert", "1 Sv")
+              ("Gy", "J / kg"); ("gray", "1 Gy")
               ("rem", "0.01 Sv")
               ("rad_dose", "0.01 Gy")
-              ("Bq", "1 / s")
+              ("Bq", "1 / s"); ("bequerel", "1 Bq")
               ("Ci", "3.7e10 Bq")
-              ("R", "2.58e-4 C / kg")
 
               // Angles & Rotation (Dimensionless)
               ("rad", "1")
               ("deg", "pi / 180")
+              ("grad", "pi / 200")
               ("rev", "2 * pi")
               ("rpm", "rev / min")
+              ("arcmin", "1 / 60 deg")
+              ("arcsec", "1 / 3600 deg")
+              
 
               // decibel, dimensionless
               ("dB", "1")
@@ -535,30 +611,16 @@ module Engine =
               ("ppm", "1e-6")
               ("ppb", "1e-9")
               ("ppt", "1e-12")
-
-              // Molar Masses (Mass of 1 mole of specific substances)
-              ("mol_water", "18.015 g")
-              ("mol_nacl", "58.44 g")
-              ("mol_ethanol", "46.07 g")
-
-              // Common Blood Panel Substances
-              ("mol_glucose", "180.156 g")
-              ("mol_cholesterol", "386.654 g")
-              ("mol_triglycerides", "885.43 g")
-              ("mol_urea", "60.056 g") ]
+              
+              // handy ones to avoid paretheses
+              ("kph", "1 km/h")
+              ("mph", "1 mi/h")
+              ("bps", "1 b/s")
+              ("Bps", "1 B/s")]
 
         for (name, exprStr) in aliases do
             unitDb[name] <- parseAliasToDef exprStr
 
-        unitDb["degC"] <-
-            { Scale = 1.0
-              Offset = 273.15
-              Dims = Temp }
-
-        unitDb["degF"] <-
-            { Scale = 5.0 / 9.0
-              Offset = 273.15 - (32.0 * 5.0 / 9.0)
-              Dims = Temp }
 
     let _ = initializeDb ()
     //  Conversion Logic
