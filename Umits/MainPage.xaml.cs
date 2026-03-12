@@ -376,7 +376,7 @@ public partial class MainPage
 
     private void OnKeyboardHeightChanged(object sender, double keyboardHeight)
     {
-        //  less than is just to surpress a warning. 
+        //  less than is just to suppress a warning. 
         // The default when no history is set is -1
         if (_historyHeight < -0.9) _historyHeight = HistoryPanel.Height;
 
