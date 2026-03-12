@@ -78,33 +78,16 @@
     <PropertyGroup Condition="'$(Configuration)' =='Release' OR '$(Configuration)' == 'AppStore'">
         <RuntimeIdentifiers>android-arm64</RuntimeIdentifiers>
         <PublishTrimmed>false</PublishTrimmed>
-        <RunILLink>false</RunILLink>
-        <AndroidLinkMode>None</AndroidLinkMode>
-        <AndroidLinkTool>None</AndroidLinkTool>
         <RunAOTCompilation>false</RunAOTCompilation>
         <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
-        <DebugSymbols>false</DebugSymbols>
-        <DebugType>none</DebugType>
-        <AndroidManagedSymbols>false</AndroidManagedSymbols>
-        <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+
     </PropertyGroup>
 
     <PropertyGroup Condition="'$(Configuration)' == 'AppStore'">
         <AndroidPackageFormat>aab</AndroidPackageFormat>
-
         <AndroidKeyStore>True</AndroidKeyStore>
         <AndroidSigningKeyStore>upload-key.keystore</AndroidSigningKeyStore>
         <AndroidSigningKeyAlias>upload-alias</AndroidSigningKeyAlias>
-        <DebugSymbols>false</DebugSymbols>
-        <DebugType>none</DebugType>
-        <AndroidManagedSymbols>false</AndroidManagedSymbols>
-        <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
-
-        <AndroidLinkMode>None</AndroidLinkMode>
-
-        <RunILLink>false</RunILLink>
-
-        <AndroidLinkTool>None</AndroidLinkTool>
     </PropertyGroup>
 
     <!--<ItemGroup>
