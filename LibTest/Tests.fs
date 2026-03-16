@@ -25,6 +25,7 @@ type EngineTest(fixture: Fixture) =
     [<Fact>]
     let ``in in in`` () =
         Assert.Equal(run "500in in cm", run "500 in in cm")
+        Assert.Equal(run "50 in in in ", "50 in")
         
 
     [<Fact>]

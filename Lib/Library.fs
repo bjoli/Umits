@@ -206,7 +206,7 @@ module Engine =
         | Pow of Expr * Expr
         | Func of string * Expr list
         
-    // Thanks to alexei for pointing out i should use a builder.
+    // Thanks to alexei for pointing out I should use a builder.
     type ResultBuilder() =
         member _.Bind(m, f) = Result.bind f m
         member _.Return(x) = Result.Ok x
@@ -628,9 +628,6 @@ module Engine =
                 matchingUnits
                 |> List.sortBy (fun (name, scale) -> (abs (scale - 1.0), name.Length))
                 |> List.head
-            // |> List.minBy (fun (_, scale) ->
-            //     let v = Math.Abs(value / scale)
-            //     if v >= 1.0 then v else 1.0 / v)
             let resultValue = value / (snd bestUnit)
             $"%s{formatNum resultValue} %s{fst bestUnit}"
     let private propRegex = Regex(@"([a-zA-Z_]\w*)\.([a-zA-Z_]\w*)", RegexOptions.Compiled)
@@ -653,7 +650,7 @@ module Engine =
                             match props.TryFind(propName) with
                             | Some value ->
                                 changed <- true
-                                value // Replaces "earth.mass" with "(5.972*10^24)kg"
+                                value
                             | None -> m.Value
                         | false, _ -> m.Value)
                 )
