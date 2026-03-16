@@ -28,8 +28,8 @@
         <ApplicationId>org.bjoli.umits</ApplicationId>
 
         <!-- Versions -->
-        <ApplicationDisplayVersion>9</ApplicationDisplayVersion>
-        <ApplicationVersion>9</ApplicationVersion>
+        <ApplicationDisplayVersion>13</ApplicationDisplayVersion>
+        <ApplicationVersion>13</ApplicationVersion>
         <AndroidSdkDirectory>/home/linus/Program/Android/</AndroidSdkDirectory>
         <JavaSdkDirectory>/usr/lib64/jvm/msopenjdk-21/</JavaSdkDirectory>
 
@@ -78,9 +78,7 @@
     <PropertyGroup Condition="'$(Configuration)' =='Release' OR '$(Configuration)' == 'AppStore'">
         <RuntimeIdentifiers>android-arm64</RuntimeIdentifiers>
         <PublishTrimmed>false</PublishTrimmed>
-        <RunILLink>false</RunILLink>
-        <AndroidLinkMode>None</AndroidLinkMode>
-        <AndroidLinkTool>None</AndroidLinkTool>
+
         <RunAOTCompilation>false</RunAOTCompilation>
         <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
         <DebugSymbols>false</DebugSymbols>
@@ -95,15 +93,10 @@
         <AndroidKeyStore>True</AndroidKeyStore>
         <AndroidSigningKeyStore>upload-key.keystore</AndroidSigningKeyStore>
         <AndroidSigningKeyAlias>upload-alias</AndroidSigningKeyAlias>
-        <DebugSymbols>false</DebugSymbols>
-        <DebugType>none</DebugType>
         <AndroidManagedSymbols>false</AndroidManagedSymbols>
         <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
-
-        <AndroidLinkMode>None</AndroidLinkMode>
-
         <RunILLink>false</RunILLink>
-
+        <AndroidLinkMode>None</AndroidLinkMode>
         <AndroidLinkTool>None</AndroidLinkTool>
     </PropertyGroup>
 

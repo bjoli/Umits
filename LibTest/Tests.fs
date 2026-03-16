@@ -21,6 +21,11 @@ type EngineTest(fixture: Fixture) =
         Assert.Equal("25", run "5 * 5")
         Assert.Equal("15", run "10 + 5")
         Assert.Equal("100", run "10^2")
+        
+    [<Fact>]
+    let ``in in in`` () =
+        Assert.Equal(run "500in in cm", run "500 in in cm")
+        
 
     [<Fact>]
     let ``Implicit multiplication evaluates correctly`` () =
@@ -47,7 +52,7 @@ type EngineTest(fixture: Fixture) =
     [<Fact>]
     let ``Macros expand and evaluate correctly`` () =
         // Adjust expected values based on your engine's decimal rounding
-        Assert.Equal("16.9897 dB", run "dBW(50W)")
+        Assert.Equal("16.9897", run "dBW(50W)")
 
     [<Fact>]
     let ``Complex dimensional analysis and implicit multiplication`` () =
@@ -72,7 +77,7 @@ type EngineTest(fixture: Fixture) =
     [<Fact>]
     let ``Nested functions, macros, and logarithmic conversions`` () =
         // Macro with internal arithmetic
-        Assert.Equal("16.9897 dB", run "dBW(25W + 25W)")
+        Assert.Equal("16.9897", run "dBW(25W + 25W)")
 
     [<Fact>]
     let ``Expected error handling for invalid operations`` () =

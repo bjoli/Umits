@@ -94,26 +94,18 @@ module Engine =
     let Mol = Map [ "Mol", 1 ]
 
     let addDims (d1: Dims) (d2: Dims) : Dims =
-        let keys = Seq.append (Map.keys d1) (Map.keys d2) |> Seq.distinct
-
-        keys
-        |> Seq.map (fun k ->
-            k,
-            (Map.tryFind k d1 |> Option.defaultValue 0)
-            + (Map.tryFind k d2 |> Option.defaultValue 0))
-        |> Seq.filter (fun (_, v) -> v <> 0)
-        |> Map.ofSeq
+        Map.fold (fun acc k v2 ->
+            let v1 = Map.tryFind k acc |> Option.defaultValue 0
+            let sum = v1 + v2
+            if sum = 0 then Map.remove k acc else Map.add k sum acc
+        ) d1 d2
 
     let subDims (d1: Dims) (d2: Dims) : Dims =
-        let keys = Seq.append (Map.keys d1) (Map.keys d2) |> Seq.distinct
-
-        keys
-        |> Seq.map (fun k ->
-            k,
-            (Map.tryFind k d1 |> Option.defaultValue 0)
-            - (Map.tryFind k d2 |> Option.defaultValue 0))
-        |> Seq.filter (fun (_, v) -> v <> 0)
-        |> Map.ofSeq
+        Map.fold (fun acc k v2 ->
+            let v1 = Map.tryFind k acc |> Option.defaultValue 0
+            let diff = v1 - v2
+            if diff = 0 then Map.remove k acc else Map.add k diff acc
+        ) d1 d2
 
     // --- 2. UnitDef & Database ---
     type UnitDef =
@@ -164,12 +156,13 @@ module Engine =
 
     let unitDb = Dictionary<string, UnitDef>()
 
+    let private powerRegex = Regex(@"^([a-zA-Z_]+)(\d+)$", RegexOptions.Compiled)
     let rec resolveSingleUnit (u: string) =
         if unitDb.ContainsKey(u) then
             Some unitDb[u]
         else
             // Check if the string ends with a number (e.g., "in2", "cm3")
-            let powerMatch = Regex.Match(u, @"^([a-zA-Z_]+)(\d+)$")
+            let powerMatch = powerRegex.Match(u)
 
             if powerMatch.Success then
                 let baseStr = powerMatch.Groups[1].Value
@@ -212,7 +205,14 @@ module Engine =
         | Div of Expr * Expr
         | Pow of Expr * Expr
         | Func of string * Expr list
-
+        
+    // Thanks to alexei for pointing out i should use a builder.
+    type ResultBuilder() =
+        member _.Bind(m, f) = Result.bind f m
+        member _.Return(x) = Result.Ok x
+        member _.ReturnFrom(x) = x
+    
+    let result = ResultBuilder()
     let rec eval expr =
         match expr with
         | Num n -> Result.Ok(linear n Map.empty)
@@ -223,125 +223,105 @@ module Engine =
                   Dims = def.Dims }
         | Group e -> eval e
         | Add(x, y) ->
-            match eval x, eval y with
-            | Result.Ok vx, Result.Ok vy ->
+            result {
+                let! vx = eval x
+                let! vy = eval y
                 if vx.Dims = vy.Dims then
-                    Result.Ok
-                        { Scale = vx.Scale + vy.Scale
-                          Offset = vx.Offset
-                          Dims = vx.Dims }
+                    return { Scale = vx.Scale + vy.Scale; Offset = vx.Offset; Dims = vx.Dims }
                 else
-                    Result.Error "Dimensional mismatch in addition"
-            | Result.Error e, _
-            | _, Result.Error e -> Result.Error e
+                    return! Result.Error "Dimensional mismatch in addition"
+            }
         | Sub(x, y) ->
-            match eval x, eval y with
-            | Result.Ok vx, Result.Ok vy ->
+            result {
+                let! vx = eval x
+                let! vy = eval y
                 if vx.Dims = vy.Dims then
-                    Result.Ok
-                        { Scale = vx.Scale - vy.Scale
-                          Offset = vx.Offset
-                          Dims = vx.Dims }
+                    return { Scale = vx.Scale - vy.Scale; Offset = vx.Offset; Dims = vx.Dims }
                 else
-                    Result.Error "Dimensional mismatch in subtraction"
-            | Result.Error e, _
-            | _, Result.Error e -> Result.Error e
+                    return! Result.Error "Dimensional mismatch in subtraction"
+            }
         | Mul(x, y) ->
-            match eval x, eval y with
-            | Result.Ok vx, Result.Ok vy ->
-                Result.Ok
-                    { Scale = vx.Scale * vy.Scale
-                      Offset = 0.0
-                      Dims = addDims vx.Dims vy.Dims }
-            | Result.Error e, _
-            | _, Result.Error e -> Result.Error e
+            result {
+                let! vx = eval x
+                let! vy = eval y
+                return { Scale = vx.Scale * vy.Scale; Offset = 0.0; Dims = addDims vx.Dims vy.Dims }
+            }
         | Div(x, y) ->
-            match eval x, eval y with
-            | Result.Ok vx, Result.Ok vy ->
-                Result.Ok
-                    { Scale = vx.Scale / vy.Scale
-                      Offset = 0.0
-                      Dims = subDims vx.Dims vy.Dims }
-            | Result.Error e, _
-            | _, Result.Error e -> Result.Error e
+            result {
+                let! vx = eval x
+                let! vy = eval y
+                return { Scale = vx.Scale / vy.Scale; Offset = 0.0; Dims = subDims vx.Dims vy.Dims }
+            }
         | Pow(x, y) ->
-            let applyPower coeff (def: UnitDef) (vy: UnitDef) =
+            result {
+                let! vy = eval y
+                
                 if not (Map.isEmpty vy.Dims) then
-                    Result.Error "Exponent must be dimensionless"
+                    return! Result.Error "Exponent must be dimensionless"
                 else
                     let power = vy.Scale
-                    let mutable isValid = true
                     let isInteger (v: float) = Math.Abs(v - Math.Round(v)) < 1e-6
 
+                    let! (coeff, def) = 
+                        match x with
+                        | UnitCoeff(c, d) -> Result.Ok(c, d)
+                        | _ -> 
+                            result {
+                                let! vx = eval x
+                                return (1.0, vx)
+                            }
+                    
                     let newDims =
                         def.Dims
-                        |> Map.map (fun _ v ->
-                            let nv = float v * power
-
-                            if not (isInteger nv) then
-                                isValid <- false
-
-                            int (Math.Round(nv)))
-                        |> Map.filter (fun _ v -> v <> 0)
-
-                    if not isValid then
-                        Result.Error "Fractional exponent resulted in non-integer dimensions"
+                        |> Map.map (fun _ v -> float v * power)
+                        
+                    let hasFractionalDims = 
+                        newDims |> Map.exists (fun _ nv -> not (isInteger nv))
+                        
+                    if hasFractionalDims then
+                        return! Result.Error "Fractional exponent resulted in non-integer dimensions"
                     else
-                        Result.Ok
-                            { Scale = coeff * (def.Scale ** power)
-                              Offset = 0.0
-                              Dims = newDims }
-
-            match x, eval y with
-            | UnitCoeff(coeff, def), Result.Ok vy -> applyPower coeff def vy
-            | _, Result.Ok vy ->
-                match eval x with
-                | Result.Ok vx -> applyPower 1.0 vx vy
-                | Result.Error e -> Result.Error e
-            | _, Result.Error e -> Result.Error e
+                        let roundedDims = 
+                            newDims 
+                            |> Map.map (fun _ nv -> int (Math.Round(nv))) 
+                            |> Map.filter (fun _ v -> v <> 0)
+                            
+                        return { Scale = coeff * (def.Scale ** power); Offset = 0.0; Dims = roundedDims }
+            }
         | Func(name, args) ->
-            // Helper to evaluate all arguments and fail fast on the first error
-            let rec evalAll acc remaining =
-                match remaining with
-                | [] -> Result.Ok(List.rev acc)
-                | h :: t ->
-                    match eval h with
-                    | Result.Ok v -> evalAll (v :: acc) t
-                    | Result.Error e -> Result.Error e
-
-            match evalAll [] args with
-            | Result.Error e -> Result.Error e
-            | Result.Ok vals ->
+            result {
+                let rec evalAll acc remaining =
+                    match remaining with
+                    | [] -> Result.Ok(List.rev acc)
+                    | h :: t ->
+                        result {
+                            let! v = eval h
+                            return! evalAll (v :: acc) t
+                        }
+                        
+                let! vals = evalAll [] args
                 let allDimensionless = vals |> List.forall (fun v -> Map.isEmpty v.Dims)
 
                 match name.ToLower(), vals with
-                // 2-Argument Logarithm: log(base, value)
                 | "log", [ baseVal; v ] when allDimensionless ->
-                    Result.Ok(linear (Math.Log(v.Scale, baseVal.Scale)) Map.empty)
-
-                // 1-Argument Functions
-                | ("log" | "log10"), [ v ] when allDimensionless -> Result.Ok(linear (Math.Log10(v.Scale)) Map.empty)
-                | "ln", [ v ] when allDimensionless -> Result.Ok(linear (Math.Log(v.Scale)) Map.empty)
-                | "sin", [ v ] when allDimensionless -> Result.Ok(linear (Math.Sin(v.Scale)) Map.empty)
-                | "cos", [ v ] when allDimensionless -> Result.Ok(linear (Math.Cos(v.Scale)) Map.empty)
-                | "tan", [ v ] when allDimensionless -> Result.Ok(linear (Math.Tan(v.Scale)) Map.empty)
-
-                // Functions that scale dimensions mathematically
+                    return linear (Math.Log(v.Scale, baseVal.Scale)) Map.empty
+                | ("log" | "log10"), [ v ] when allDimensionless -> return linear (Math.Log10(v.Scale)) Map.empty
+                | "ln", [ v ] when allDimensionless -> return linear (Math.Log(v.Scale)) Map.empty
+                | "sin", [ v ] when allDimensionless -> return linear (Math.Sin(v.Scale)) Map.empty
+                | "cos", [ v ] when allDimensionless -> return linear (Math.Cos(v.Scale)) Map.empty
+                | "tan", [ v ] when allDimensionless -> return linear (Math.Tan(v.Scale)) Map.empty
                 | "sqrt", [ v ] ->
                     let hasOddPowers = v.Dims |> Map.exists (fun _ power -> power % 2 <> 0)
-
                     if hasOddPowers then
-                        Result.Error "Cannot take the square root of an odd power dimension"
+                        return! Result.Error "Cannot take the square root of an odd power dimension"
                     else
-                        Result.Ok(linear (Math.Sqrt(v.Scale)) (v.Dims |> Map.map (fun _ p -> p / 2)))
-
-                // Error Fallbacks
+                        return linear (Math.Sqrt(v.Scale)) (v.Dims |> Map.map (fun _ p -> p / 2))
                 | funcName, _ when
                     [ "log"; "log10"; "ln"; "sin"; "cos"; "tan" ] |> List.contains funcName
-                    && not allDimensionless
-                    ->
-                    Result.Error $"Arguments to '%s{name}' must be dimensionless"
-                | _ -> Result.Error $"Unknown function or invalid argument count: %s{name}"
+                    && not allDimensionless ->
+                    return! Result.Error $"Arguments to {name} must be dimensionless"
+                | _ -> return! Result.Error $"Unknown function or invalid argument count: {name}"
+            }
 
     let opp = OperatorPrecedenceParser<Expr, unit, unit>()
     let pExpr = opp.ExpressionParser
@@ -653,9 +633,8 @@ module Engine =
             //     if v >= 1.0 then v else 1.0 / v)
             let resultValue = value / (snd bestUnit)
             $"%s{formatNum resultValue} %s{fst bestUnit}"
-
+    let private propRegex = Regex(@"([a-zA-Z_]\w*)\.([a-zA-Z_]\w*)", RegexOptions.Compiled)
     let rec resolveProperties (input: string) : string =
-        let propRegex = Regex(@"([a-zA-Z_]\w*)\.([a-zA-Z_]\w*)")
         let mutable current = input
         let mutable changed = true
 
@@ -692,13 +671,14 @@ module Engine =
         else
             preprocess afterEntities
 
-
+    let private decFixedRegex = Regex(@"(?<=\d),(?=\d)", RegexOptions.Compiled)
+    let private extractInRegex =Regex(@"(?i)\s+in\s+", RegexOptions.RightToLeft ||| RegexOptions.Compiled)
     let convertQuery (query: string) =
         // This recursively expands macros and entities until there is no more expansion
         // to be done. It can potentially loop forever.
         let fullyExpanded = preprocess query
-        let decFixed = Regex.Replace(fullyExpanded.Trim(), @"(?<=\d),(?=\d)", ".")
-        let parts = Regex.Split(decFixed, @"(?i)\s+in\s+")
+        let decFixed = decFixedRegex.Replace(fullyExpanded.Trim(), ".")
+        let parts = extractInRegex.Split(decFixed, 2)
 
         match parts with
         // Here we have a LHS with an expression and a RHS that is on the right side of the "in"
