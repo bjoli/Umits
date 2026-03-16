@@ -35,5 +35,7 @@
 
     <Color x:Key="ErrorTextLight">#B91C1C</Color>
     <Color x:Key="ErrorTextDark">#fca5a5</Color>
+    
+    <Color x:Key="InlinePopupDark">#67626b</Color>
 
 </ResourceDictionary>

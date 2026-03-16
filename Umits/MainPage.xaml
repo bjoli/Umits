@@ -7,13 +7,13 @@
              x:Class="Umits.MainPage">
     <Grid x:Name="RootGrid">
 
-        <Grid RowDefinitions="*, Auto" Padding="15">
+        <Grid RowDefinitions="*, Auto" Padding="5">
 
             <Border Grid.Row="0"
                     x:Name="HistoryPanel"
                     StyleClass="HistoryPanel">
 
-                <Grid RowDefinitions="*, Auto" Padding="15" VerticalOptions="Fill">
+                <Grid RowDefinitions="*, Auto" Padding="10" VerticalOptions="Fill">
                     <CollectionView
                         x:Name="HistoryCollectionView"
                         Grid.Row="0"
@@ -46,17 +46,16 @@
 
                 </Grid>
             </Border>
-            <Grid Grid.Row="1" ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto, Auto" RowSpacing="4">
+            <Grid Grid.Row="1" ColumnDefinitions="*, Auto, Auto" RowDefinitions="Auto, Auto" RowSpacing="4" StyleClass="ToolbarPanel">
 
                 <Border Grid.Row="0" Grid.Column="0" StyleClass="InputPanel">
                     <Editor x:Name="InputEntry"
                             Text=""
                             Placeholder="e.g., 10 km in mi"
-                            TextChanged="OnInputTextChanged"
-                            Completed="OnConvertClicked" />
+                            TextChanged="OnInputTextChanged"/>
                 </Border>
 
-                <Grid Grid.Row="1" Grid.Column="0" ColumnSpacing="4">
+                <Grid Grid.Row="1" Grid.Column="0" ColumnSpacing="4" >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="*" />
@@ -71,25 +70,25 @@
                             StyleClass="ParenButton" 
                                 Grid.ColumnSpan="2" 
                                 HandlerChanged="OnParenHandlerChanged">
-                            <Label Text="( )" StyleClass="ParenLabel" />
+                            <Label Text="( )" StyleClass="ToolbarLabel" />
 
                         </Border>
                         <Border Grid.Column="2" HeightRequest="24"
                                 StyleClass="ParenButton"
                                 HandlerChanged="OnOperatorHandlerChanged">
-                            <Label Text="+ -" FontSize="10" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold"/>
+                            <Label Text="+ -" StyleClass="ToolbarLabel" />
                         </Border>
 
                         <Border Grid.Column="3" HeightRequest="24"
                                 StyleClass="ParenButton"
                                 HandlerChanged="OnOperatorHandlerChanged">
-                            <Label Text="* /" FontSize="10" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold"/>
+                            <Label Text="/ *" StyleClass ="ToolbarLabel" />
                         </Border>
 
                         <Border Grid.Column="4" HeightRequest="24"
                                 StyleClass="ParenButton"
                                 HandlerChanged="OnOperatorHandlerChanged">
-                            <Label Text="$ ^" FontSize="10" HorizontalOptions="Center" VerticalOptions="Center" FontAttributes="Bold"/>
+                            <Label Text="$ ^" StyleClass="ToolbarLabel" />
                         </Border>
                 </Grid>
 
