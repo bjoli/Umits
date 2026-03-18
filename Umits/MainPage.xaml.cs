@@ -52,7 +52,6 @@ using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using CommunityToolkit.Maui.Core;
 using CommunityToolkit.Maui.Core.Platform;
-using Indiko.Maui.Controls.Markdown.Theming;
 
 namespace Umits;
 
@@ -81,11 +80,8 @@ public partial class MainPage
         // Bind the history list to the UI
         HistoryCollectionView.ItemsSource = _history;
 
-        Application.Current!.RequestedThemeChanged += OnRequestedThemeChanged;
 
-        ChangeMarkdownViewTheme();
-
-        Loaded += OnPageLoaded!;
+        Loaded += OnPageLoaded;
     }
 
     protected override async void OnAppearing()
@@ -93,8 +89,8 @@ public partial class MainPage
         base.OnAppearing();
         InputEntry.Focus();
 
-        InfoMarkdownView.MarkdownText = await LoadMarkdownFileAsync("Documentation.md");
-        KeyboardService.KeyboardHeightChanged += OnKeyboardHeightChanged!;
+        
+        KeyboardService.KeyboardHeightChanged += OnKeyboardHeightChanged;
         await LoadSettingsIntoEngine();
     }
 
@@ -131,7 +127,7 @@ public partial class MainPage
         }
     }
 
-    private async void OnPageLoaded(object sender, EventArgs e)
+    private async void OnPageLoaded(object? sender, EventArgs? e)
     {
         base.OnAppearing();
 
@@ -140,7 +136,7 @@ public partial class MainPage
         InputEntry.Focus(); // Or InputEntry if you reverted to the single-line control
     }
 
-    private async void OnConvertClicked(object sender, EventArgs e)
+    private async void OnConvertClicked(object? sender, EventArgs? e)
     {
         HideErrorBubbleImmediately();
         var rawQuery = InputEntry.Text;
@@ -195,259 +191,261 @@ public partial class MainPage
         HistoryCollectionView.ScrollTo(_history.Last(), position: ScrollToPosition.MakeVisible);
     }
 
-    private async void OnInfoClicked(object sender, EventArgs e)
+    private async void OnInfoClicked(object? sender, EventArgs e)
     {
         await InputEntry.HideKeyboardAsync();
-        OverlayContainer.IsVisible = !OverlayContainer.IsVisible;
+        await Shell.Current.GoToAsync(nameof(InfoPage));
     }
 
     private float _startX;
-private string _selectedOperator = string.Empty;
+    private string _selectedOperator = string.Empty;
 
 
-private Point GetAbsolutePosition(VisualElement element)
-{
-    double x = 0;
-    double y = 0;
-    Element current = element;
-
-    while (current is VisualElement visual)
+    private Point GetAbsolutePosition(VisualElement element)
     {
-        x += visual.X;
-        y += visual.Y;
-        current = current.Parent;
+        double x = 0;
+        double y = 0;
+        Element current = element;
+
+        while (current is VisualElement visual)
+        {
+            x += visual.X;
+            y += visual.Y;
+            current = current.Parent;
+        }
+
+        return new Point(x, y);
     }
 
-    return new Point(x, y);
-}
-private void OnOperatorHandlerChanged(object sender, EventArgs e)
-{
-#if ANDROID
-    if (sender is Border border)
+    private void OnOperatorHandlerChanged(object? sender, EventArgs? e)
     {
-        // Access the native Android View underlying the MAUI Border
-        if (border.Handler?.PlatformView is Android.Views.View nativeView)
+#if ANDROID
+        if (sender is Border border)
         {
-            nativeView.Touch += (_, args) =>
+            // Access the native Android View underlying the MAUI Border
+            if (border.Handler?.PlatformView is Android.Views.View nativeView)
+            {
+                nativeView.Touch += (_, args) =>
+                {
+                    if (args.Event == null) return;
+
+                    // Extract operators dynamically from the Label
+                    string leftOp = "+", rightOp = "-";
+                    if (border.Content is Label label)
+                    {
+                        var ops = label.Text.Split(' ');
+                        if (ops.Length == 2)
+                        {
+                            leftOp = ops[0];
+                            rightOp = ops[1];
+                        }
+                    }
+
+                    switch (args.Event.ActionMasked)
+                    {
+                        case Android.Views.MotionEventActions.Down:
+                            _startX = args.Event.GetX();
+                            PopupLeftOp.Text = leftOp;
+                            PopupRightOp.Text = rightOp;
+
+                            _selectedOperator = leftOp;
+                            PopupLeftOp.BackgroundColor = Colors.LightGray;
+                            PopupRightOp.BackgroundColor = Colors.Transparent;
+
+                            InlineOperatorPopup.IsVisible = true;
+                            Point location = GetAbsolutePosition(border);
+
+                            // The popup is roughly 90px wide. 
+                            // X: Center it over the button. Y: Place it 55px above.
+                            InlineOperatorPopup.TranslationX = location.X + (border.Width / 2) - 45;
+                            InlineOperatorPopup.TranslationY = location.Y - 55;
+
+                            args.Handled = true; // Setting to true kills the 150ms OS delay
+                            break;
+
+                        case Android.Views.MotionEventActions.Move:
+                            if (!InlineOperatorPopup.IsVisible) break;
+
+                            float deltaX = args.Event.GetX() - _startX;
+
+                            // 30 native pixels threshold for a swipe right
+                            if (deltaX > 30)
+                            {
+                                PopupRightOp.BackgroundColor = Colors.LightGray;
+                                PopupLeftOp.BackgroundColor = Colors.Transparent;
+                                _selectedOperator = PopupRightOp.Text;
+                            }
+                            else
+                            {
+                                PopupLeftOp.BackgroundColor = Colors.LightGray;
+                                PopupRightOp.BackgroundColor = Colors.Transparent;
+                                _selectedOperator = PopupLeftOp.Text;
+                            }
+
+                            args.Handled = true;
+                            break;
+
+                        case Android.Views.MotionEventActions.Up:
+                        case Android.Views.MotionEventActions.Cancel:
+                            ProcessOperatorSelection();
+                            args.Handled = true;
+                            break;
+                    }
+                };
+            }
+        }
+#endif
+    }
+
+    private void ProcessOperatorSelection()
+    {
+        if (InlineOperatorPopup.IsVisible)
+        {
+            if (!string.IsNullOrEmpty(_selectedOperator))
+            {
+                InsertTextAtCursor(_selectedOperator);
+            }
+
+            InlineOperatorPopup.IsVisible = false;
+            PopupLeftOp.BackgroundColor = Colors.Transparent;
+            PopupRightOp.BackgroundColor = Colors.Transparent;
+            _selectedOperator = string.Empty;
+        }
+    }
+
+    private CancellationTokenSource? _parenLongPressCts;
+    private bool _isParenPopupOpen;
+    private float _parenStartX;
+    private float _parenStartY;
+
+    private void OnParenHandlerChanged(object? sender, EventArgs? e)
+    {
+        // I am only pushing this for android, but if anyone wants to implement this for ios, 
+        // well, I hope there is an easier way to handle popups.
+#if ANDROID
+        if (sender is Border border && border.Handler?.PlatformView is Android.Views.View nativeView)
+        {
+            nativeView.Touch += (s, args) =>
             {
                 if (args.Event == null) return;
-
-                // Extract operators dynamically from the Label
-                string leftOp = "+", rightOp = "-";
-                if (border.Content is Label label)
-                {
-                    var ops = label.Text.Split(' ');
-                    if (ops.Length == 2)
-                    {
-                        leftOp = ops[0];
-                        rightOp = ops[1];
-                    }
-                }
 
                 switch (args.Event.ActionMasked)
                 {
                     case Android.Views.MotionEventActions.Down:
-                        _startX = args.Event.GetX();
-                        PopupLeftOp.Text = leftOp;
-                        PopupRightOp.Text = rightOp;
-                        
-                        _selectedOperator = leftOp;
-                        PopupLeftOp.BackgroundColor = Colors.LightGray;
-                        PopupRightOp.BackgroundColor = Colors.Transparent;
-                        
-                        InlineOperatorPopup.IsVisible = true;
-                        Point location = GetAbsolutePosition(border);
-    
-                        // The popup is roughly 90px wide. 
-                        // X: Center it over the button. Y: Place it 55px above.
-                        InlineOperatorPopup.TranslationX = location.X + (border.Width / 2) - 45; 
-                        InlineOperatorPopup.TranslationY = location.Y - 55;
-                        
-                        args.Handled = true; // Setting to true kills the 150ms OS delay
+                        _parenStartX = args.Event.GetX();
+                        _parenStartY = args.Event.GetY();
+                        _isParenPopupOpen = false;
+                        _parenLongPressCts = new CancellationTokenSource();
+
+                        // Start the 250ms timer
+                        _ = TriggerParenLongPressAsync(_parenLongPressCts.Token, border);
+
+                        args.Handled = true;
                         break;
 
                     case Android.Views.MotionEventActions.Move:
-                        if (!InlineOperatorPopup.IsVisible) break;
-                        
-                        float deltaX = args.Event.GetX() - _startX;
-
-                        // 30 native pixels threshold for a swipe right
-                        if (deltaX > 30) 
+                        if (_isParenPopupOpen)
                         {
-                            PopupRightOp.BackgroundColor = Colors.LightGray;
-                            PopupLeftOp.BackgroundColor = Colors.Transparent;
-                            _selectedOperator = PopupRightOp.Text;
+                            // Handle the swipe selection if the popup is open
+                            float deltaX = args.Event.GetX() - _parenStartX;
+                            if (deltaX < -15)
+                            {
+                                PopupLeftParen.BackgroundColor = Colors.LightGray;
+                                PopupRightParen.BackgroundColor = Colors.Transparent;
+                                _selectedSwipeParen = "(";
+                            }
+                            else if (deltaX > 15)
+                            {
+                                PopupRightParen.BackgroundColor = Colors.LightGray;
+                                PopupLeftParen.BackgroundColor = Colors.Transparent;
+                                _selectedSwipeParen = ")";
+                            }
+                            else
+                            {
+                                PopupLeftParen.BackgroundColor = Colors.LightGray;
+                                PopupRightParen.BackgroundColor = Colors.Transparent;
+                                _selectedSwipeParen = "("; // Default to left while open
+                            }
                         }
                         else
                         {
-                            PopupLeftOp.BackgroundColor = Colors.LightGray;
-                            PopupRightOp.BackgroundColor = Colors.Transparent;
-                            _selectedOperator = PopupLeftOp.Text;
+                            // Cancel the long press if they move their finger too far before it opens
+                            if (Math.Abs(args.Event.GetX() - _parenStartX) > 20 ||
+                                Math.Abs(args.Event.GetY() - _parenStartY) > 20)
+                            {
+                                _parenLongPressCts?.Cancel();
+                            }
                         }
-                        
+
                         args.Handled = true;
                         break;
 
                     case Android.Views.MotionEventActions.Up:
                     case Android.Views.MotionEventActions.Cancel:
-                        ProcessOperatorSelection();
+                        if (_isParenPopupOpen)
+                        {
+                            ProcessParenSelection();
+                        }
+                        else
+                        {
+                            // It was a short tap. Cancel timer and run normal heuristic.
+                            _parenLongPressCts?.Cancel();
+                            ExecuteAutoParenHeuristic();
+                        }
+
+                        _isParenPopupOpen = false;
                         args.Handled = true;
                         break;
                 }
             };
         }
-    }
 #endif
-}
-
-private void ProcessOperatorSelection()
-{
-    if (InlineOperatorPopup.IsVisible)
-    {
-        if (!string.IsNullOrEmpty(_selectedOperator))
-        {
-            InsertTextAtCursor(_selectedOperator);
-        }
-        
-        InlineOperatorPopup.IsVisible = false;
-        PopupLeftOp.BackgroundColor = Colors.Transparent;
-        PopupRightOp.BackgroundColor = Colors.Transparent;
-        _selectedOperator = string.Empty;
     }
-}
 
-private CancellationTokenSource? _parenLongPressCts;
-private bool _isParenPopupOpen;
-private float _parenStartX;
-private float _parenStartY;
-
-private void OnParenHandlerChanged(object sender, EventArgs e)
-{
-    // I am only pushing this for android, but if anyone wants to implement this for ios, 
-    // well, I hope there is an easier way to handle popups.
-#if ANDROID
-    if (sender is Border border && border.Handler?.PlatformView is Android.Views.View nativeView)
+    private async Task TriggerParenLongPressAsync(CancellationToken token, Border border)
     {
-        nativeView.Touch += (s, args) =>
+        try
         {
-            if (args.Event == null) return;
+            await Task.Delay(250, token);
 
-            switch (args.Event.ActionMasked)
+            // If we get here, the timer finished without being cancelled
+            _isParenPopupOpen = true;
+            _selectedSwipeParen = "("; // Default selection
+
+            PopupLeftParen.BackgroundColor = Colors.LightGray;
+            PopupRightParen.BackgroundColor = Colors.Transparent;
+
+            Point location = GetAbsolutePosition(border);
+            InlineParenPopup.TranslationX = location.X + (border.Width / 2) - 45;
+            InlineParenPopup.TranslationY = location.Y - 55;
+
+            InlineParenPopup.IsVisible = true;
+        }
+        catch (TaskCanceledException)
+        {
+            // Touch was released or moved before 250ms elapsed
+        }
+    }
+
+    private void ProcessParenSelection()
+    {
+        if (InlineParenPopup.IsVisible)
+        {
+            if (!string.IsNullOrEmpty(_selectedSwipeParen))
             {
-                case Android.Views.MotionEventActions.Down:
-                    _parenStartX = args.Event.GetX();
-                    _parenStartY = args.Event.GetY();
-                    _isParenPopupOpen = false;
-                    _parenLongPressCts = new CancellationTokenSource();
-
-                    // Start the 250ms timer
-                    _ = TriggerParenLongPressAsync(_parenLongPressCts.Token, border);
-                    
-                    args.Handled = true;
-                    break;
-
-                case Android.Views.MotionEventActions.Move:
-                    if (_isParenPopupOpen)
-                    {
-                        // Handle the swipe selection if the popup is open
-                        float deltaX = args.Event.GetX() - _parenStartX;
-                        if (deltaX < -15)
-                        {
-                            PopupLeftParen.BackgroundColor = Colors.LightGray; 
-                            PopupRightParen.BackgroundColor = Colors.Transparent;
-                            _selectedSwipeParen = "(";
-                        }
-                        else if (deltaX > 15)
-                        {
-                            PopupRightParen.BackgroundColor = Colors.LightGray;
-                            PopupLeftParen.BackgroundColor = Colors.Transparent;
-                            _selectedSwipeParen = ")";
-                        }
-                        else
-                        {
-                            PopupLeftParen.BackgroundColor = Colors.LightGray;
-                            PopupRightParen.BackgroundColor = Colors.Transparent;
-                            _selectedSwipeParen = "("; // Default to left while open
-                        }
-                    }
-                    else
-                    {
-                        // Cancel the long press if they move their finger too far before it opens
-                        if (Math.Abs(args.Event.GetX() - _parenStartX) > 20 || 
-                            Math.Abs(args.Event.GetY() - _parenStartY) > 20)
-                        {
-                            _parenLongPressCts?.Cancel();
-                        }
-                    }
-                    args.Handled = true;
-                    break;
-
-                case Android.Views.MotionEventActions.Up:
-                case Android.Views.MotionEventActions.Cancel:
-                    if (_isParenPopupOpen)
-                    {
-                        ProcessParenSelection();
-                    }
-                    else
-                    {
-                        // It was a short tap. Cancel timer and run normal heuristic.
-                        _parenLongPressCts?.Cancel();
-                        ExecuteAutoParenHeuristic(); 
-                    }
-                    
-                    _isParenPopupOpen = false;
-                    args.Handled = true;
-                    break;
+                InsertTextAtCursor(_selectedSwipeParen);
             }
-        };
-    }
-#endif
-}
 
-private async Task TriggerParenLongPressAsync(CancellationToken token, Border border)
-{
-    try
-    {
-        await Task.Delay(250, token);
-
-        // If we get here, the timer finished without being cancelled
-        _isParenPopupOpen = true;
-        _selectedSwipeParen = "("; // Default selection
-
-        PopupLeftParen.BackgroundColor = Colors.LightGray;
-        PopupRightParen.BackgroundColor = Colors.Transparent;
-
-        Point location = GetAbsolutePosition(border);
-        InlineParenPopup.TranslationX = location.X + (border.Width / 2) - 45;
-        InlineParenPopup.TranslationY = location.Y - 55;
-
-        InlineParenPopup.IsVisible = true;
-    }
-    catch (TaskCanceledException)
-    {
-        // Touch was released or moved before 250ms elapsed
-    }
-}
-
-private void ProcessParenSelection()
-{
-    if (InlineParenPopup.IsVisible)
-    {
-        if (!string.IsNullOrEmpty(_selectedSwipeParen))
-        {
-            InsertTextAtCursor(_selectedSwipeParen);
+            InlineParenPopup.IsVisible = false;
+            PopupLeftParen.BackgroundColor = Colors.Transparent;
+            PopupRightParen.BackgroundColor = Colors.Transparent;
+            _selectedSwipeParen = string.Empty;
         }
-        
-        InlineParenPopup.IsVisible = false;
-        PopupLeftParen.BackgroundColor = Colors.Transparent;
-        PopupRightParen.BackgroundColor = Colors.Transparent;
-        _selectedSwipeParen = string.Empty;
     }
-}
 
-private void ExecuteAutoParenHeuristic()
-{
-    var text = string.IsNullOrEmpty(InputEntry.Text) ? string.Empty : InputEntry.Text;
+    private void ExecuteAutoParenHeuristic()
+    {
+        var text = string.IsNullOrEmpty(InputEntry.Text) ? string.Empty : InputEntry.Text;
         var cursor = Math.Max(0, Math.Min(InputEntry.CursorPosition, text.Length));
         var selLength = InputEntry.SelectionLength;
 
@@ -519,7 +517,7 @@ private void ExecuteAutoParenHeuristic()
         }
 
         InsertTextAtCursor(parenToInsert);
-}
+    }
 
     private void InsertTextAtCursor(string textToInsert)
     {
@@ -535,14 +533,14 @@ private void ExecuteAutoParenHeuristic()
         InputEntry.Focus();
     }
 
-    private async void OnSettingsClicked(object sender, EventArgs e)
+    private async void OnSettingsClicked(object? sender, EventArgs? e)
     {
         await InputEntry.HideKeyboardAsync();
         await Shell.Current.GoToAsync(nameof(SettingsPage));
     }
 
     // When tapping a historyItem we copy the query into the text field
-    private void OnHistoryItemTapped(object sender, TappedEventArgs e)
+    private void OnHistoryItemTapped(object? sender, TappedEventArgs e)
     {
         if (e.Parameter is not string query) return;
         InputEntry.Text = query;
@@ -550,13 +548,13 @@ private void ExecuteAutoParenHeuristic()
     }
 
     // A long press on a historyItem copies the result to the clipboard
-    private async void OnItemLongPressed(object sender, LongPressCompletedEventArgs e)
+    private async void OnItemLongPressed(object? sender, LongPressCompletedEventArgs e)
     {
         if (sender is VisualElement { BindingContext: HistoryItem item })
             await Clipboard.Default.SetTextAsync(item.Result);
     }
 
-    private void OnKeyboardHeightChanged(object sender, double keyboardHeight)
+    private void OnKeyboardHeightChanged(object? sender, double keyboardHeight)
     {
         //  less than is just to suppress a warning. 
         // The default when no history is set is -1
@@ -573,7 +571,7 @@ private void ExecuteAutoParenHeuristic()
     protected override void OnDisappearing()
     {
         base.OnDisappearing();
-        KeyboardService.KeyboardHeightChanged -= OnKeyboardHeightChanged!;
+        KeyboardService.KeyboardHeightChanged -= OnKeyboardHeightChanged;
     }
 
     private void OnOverlayTapped(object? sender, TappedEventArgs e)
@@ -599,71 +597,16 @@ private void ExecuteAutoParenHeuristic()
         ErrorBubble.IsVisible = false;
     }
 
-    private void OnErrorBubbleTapped(object sender, TappedEventArgs e)
+    private void OnErrorBubbleTapped(object? sender, TappedEventArgs e)
     {
         HideErrorBubbleImmediately();
     }
 
 
-    private void OnInputTextChanged(object sender, TextChangedEventArgs e)
+    private void OnInputTextChanged(object? sender, TextChangedEventArgs e)
     {
         // Only attempt to hide if it is currently visible
         if (ErrorBubble.IsVisible) HideErrorBubbleImmediately();
     }
 
-    // Set the theme of the markdownView
-    private void OnRequestedThemeChanged(object? sender, AppThemeChangedEventArgs e)
-    {
-        ChangeMarkdownViewTheme();
-    }
-
-    private void ChangeMarkdownViewTheme()
-    {
-        var currentTheme = Application.Current?.RequestedTheme;
-        if (currentTheme == null)
-            return;
-
-
-        if (currentTheme == AppTheme.Dark)
-        {
-            InfoMarkdownView.Theme = MarkdownThemeDefaults.Dracula;
-            return;
-        }
-
-        InfoMarkdownView.Theme = MarkdownThemeDefaults.GitHub;
-    }
-
-
-    private async void OnDocumentationClicked(object sender, EventArgs e)
-    {
-        InfoScroll.Orientation = ScrollOrientation.Vertical;
-        InfoMarkdownView.MarkdownText = await LoadMarkdownFileAsync("Documentation.md");
-    }
-
-    private async void OnLicensesClicked(object sender, EventArgs e)
-    {
-        InfoScroll.Orientation = ScrollOrientation.Both;
-        InfoMarkdownView.MarkdownText = "... Loading ...";
-        InfoMarkdownView.MarkdownText = await LoadMarkdownFileAsync("LICENSES.md");
-    }
-
-    private async Task<string> LoadMarkdownFileAsync(string filename)
-    {
-        try
-        {
-            await using var stream = await FileSystem.OpenAppPackageFileAsync(filename);
-            using var reader = new StreamReader(stream);
-            return await reader.ReadToEndAsync();
-        }
-        catch (Exception ex)
-        {
-            return $"### Error\nCould not load {filename}: {ex.Message}";
-        }
-    }
-
-
-    private void CloseInfoView(object? sender, EventArgs e)
-    {
-        OverlayContainer.IsVisible = false;
-    }
 }

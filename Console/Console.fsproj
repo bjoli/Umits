@@ -33,5 +33,10 @@
     <ItemGroup>
         <ProjectReference Include="..\Lib\Lib.fsproj"/>
     </ItemGroup>
+
+
+    <ItemGroup>
+      <PackageReference Update="FSharp.Core" Version="10.1.201" />
+    </ItemGroup>
 </Project>
 

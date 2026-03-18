@@ -15,6 +15,18 @@
             <Label Text="Number Format String" FontAttributes="Bold" />
             <Entry x:Name="NumberFormatEntry"
                    Placeholder="e.g., G7" />
+            <Label
+                HorizontalOptions="Fill"
+                LineBreakMode="WordWrap"
+                Text="G[num] selects the shortest between scientific and
+normal notation and prints [num] significant digits.
+If you don't want scientific notation, use F[num]
+The largest [num] supported is 17, but you should not use that 
+unless you like the frustrating parts of floating point numbers.">
+                
+                
+                
+            </Label>
 
             <Label Text="Macros" FontAttributes="Bold" />
             <Editor x:Name="MacrosEditor"
@@ -29,7 +41,8 @@
                     HeightRequest="100"
                     Focused="OnEditorFocused"
                     Unfocused="OnEditorUnfocused" />
-
+            
+            <Button x:Name="Licenses" Text="Licenses" Clicked="Licenses_OnClicked" />
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

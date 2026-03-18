@@ -28,11 +28,8 @@
         <ApplicationId>org.bjoli.umits</ApplicationId>
 
         <!-- Versions -->
-        <ApplicationDisplayVersion>13</ApplicationDisplayVersion>
-        <ApplicationVersion>13</ApplicationVersion>
-        <AndroidSdkDirectory>/home/linus/Program/Android/</AndroidSdkDirectory>
-        <JavaSdkDirectory>/usr/lib64/jvm/msopenjdk-21/</JavaSdkDirectory>
-
+        <ApplicationDisplayVersion>15</ApplicationDisplayVersion>
+        <ApplicationVersion>15</ApplicationVersion>
 
         <!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
         <WindowsPackageType>None</WindowsPackageType>
@@ -54,9 +51,6 @@
         <!-- Splash Screen -->
         <MauiSplashScreen Include="Resources\Splash\splash.svg" Color="#ffc200" BaseSize="128,128"/>
 
-        <!-- Custom Fonts -->
-        <MauiFont Include="Resources\Fonts\*"/>
-
         <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
         <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)"/>
     </ItemGroup>
@@ -64,9 +58,8 @@
     <ItemGroup>
         <PackageReference Include="CommunityToolkit.Maui" Version="14.0.1"/>
         <PackageReference Include="CommunityToolkit.Maui.Core" Version="14.0.1"/>
-        <PackageReference Include="Indiko.Maui.Controls.Markdown" Version="1.5.0"/>
-        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.41"/>
-        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.0"/>
+        <PackageReference Include="Microsoft.Maui.Controls" Version="10.0.50" />
+        <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="10.0.5" />
 
     </ItemGroup>
 
@@ -77,39 +70,23 @@
 
     <PropertyGroup Condition="'$(Configuration)' =='Release' OR '$(Configuration)' == 'AppStore'">
         <RuntimeIdentifiers>android-arm64</RuntimeIdentifiers>
-        <PublishTrimmed>false</PublishTrimmed>
-        <RunILLink>false</RunILLink>
-        <AndroidLinkMode>None</AndroidLinkMode>
-        <AndroidLinkTool>None</AndroidLinkTool>
-        <RunAOTCompilation>false</RunAOTCompilation>
-        <AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>
+        <PublishTrimmed>true</PublishTrimmed>
+	<TrimMode>full</TrimMode>
+        <UseMonoRuntime>false</UseMonoRuntime>
+        <PublishAot>false</PublishAot>
+        <!--<RunAOTCompilation>false</RunAOTCompilation>-->
+        <!--<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>-->
+
+        <PublishReadyToRun>true</PublishReadyToRun>
         <DebugSymbols>false</DebugSymbols>
         <DebugType>none</DebugType>
-        <AndroidManagedSymbols>false</AndroidManagedSymbols>
         <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
-    </PropertyGroup>
-
-    <PropertyGroup Condition="'$(Configuration)' == 'AppStore'">
-        <AndroidPackageFormat>aab</AndroidPackageFormat>
-
-        <AndroidKeyStore>True</AndroidKeyStore>
-        <AndroidSigningKeyStore>upload-key.keystore</AndroidSigningKeyStore>
-        <AndroidSigningKeyAlias>upload-alias</AndroidSigningKeyAlias>
-        <DebugSymbols>false</DebugSymbols>
-        <DebugType>none</DebugType>
-        <AndroidManagedSymbols>false</AndroidManagedSymbols>
-        <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
-
-        <AndroidLinkMode>None</AndroidLinkMode>
-
-        <RunILLink>false</RunILLink>
-
-        <AndroidLinkTool>None</AndroidLinkTool>
     </PropertyGroup>
 
     <!--<ItemGroup>
         <TrimmerRootDescriptor Include="TrimmerRootDescriptor.xml" />
     </ItemGroup>
 -->
+
 
 </Project>

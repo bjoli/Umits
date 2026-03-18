@@ -49,22 +49,27 @@ public partial class SettingsPage : ContentPage
         Engine.formatString = Preferences.Get("NumberFormat", "G7");
     }
 
-    private void OnEditorFocused(object sender, FocusEventArgs e)
+    private void OnEditorFocused(object? sender, FocusEventArgs e)
     {
         if (sender is Editor editor)
             editor.Animate("Expand", new Animation(v => editor.HeightRequest = v, editor.Height, ExpandedHeight), 16,
                 250, Easing.CubicOut);
     }
 
-    private void OnEditorUnfocused(object sender, FocusEventArgs e)
+    private void OnEditorUnfocused(object? sender, FocusEventArgs e)
     {
         if (sender is Editor editor)
             editor.Animate("Collapse", new Animation(v => editor.HeightRequest = v, editor.Height, CollapsedHeight), 16,
                 250, Easing.CubicIn);
     }
 
-    private async void OnCloseClicked(object sender, EventArgs e)
+    private async void OnCloseClicked(object? sender, EventArgs e)
     {
         await Navigation.PopAsync();
+    }
+
+    private async void Licenses_OnClicked(object? sender, EventArgs e)
+    {
+        await Shell.Current.GoToAsync(nameof(LicensesPage));
     }
 }

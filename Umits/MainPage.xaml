@@ -3,8 +3,10 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:idk="clr-namespace:Indiko.Maui.Controls.Markdown;assembly=Indiko.Maui.Controls.Markdown"
-             x:Class="Umits.MainPage">
+xmlns:local="clr-namespace:Umits"
+             x:Class="Umits.MainPage"
+x:DataType="local:MainPage"
+>
     <Grid x:Name="RootGrid">
 
         <Grid RowDefinitions="*, Auto" Padding="5">
@@ -19,7 +21,7 @@
                         Grid.Row="0"
                         VerticalOptions="Fill">
                         <CollectionView.ItemTemplate>
-                            <DataTemplate>
+                            <DataTemplate x:DataType="local:HistoryItem">
                                 <VerticalStackLayout Padding="5,8" Margin="0,2">
                                     <VerticalStackLayout.GestureRecognizers>
                                         <TapGestureRecognizer Tapped="OnHistoryItemTapped"
@@ -121,37 +123,6 @@
                     <TapGestureRecognizer Tapped="OnOverlayTapped" />
                 </BoxView.GestureRecognizers>
             </BoxView>
-
-            <Grid ColumnDefinitions="2*, 96*, 2*" RowDefinitions="5*, 90*, 5*">
-                <Border x:Name="InfoPanel"
-                        StyleClass="InfoPanel"
-                        Grid.Row="1"
-                        Grid.Column="1">
-                    <Grid RowDefinitions="Auto, *">
-
-                        <Grid Grid.Row="0"
-                              ColumnDefinitions="Auto, Auto, *, Auto"
-                              ColumnSpacing="10"
-                              Margin="0,10,0,10"
-                              HorizontalOptions="Fill">
-
-                            <Button Grid.Column="0" Text="Documentation" Clicked="OnDocumentationClicked" />
-                            <Button Grid.Column="1" Text="Licenses" Clicked="OnLicensesClicked" />
-
-                            <Button Grid.Column="3" Text="X" Clicked="CloseInfoView" StyleClass="CloseButton" />
-                        </Grid>
-
-                        <ScrollView x:Name="InfoScroll"
-                                    Grid.Row="1"
-                                    Orientation="Vertical"
-                                    VerticalScrollBarVisibility="Default">
-                            <idk:MarkdownView x:Name="InfoMarkdownView" />
-                        </ScrollView>
-
-                    </Grid>
-                </Border>
-
-            </Grid>
         </Grid>
 
         <Border x:Name="InlineParenPopup"

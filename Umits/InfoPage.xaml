@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:Umits"
+             x:DataType="local:InfoPage"
+             x:Class="Umits.InfoPage"
+             Title="Documentation"
+             Shell.NavBarIsVisible="False">
+    
+    <Grid RowDefinitions="Auto, *">
+        
+        <Grid Grid.Row="0" BackgroundColor="{AppThemeBinding
+                          Light={StaticResource PageBackgroundLight},
+                          Dark={StaticResource PageBackgroundDark}}" Padding="10">
+            <Button Text="← Back" HorizontalOptions="Start" Clicked="OnBackButtonClicked" />
+        </Grid>
+
+        <WebView Grid.Row="1" x:Name="InfoWebView" Source="documentation.html" />
+        
+    </Grid>
+</ContentPage>
+ 
