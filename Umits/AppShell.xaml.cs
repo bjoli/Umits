@@ -1,5 +1,3 @@
-using System.ComponentModel;
-
 namespace Umits;
 
 public partial class AppShell : Shell

@@ -38,7 +38,7 @@ module EntityParser =
             let parent = if m.Groups[2].Success then m.Groups[2].Value else ""
             let rawBody = m.Groups[3].Value
 
-            // mutsble becayse we add any templatw values to it next.
+            // mutable because we add any template values to it next.
             let mutable mergedBody = rawBody
 
             // I should probably print some error message if the parent does not exist.

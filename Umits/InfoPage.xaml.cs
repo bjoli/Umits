@@ -10,6 +10,13 @@ public partial class InfoPage : ContentPage
 
     private async void OnBackButtonClicked(object? sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync("..");
+        try
+        {
+            await Shell.Current.GoToAsync("..");
+        } 
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 }

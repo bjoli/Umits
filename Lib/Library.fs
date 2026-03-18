@@ -399,10 +399,7 @@ module Engine =
               ("K", linear 1.0 Temp)
               ("cd", linear 1.0 Cd)
               ("mol", linear 1.0 Mol)
-
-              ("gn", linear 9.80665 (subDims L (addDims T T)))
-              ("pi", linear Math.PI Map.empty)
-              ("c", linear 299792458.0 (subDims L T)) ]
+              ]
 
         for (name, def) in primitives do
             unitDb[name] <- def
@@ -448,6 +445,7 @@ module Engine =
               ("ft", "12 in")
               ("foot", "12 in")
               ("yd", "3 ft")
+              
               ("yard", "1 yd")
               ("mi", "5280 ft")
               ("mile", "1 mi")

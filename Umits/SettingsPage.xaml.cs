@@ -15,38 +15,52 @@ public partial class SettingsPage : ContentPage
 
     protected override async void OnAppearing()
     {
-        base.OnAppearing();
+       
+        try
+        {
+            base.OnAppearing();
+            // Load Number Format
+            NumberFormatEntry.Text = Preferences.Default.Get("NumberFormat", "G7");
 
-        // Load Number Format
-        NumberFormatEntry.Text = Preferences.Default.Get("NumberFormat", "G7");
+            // Load Macros
+            if (File.Exists(_macrosFilePath)) MacrosEditor.Text = await File.ReadAllTextAsync(_macrosFilePath);
 
-        // Load Macros
-        if (File.Exists(_macrosFilePath)) MacrosEditor.Text = await File.ReadAllTextAsync(_macrosFilePath);
-
-        // Load Entities
-        if (File.Exists(_entitiesFilePath)) EntitiesEditor.Text = await File.ReadAllTextAsync(_entitiesFilePath);
+            // Load Entities
+            if (File.Exists(_entitiesFilePath)) EntitiesEditor.Text = await File.ReadAllTextAsync(_entitiesFilePath);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+        }
     }
 
     protected override async void OnDisappearing()
     {
-        base.OnDisappearing();
+        try
+        {
+            base.OnDisappearing();
 
-        // Save Number Format
-        Preferences.Default.Set("NumberFormat", NumberFormatEntry.Text ?? "G7");
+            // Save Number Format
+            Preferences.Default.Set("NumberFormat", string.IsNullOrWhiteSpace(NumberFormatEntry.Text) ? "G7" : NumberFormatEntry.Text);
 
-        // Save Macros
-        await File.WriteAllTextAsync(_macrosFilePath, MacrosEditor.Text ?? string.Empty);
+            // Save Macros
+            await File.WriteAllTextAsync(_macrosFilePath, MacrosEditor.Text);
 
-        // Save Entities
-        await File.WriteAllTextAsync(_entitiesFilePath, EntitiesEditor.Text ?? string.Empty);
+            // Save Entities
+            await File.WriteAllTextAsync(_entitiesFilePath, EntitiesEditor.Text);
 
-        // Clear all the macros and entities and reload them
-        // to avoid any removed entities loitering around.
-        Engine.clearMacrosAndEntities();
-        ConfigurationLoader.loadAll();
-        MacroParser.parseFile(await File.ReadAllTextAsync(_macrosFilePath));
-        EntityParser.parseFiles([await File.ReadAllTextAsync(_entitiesFilePath)]);
-        Engine.formatString = Preferences.Get("NumberFormat", "G7");
+            // Clear all the macros and entities and reload them
+            // to avoid any removed entities loitering around.
+            Engine.clearMacrosAndEntities();
+            ConfigurationLoader.loadAll();
+            MacroParser.parseFile(await File.ReadAllTextAsync(_macrosFilePath));
+            EntityParser.parseFiles([await File.ReadAllTextAsync(_entitiesFilePath)]);
+            Engine.formatString = Preferences.Get("NumberFormat", "G7");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+        }
     }
 
     private void OnEditorFocused(object? sender, FocusEventArgs e)
@@ -65,11 +79,25 @@ public partial class SettingsPage : ContentPage
 
     private async void OnCloseClicked(object? sender, EventArgs e)
     {
-        await Navigation.PopAsync();
+        try
+        {
+            await Navigation.PopAsync();
+        }
+        catch (Exception ex) 
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+        }
     }
 
     private async void Licenses_OnClicked(object? sender, EventArgs e)
     {
-        await Shell.Current.GoToAsync(nameof(LicensesPage));
+        try
+        {
+            await Shell.Current.GoToAsync(nameof(LicensesPage));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading data: {ex.Message}");
+        }
     }
 }

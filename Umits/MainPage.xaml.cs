@@ -86,12 +86,19 @@ public partial class MainPage
 
     protected override async void OnAppearing()
     {
-        base.OnAppearing();
-        InputEntry.Focus();
+        try
+        {
+            base.OnAppearing();
+            InputEntry.Focus();
 
         
-        KeyboardService.KeyboardHeightChanged += OnKeyboardHeightChanged;
-        await LoadSettingsIntoEngine();
+            KeyboardService.KeyboardHeightChanged += OnKeyboardHeightChanged;
+            await LoadSettingsIntoEngine();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+        }
     }
 
     private async Task LoadSettingsIntoEngine()
@@ -129,72 +136,93 @@ public partial class MainPage
 
     private async void OnPageLoaded(object? sender, EventArgs? e)
     {
-        base.OnAppearing();
+        try
+        {
+            base.OnAppearing();
 
-        // Ensures the UI is ready before requesting focus
-        await Task.Delay(100);
-        InputEntry.Focus(); // Or InputEntry if you reverted to the single-line control
+            // Ensures the UI is ready before requesting focus
+            await Task.Delay(100);
+            InputEntry.Focus(); // Or InputEntry if you reverted to the single-line control
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     private async void OnConvertClicked(object? sender, EventArgs? e)
     {
-        HideErrorBubbleImmediately();
-        var rawQuery = InputEntry.Text;
-
-        if (string.IsNullOrWhiteSpace(rawQuery)) return;
-        rawQuery = rawQuery.Trim();
-
-        // Replace $1, $2, etc., with the corresponding history result
-        rawQuery = Regex.Replace(rawQuery, @"\$(\d+)", match =>
+        try
         {
-            if (int.TryParse(match.Groups[1].Value, out var index))
+            HideErrorBubbleImmediately();
+            var rawQuery = InputEntry.Text;
+
+            if (string.IsNullOrWhiteSpace(rawQuery)) return;
+            rawQuery = rawQuery.Trim();
+
+            // Replace $1, $2, etc., with the corresponding history result
+            rawQuery = Regex.Replace(rawQuery, @"\$(\d+)", match =>
             {
-                var listIndex = index;
-                if (listIndex >= 0 && listIndex < _history.Count) return _history[listIndex].Result;
+                if (int.TryParse(match.Groups[1].Value, out var index))
+                {
+                    var listIndex = index;
+                    if (listIndex >= 0 && listIndex < _history.Count) return _history[listIndex].Result;
+                }
+
+                // If the index is out of bounds or invalid, leave the token as is
+                return match.Value;
+            });
+
+            // Clear the results.
+            if (rawQuery == "clear")
+            {
+                _history.Clear();
+                InputEntry.Text = string.Empty;
+                return;
             }
 
-            // If the index is out of bounds or invalid, leave the token as is
-            return match.Value;
-        });
+            var actualQuery = rawQuery;
+            if (rawQuery.StartsWith("in ", StringComparison.OrdinalIgnoreCase) && _lastResult != null)
+                actualQuery = $"{_lastResult} {rawQuery}";
 
-        // Clear the results.
-        if (rawQuery == "clear")
-        {
-            _history.Clear();
+            var resultStr = Engine.convertQuery(actualQuery);
+            var isError = resultStr.Contains("Error");
+
+            if (isError)
+            {
+                await ShowErrorBubbleAsync(resultStr);
+                return;
+            }
+
+            // Update state
+            _history.Add(new HistoryItem(_history.Count, actualQuery, resultStr));
+
+
+            _lastResult = resultStr;
+            InputEntry.Placeholder = $"e.g., in ms (uses {_lastResult})";
+
             InputEntry.Text = string.Empty;
-            return;
+
+            // Scroll to the bottom
+            HistoryCollectionView.ScrollTo(_history.Last(), position: ScrollToPosition.MakeVisible);
         }
-
-        var actualQuery = rawQuery;
-        if (rawQuery.StartsWith("in ", StringComparison.OrdinalIgnoreCase) && _lastResult != null)
-            actualQuery = $"{_lastResult} {rawQuery}";
-
-        var resultStr = Engine.convertQuery(actualQuery);
-        var isError = resultStr.Contains("Error");
-
-        if (isError)
+        catch (Exception ex)
         {
-            await ShowErrorBubbleAsync(resultStr);
-            return;
+            Console.WriteLine(ex.Message);
         }
-
-        // Update state
-        _history.Add(new HistoryItem(_history.Count, actualQuery, resultStr));
-
-
-        _lastResult = resultStr;
-        InputEntry.Placeholder = $"e.g., in ms (uses {_lastResult})";
-
-        InputEntry.Text = string.Empty;
-
-        // Scroll to the bottom
-        HistoryCollectionView.ScrollTo(_history.Last(), position: ScrollToPosition.MakeVisible);
     }
 
     private async void OnInfoClicked(object? sender, EventArgs e)
     {
-        await InputEntry.HideKeyboardAsync();
-        await Shell.Current.GoToAsync(nameof(InfoPage));
+        try
+        {
+            await InputEntry.HideKeyboardAsync();
+            await Shell.Current.GoToAsync(nameof(InfoPage));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+        }
     }
 
     private float _startX;
@@ -220,79 +248,76 @@ public partial class MainPage
     private void OnOperatorHandlerChanged(object? sender, EventArgs? e)
     {
 #if ANDROID
-        if (sender is Border border)
-        {
+        if (sender is Border { Handler.PlatformView: Android.Views.View nativeView } border)
             // Access the native Android View underlying the MAUI Border
-            if (border.Handler?.PlatformView is Android.Views.View nativeView)
+        {
+            nativeView.Touch += (_, args) =>
             {
-                nativeView.Touch += (_, args) =>
+                if (args.Event == null) return;
+
+                // Extract operators dynamically from the Label
+                string leftOp = "+", rightOp = "-";
+                if (border.Content is Label label)
                 {
-                    if (args.Event == null) return;
-
-                    // Extract operators dynamically from the Label
-                    string leftOp = "+", rightOp = "-";
-                    if (border.Content is Label label)
+                    var ops = label.Text.Split(' ');
+                    if (ops.Length == 2)
                     {
-                        var ops = label.Text.Split(' ');
-                        if (ops.Length == 2)
-                        {
-                            leftOp = ops[0];
-                            rightOp = ops[1];
-                        }
+                        leftOp = ops[0];
+                        rightOp = ops[1];
                     }
+                }
 
-                    switch (args.Event.ActionMasked)
-                    {
-                        case Android.Views.MotionEventActions.Down:
-                            _startX = args.Event.GetX();
-                            PopupLeftOp.Text = leftOp;
-                            PopupRightOp.Text = rightOp;
+                switch (args.Event.ActionMasked)
+                {
+                    case Android.Views.MotionEventActions.Down:
+                        _startX = args.Event.GetX();
+                        PopupLeftOp.Text = leftOp;
+                        PopupRightOp.Text = rightOp;
 
-                            _selectedOperator = leftOp;
+                        _selectedOperator = leftOp;
+                        PopupLeftOp.BackgroundColor = Colors.LightGray;
+                        PopupRightOp.BackgroundColor = Colors.Transparent;
+
+                        InlineOperatorPopup.IsVisible = true;
+                        Point location = GetAbsolutePosition(border);
+
+                        // The popup is roughly 90px wide. 
+                        // X: Center it over the button. Y: Place it 55px above.
+                        InlineOperatorPopup.TranslationX = location.X + (border.Width / 2) - 45;
+                        InlineOperatorPopup.TranslationY = location.Y - 55;
+
+                        args.Handled = true; // Setting to true kills the 150ms OS delay
+                        break;
+
+                    case Android.Views.MotionEventActions.Move:
+                        if (!InlineOperatorPopup.IsVisible) break;
+
+                        float deltaX = args.Event.GetX() - _startX;
+
+                        // 30 native pixels threshold for a swipe right
+                        if (deltaX > 30)
+                        {
+                            PopupRightOp.BackgroundColor = Colors.LightGray;
+                            PopupLeftOp.BackgroundColor = Colors.Transparent;
+                            _selectedOperator = PopupRightOp.Text;
+                        }
+                        else
+                        {
                             PopupLeftOp.BackgroundColor = Colors.LightGray;
                             PopupRightOp.BackgroundColor = Colors.Transparent;
+                            _selectedOperator = PopupLeftOp.Text;
+                        }
 
-                            InlineOperatorPopup.IsVisible = true;
-                            Point location = GetAbsolutePosition(border);
+                        args.Handled = true;
+                        break;
 
-                            // The popup is roughly 90px wide. 
-                            // X: Center it over the button. Y: Place it 55px above.
-                            InlineOperatorPopup.TranslationX = location.X + (border.Width / 2) - 45;
-                            InlineOperatorPopup.TranslationY = location.Y - 55;
-
-                            args.Handled = true; // Setting to true kills the 150ms OS delay
-                            break;
-
-                        case Android.Views.MotionEventActions.Move:
-                            if (!InlineOperatorPopup.IsVisible) break;
-
-                            float deltaX = args.Event.GetX() - _startX;
-
-                            // 30 native pixels threshold for a swipe right
-                            if (deltaX > 30)
-                            {
-                                PopupRightOp.BackgroundColor = Colors.LightGray;
-                                PopupLeftOp.BackgroundColor = Colors.Transparent;
-                                _selectedOperator = PopupRightOp.Text;
-                            }
-                            else
-                            {
-                                PopupLeftOp.BackgroundColor = Colors.LightGray;
-                                PopupRightOp.BackgroundColor = Colors.Transparent;
-                                _selectedOperator = PopupLeftOp.Text;
-                            }
-
-                            args.Handled = true;
-                            break;
-
-                        case Android.Views.MotionEventActions.Up:
-                        case Android.Views.MotionEventActions.Cancel:
-                            ProcessOperatorSelection();
-                            args.Handled = true;
-                            break;
-                    }
-                };
-            }
+                    case Android.Views.MotionEventActions.Up:
+                    case Android.Views.MotionEventActions.Cancel:
+                        ProcessOperatorSelection();
+                        args.Handled = true;
+                        break;
+                }
+            };
         }
 #endif
     }
@@ -323,7 +348,7 @@ public partial class MainPage
         // I am only pushing this for android, but if anyone wants to implement this for ios, 
         // well, I hope there is an easier way to handle popups.
 #if ANDROID
-        if (sender is Border border && border.Handler?.PlatformView is Android.Views.View nativeView)
+        if (sender is Border { Handler.PlatformView: Android.Views.View nativeView } border)
         {
             nativeView.Touch += (s, args) =>
             {
@@ -535,8 +560,15 @@ public partial class MainPage
 
     private async void OnSettingsClicked(object? sender, EventArgs? e)
     {
-        await InputEntry.HideKeyboardAsync();
-        await Shell.Current.GoToAsync(nameof(SettingsPage));
+        try
+        {
+            await InputEntry.HideKeyboardAsync();
+            await Shell.Current.GoToAsync(nameof(SettingsPage));
+        }
+        catch (Exception ex)
+        {            
+            Console.WriteLine(ex);
+        }
     }
 
     // When tapping a historyItem we copy the query into the text field
@@ -550,8 +582,16 @@ public partial class MainPage
     // A long press on a historyItem copies the result to the clipboard
     private async void OnItemLongPressed(object? sender, LongPressCompletedEventArgs e)
     {
-        if (sender is VisualElement { BindingContext: HistoryItem item })
-            await Clipboard.Default.SetTextAsync(item.Result);
+        try
+        {
+            if (sender is VisualElement { BindingContext: HistoryItem item })
+                await Clipboard.Default.SetTextAsync(item.Result);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+
+        }
     }
 
     private void OnKeyboardHeightChanged(object? sender, double keyboardHeight)
