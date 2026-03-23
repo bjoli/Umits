@@ -26,6 +26,7 @@
         <Setter Property="AutoSize" Value="TextChanges" />
         <Setter Property="MaximumHeightRequest" Value="120" />
         <Setter Property="IsSpellCheckEnabled" Value="False" />
+        <Setter Property="IsTextPredictionEnabled" Value="False" />
     </Style>
 
 
@@ -134,27 +135,7 @@
         <Setter Property="Opacity" Value="0.4" />
     </Style>
 
-    <Style Class="InfoPanel" TargetType="Border">
-        <Setter Property="BackgroundColor"
-                Value="{AppThemeBinding 
-                       Light={StaticResource InfoPanelBackgroundLight},
-                       Dark={StaticResource InfoPanelBackgroundDark}}" />
-        <Setter Property="Stroke"
-                Value="{AppThemeBinding
-                       Light={StaticResource PanelStrokeLight},
-                       Dark={StaticResource PanelStrokeDark}}" />
-        <Setter Property="StrokeThickness" Value="0" />
-        <Setter Property="Padding" Value="10,0" />
-        <Setter Property="StrokeShape" Value="RoundRectangle 8" />
-        <Setter Property="Shadow">
-            <Setter.Value>
-                <Shadow Brush="Black"
-                        Opacity="0.3"
-                        Offset="0,5"
-                        Radius="10" />
-            </Setter.Value>
-        </Setter>
-    </Style>
+e
 
     <Style Class="ErrorBubble" TargetType="Border">
         <Setter Property="BackgroundColor"
@@ -171,14 +152,7 @@
                             Light={StaticResource ErrorStrokeLight}}" />
         <Setter Property="StrokeThickness" Value="1" />
         <Setter Property="StrokeShape" Value="RoundRectangle 8" />
-        <Setter Property="Shadow">
-            <Setter.Value>
-                <Shadow Brush="Black"
-                        Opacity="0.1"
-                        Offset="0,2"
-                        Radius="4" />
-            </Setter.Value>
-        </Setter>
+
         <Setter Property="VerticalOptions" Value="End" />
         <Setter Property="ZIndex" Value="5" />
     </Style>

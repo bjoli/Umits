@@ -68,26 +68,25 @@ x:DataType="local:MainPage"
 
 
                         <Border 
-                            HeightRequest="24" 
                             StyleClass="ParenButton" 
                                 Grid.ColumnSpan="2" 
                                 HandlerChanged="OnParenHandlerChanged">
                             <Label Text="( )" StyleClass="ToolbarLabel" />
 
                         </Border>
-                        <Border Grid.Column="2" HeightRequest="24"
+                        <Border Grid.Column="2" 
                                 StyleClass="ParenButton"
                                 HandlerChanged="OnOperatorHandlerChanged">
                             <Label Text="+ -" StyleClass="ToolbarLabel" />
                         </Border>
 
-                        <Border Grid.Column="3" HeightRequest="24"
+                        <Border Grid.Column="3"
                                 StyleClass="ParenButton"
                                 HandlerChanged="OnOperatorHandlerChanged">
                             <Label Text="/ *" StyleClass ="ToolbarLabel" />
                         </Border>
 
-                        <Border Grid.Column="4" HeightRequest="24"
+                        <Border Grid.Column="4"
                                 StyleClass="ParenButton"
                                 HandlerChanged="OnOperatorHandlerChanged">
                             <Label Text="$ ^" StyleClass="ToolbarLabel" />
@@ -116,14 +115,7 @@ x:DataType="local:MainPage"
             </Border>
 
         </Grid>
-        <Grid Grid.RowSpan="2" ZIndex="10" IsVisible="False" x:Name="OverlayContainer">
 
-            <BoxView StyleClass="OverlayDimmer">
-                <BoxView.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnOverlayTapped" />
-                </BoxView.GestureRecognizers>
-            </BoxView>
-        </Grid>
 
         <Border x:Name="InlineParenPopup"
                 StyleClass="ParenPopup"

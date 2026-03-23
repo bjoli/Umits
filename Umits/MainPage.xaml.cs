@@ -69,6 +69,8 @@ public partial class MainPage
 
     private double _historyHeight = -1.0;
     private string? _lastResult;
+    // ReSharper disable once RedundantDefaultMemberInitializer
+    private bool _engineInitialized = false;
 
 
     private string _selectedSwipeParen = string.Empty;
@@ -84,16 +86,14 @@ public partial class MainPage
         Loaded += OnPageLoaded;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         try
         {
             base.OnAppearing();
             InputEntry.Focus();
-
-        
             KeyboardService.KeyboardHeightChanged += OnKeyboardHeightChanged;
-            await LoadSettingsIntoEngine();
+            Task.Run(LoadSettingsIntoEngine); 
         }
         catch (Exception e)
         {
@@ -104,18 +104,7 @@ public partial class MainPage
     private async Task LoadSettingsIntoEngine()
     {
         // 1. Apply Number Format String
-        // Assuming you exposed a public static property named 'formatString' on Engine
-        try
-        {
-            Engine.formatString = Preferences.Default.Get("NumberFormat", "G7");
-        }
-        catch (TypeInitializationException ex)
-        {
-            // The actual error is hidden inside the InnerException
-            System.Diagnostics.Debug.WriteLine($"CRITICAL ERROR: {ex.InnerException?.Message}");
-            System.Diagnostics.Debug.WriteLine($"CRITICAL STACK TRACE: {ex.InnerException?.StackTrace}");
-            throw; // Re-throw if you want it to still crash after logging
-        }
+        Engine.formatString = Preferences.Default.Get("NumberFormat", "G7");
 
         // 2. Load Macros
         var macrosPath = Path.Combine(FileSystem.AppDataDirectory, "user_macros.txt");
@@ -132,6 +121,7 @@ public partial class MainPage
             var entitiesText = await File.ReadAllTextAsync(entitiesPath);
             EntityParser.parseFiles([entitiesText]);
         }
+        _engineInitialized = true;
     }
 
     private async void OnPageLoaded(object? sender, EventArgs? e)
@@ -141,8 +131,8 @@ public partial class MainPage
             base.OnAppearing();
 
             // Ensures the UI is ready before requesting focus
-            await Task.Delay(100);
-            InputEntry.Focus(); // Or InputEntry if you reverted to the single-line control
+            await Task.Delay(150);
+            InputEntry.Focus();
         }
         catch (Exception ex)
         {
@@ -152,6 +142,9 @@ public partial class MainPage
 
     private async void OnConvertClicked(object? sender, EventArgs? e)
     {
+        if (!_engineInitialized) 
+            return;
+
         try
         {
             HideErrorBubbleImmediately();
@@ -160,7 +153,6 @@ public partial class MainPage
             if (string.IsNullOrWhiteSpace(rawQuery)) return;
             rawQuery = rawQuery.Trim();
 
-            // Replace $1, $2, etc., with the corresponding history result
             rawQuery = Regex.Replace(rawQuery, @"\$(\d+)", match =>
             {
                 if (int.TryParse(match.Groups[1].Value, out var index))
@@ -613,12 +605,7 @@ public partial class MainPage
         base.OnDisappearing();
         KeyboardService.KeyboardHeightChanged -= OnKeyboardHeightChanged;
     }
-
-    private void OnOverlayTapped(object? sender, TappedEventArgs e)
-    {
-        OverlayContainer.IsVisible = false;
-    }
-
+    
     // Error bubble
     private async Task ShowErrorBubbleAsync(string errorMessage)
     {

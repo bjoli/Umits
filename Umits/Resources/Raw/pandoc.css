@@ -1,3 +1,5 @@
+table { width: 100% !important; }
+
 table, th, td {
     border: 1px solid;
     border-collapse: collapse;
@@ -15,25 +17,27 @@ body {
     border-left: 1px solid black;
     border-right: 1px solid black;
     color: black;
-    font-family: Verdana, sans-serif;
+    font-family: sans-serif;
     font-size: 100%;
     line-height: 140%;
-    color: #333;
 }
 pre {
     border: 1px dotted gray;
     background-color: #ececec;
     color: #111111;
     padding: 0.5em;
+    overflow: auto;
 }
 code {
     font-family: monospace;
+    overflow: auto;
+
 }
 h1 a, h2 a, h3 a, h4 a, h5 a {
     text-decoration: none;
     color: #7a5ada;
 }
-h1, h2, h3, h4, h5 { font-family: verdana;
+h1, h2, h3, h4, h5 { font-family: sans-serif;
     font-weight: bold;
     border-bottom: 1px dotted black;
     color: #7a5ada; }
