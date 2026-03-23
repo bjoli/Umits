@@ -73,20 +73,16 @@
         <PublishTrimmed>true</PublishTrimmed>
 	<TrimMode>full</TrimMode>
         <UseMonoRuntime>false</UseMonoRuntime>
-        <PublishAot>false</PublishAot>
+        <PublishAot>true</PublishAot>
         <!--<RunAOTCompilation>false</RunAOTCompilation>-->
         <!--<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>-->
 
-        <PublishReadyToRun>true</PublishReadyToRun>
+        <PublishReadyToRun>false</PublishReadyToRun>
         <DebugSymbols>false</DebugSymbols>
         <DebugType>none</DebugType>
         <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     </PropertyGroup>
 
-    <!--<ItemGroup>
-        <TrimmerRootDescriptor Include="TrimmerRootDescriptor.xml" />
-    </ItemGroup>
--->
 
 
 </Project>
