@@ -28,8 +28,8 @@
         <ApplicationId>org.bjoli.umits</ApplicationId>
 
         <!-- Versions -->
-        <ApplicationDisplayVersion>15</ApplicationDisplayVersion>
-        <ApplicationVersion>15</ApplicationVersion>
+        <ApplicationDisplayVersion>20</ApplicationDisplayVersion>
+        <ApplicationVersion>20</ApplicationVersion>
 
         <!-- To develop, package, and publish an app to the Microsoft Store, see: https://aka.ms/MauiTemplateUnpackaged -->
         <WindowsPackageType>None</WindowsPackageType>
@@ -64,7 +64,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Lib\Lib.fsproj" IsTrimmable="false"/>
+        <ProjectReference Include="..\Lib\Lib.fsproj"/>
     </ItemGroup>
 
 
@@ -72,15 +72,19 @@
         <RuntimeIdentifiers>android-arm64</RuntimeIdentifiers>
         <PublishTrimmed>true</PublishTrimmed>
 	<TrimMode>full</TrimMode>
-        <UseMonoRuntime>false</UseMonoRuntime>
-        <PublishAot>true</PublishAot>
-        <!--<RunAOTCompilation>false</RunAOTCompilation>-->
-        <!--<AndroidEnableProfiledAot>false</AndroidEnableProfiledAot>-->
-
+        <UseMonoRuntime>False</UseMonoRuntime>
+        <PublishAot>True</PublishAot>
+        
         <PublishReadyToRun>false</PublishReadyToRun>
         <DebugSymbols>false</DebugSymbols>
         <DebugType>none</DebugType>
         <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
+
+        <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
+        <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+        <StripSymbols>true</StripSymbols>
+
+<CustomLinkerArgs>$(CustomLinkerArgs) -Wl,-z,max-page-size=16384 -Wl,-z,common-page-size=4096</CustomLinkerArgs>
     </PropertyGroup>
 
 

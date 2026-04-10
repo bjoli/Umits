@@ -419,34 +419,36 @@ module Engine =
               ("pi", "3.141592653589793")
               ("c", "299792458 m / s")
               ("gn", "9.80665 m/s^2")
-                
-              
+
+              ("sec", "1 s")
+              ("second", "1 s"); ("seconds", "1 s")
               
               ("min", "60 s")
-              ("minute", "1 min")
+              ("minute", "1 min"); ("minutes", "1 min")
               
               ("h", "60 min")
               ("hr", "1 h")
-              ("hour", "1 h")
+              ("hour", "1 h"); ("hours", "1 h")
               
               ("d", "24 h")
-              ("day", "1 d")
+              ("day", "1 d"); ("days", "1 d")
               
               ("wk", "7 d")
-              ("week", "1 wk")
+              ("week", "1 wk"); ("weeks", "1 wk")
               
               ("yr", "31557600 s")
-              ("year", "1 yr")
+              ("year", "1 yr"); ("years", "1 yr")
 
               // Length
-              ("meter", "1 m")
+              ("meter", "1 m"); ("meters", "1 m")
               ("in", "0.0254 m")
-              ("inch", "1 in")
+              ("inch", "1 in"); ("inches", "1 in")
               ("ft", "12 in")
               ("foot", "12 in")
+              ("feet", "12 in")
+
               ("yd", "3 ft")
-              
-              ("yard", "1 yd")
+              ("yard", "1 yd"); ("yards", "1 yd")
               ("mi", "5280 ft")
               ("mile", "1 mi")
               ("miles", "1 mi")
@@ -455,6 +457,7 @@ module Engine =
               ("ly", "c * 1 yr")
               ("lightyear", "1 ly")
               ("pc", "3.085677581491367e16 m")
+              ("parsec", "1 pc")
               
               // old length units
               ("fath", "6 ft"); ("fathom", "1 fath")           
@@ -468,63 +471,64 @@ module Engine =
               ("m3", "m^3")
 
               // Volume
-              ("l", "0.001 m3"); ("litre", "1 l"); ("liter", "1 l")
+              ("l", "0.001 m3"); ("litre", "1 l"); ("litres", "1 l"); ("liter", "1 l"); ("liters", "1 l")
               
               // non-metric
-              ("gal", "3.78541 l"); ("gallon", "1 gal")
-              ("qt", "0.25 gal"); ("quart", "1 qt")
-              ("pt", "0.5 qt"); ("pint", "1 pt")
-              ("fl_oz", "0.0625 pt"); ("fluid_ounce", "1 fl_oz")
+              ("gal", "3.78541 l"); ("gallon", "1 gal"); ("gallons", "1 gal")
+              ("qt", "0.25 gal"); ("quart", "1 qt"); ("quarts", "1 qt")
+              ("pt", "0.5 qt"); ("pint", "1 pt"); ("pints", "1 pt")
+              ("fl_oz", "0.0625 pt"); ("fluid_ounce", "1 fl_oz"); ("fluid_ounces", "1 fl_oz")
               ("fl_dr", "1/8 fl_oz")
               ("gi", "4 fl_oz")
               
               // Cooking volume
-              ("tsp", "5ml"); ("teaspoon", "1 tsp")
-              ("tbsp", "15ml"); ("tablespoon", "1 tbsp")
-              ("cup", "250 ml")
+              ("tsp", "5ml"); ("teaspoon", "1 tsp"); ("teaspoons", "1 tsp")
+              ("tbsp", "15ml"); ("tablespoon", "1 tbsp"); ("tablespoons", "1 tbsp")
+              ("cup", "250 ml"); ("cups", "1 cup")
               
               // non-metric
               ("us_tsp", "4.92892159375 ml")
               ("us_tbsp", "3 us_tsp")
-              ("us_cup", "16 us_tbsp")
+              ("us_cup", "16 us_tbsp"); ("us_cups", "1 us_cup")
               
               
               // area
-              ("ha", "10000 m2"); ("hectare", "1 ha")
-              ("are", "100m2")
-              ("acre", "4046.8 m2")
+              ("ha", "10000 m2"); ("hectare", "1 ha"); ("hectares", "1 ha")
+              ("are", "100m2"); ("ares", "1 are")
+              ("acre", "4046.8 m2"); ("acres", "1 acre")
 
               // mass
-              ("g", "0.001 kg"); ("gram", "1 g")
-              ("t", "1000 kg"); ("ton", "1 t"); ("tonne", "1 t");
+              ("g", "0.001 kg"); ("gram", "1 g"); ("grams", "1 g")
+              ("t", "1000 kg"); ("ton", "1 t"); ("tons", "1t"); ("tonne", "1 t"); ("tonnes", "1t")
               ("u", "1.66053906660e-27 kg")
               ("amu", "1 u")
               
               // non-metric
               ("slug", "14.5939029 kg")
-              ("lb", "0.453592 kg"); ("pound", "1 lb")
-              ("oz", "0.0625 lb"); ("ounce", "1 oz")
-              ("gr", "1/7000 lb"); ("grain", "1 gr") 
+              ("lb", "0.453592 kg"); ("pound", "1 lb"); ("pounds", "1 lb")
+              ("oz", "0.0625 lb"); ("ounce", "1 oz"); ("ounces", "1 oz")
+              ("gr", "1/7000 lb"); ("grain", "1 gr"); ("grains", "1 gr")
               ("st", "14 lb"); ("stone", "1 st")
-              ("short_ton", "2000 lb")
-              ("long_ton", "2240 lb")
+              ("short_ton", "2000 lb"); ("short_tons", "1 short_ton")
+              ("long_ton", "2240 lb"); ("long_tons", "1 long_ton")
 
               // Pressure and force
               ("N", "kg * m / s^2"); ("newton", "1 N")
               ("lbf", "1 lb * gn")
               ("Pa", "N / m^2"); ("pascal", "1 Pa")
               ("bar", "100000 Pa")
-              ("atm", "101325 Pa"); ("atmosphere", "1 atm")
+              ("atm", "101325 Pa"); ("atmosphere", "1 atm"); ("atmospheres", "1 atm")
               ("psi", "lbf / in2")
-              ("mmHg", "133.322387415 Pa")
+              ("mHg", "133322.39 Pa"); ("mhg", "1 mHq")
+              ("mH2O", "9806.65 Pa"); ("mh2o", "1 mH2O")
               ("dyn", "1e-5 N")
               ("kgf", "1 kg * gn")
               ("R", "2.58e-4 degC / kg")
 
               // Energy/work
-              ("J", "N * m"); ("joule", "1 J")
+              ("J", "N * m"); ("joule", "1 J"); ("joules", "1 J")
               ("Nm", "1 J")
-              ("W", "J / s"); ("Watt", "1 W")
+              ("W", "J / s"); ("Watt", "1 W"); ("watt", "1 W"); ("watts", "1 W"); ("Watts", "1 W")
               ("Wh", "W * h"); 
               ("hp", "745.6998715822702 W"); ("horsepower", "1 hp")
               ("cal", "4.184 J"); ("calorie", "1 cal")
@@ -603,6 +607,9 @@ module Engine =
     let _ = initializeDb ()
     //  Conversion Logic
     let formatNum (n: float) =
+        // sometimes the regional settings for dotnet changes the minus
+        // sign to the proper minus sign, meaning we can't read it
+        // back in. 
         n.ToString(formatString).Replace("−", "-")
 
 

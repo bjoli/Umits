@@ -10,7 +10,7 @@ Sometimes SI base units, sometimes other tings.
 
 ## Mathematical Operators:
 
-Supported operators follow standard order of operations: +, -, *, /, ^, and (). Fractional exponents are supported
+Supported operators follow standard order of operations: +, -, \*, /, ^, and (). Fractional exponents are supported
 provided the resulting dimension vector contains only integers. km/h is TWO units, not one. Make sure to use parentheses accordingly
 
     10 m + 5 m in m = 15m
@@ -55,17 +55,21 @@ any base unit or mapped alias. Yes, the kilomile (kmi) is supported.
 +-------------+-------+-----------------------------------------------------------------+
 | Dimension   | Unit  | Aliases                                                         |
 +-------------+-------+-----------------------------------------------------------------+
-| Length      | m     | in, inch,  ft, foot, yd, mi, mile, miles, nmi, au, ly, pc       |
+| Length      | m     | meter(s), in, inch(es), ft, foot, feet, yd, yard(s), mi, mile,  |
+|             |       |miles, nmi,                                                      |
+|             |       | au, ly, pc, parsec,                                             |
 +-------------+-------+-----------------------------------------------------------------+
-| Mass        | kg    | g, lb, oz, ton, u, amu                                          |
+| Mass        | kg    | g, gram, t, ton, tonne, lb, pound, oz, ounce, ton, u, amu, slug,|
+|             |       |gr, grain, st, stone, short_ton, long_ton                        |
 +-------------+-------+-----------------------------------------------------------------+
-| Time        | s     | min, minute, h, hr, hour, d, day, wk, week, yr, year            |
+| Time        | s     | sec, second(s), min, minute(s), h, hr, hour(s), d, day(s), wk,  |
+|             |       |week(s), yr, year(s)                                             |
 +-------------+-------+-----------------------------------------------------------------+
-| Current     | A     |                                                                 |
+| Current     | A     | Ampere                                                          |
 +-------------+-------+-----------------------------------------------------------------+
-| Photometry  | cd    |                                                                 |
+| Photometry  | cd    | candela                                                         |
 +-------------+-------+-----------------------------------------------------------------+
-| Temperature | K     | degC, degF                                                      |
+| Temperature | K     | kelvin, celsius, degC, fahrenheit, degF                         |
 +-------------+-------+-----------------------------------------------------------------+
 
 ## Derived Dimensions
@@ -75,17 +79,21 @@ any base unit or mapped alias. Yes, the kilomile (kmi) is supported.
 +-----------+-------------------------------------------------------------------------------------+
 | Category  | Units                                                                               |
 +-----------+-------------------------------------------------------------------------------------+
-| Area      | m2, in2, ft2, are, acre, ha, barn                                                   |
+| Area      | m2, in2, ft2, are(s), acre(s), ha, hectare(s), barn                                 |
 +-----------+-------------------------------------------------------------------------------------+
-| Volume    | m3, in3, ft3, l, gal, gallon,  qt, quart,  pt, pint, fl_oz, fluid_ounce, fl_dr, gi  |
+| Volume    |   m3, in3, ft3, l, liter(s), litre(s), gal, gallon(s), qt, quart(s), pt, pint(s),   |
+|           |                                       fl_oz,                                        |
+|           |                                   fluid_ounce(s),                                   |
+|           |                                       fl_dr,                                        |
+|           |                                         gi                                          |
 +-----------+-------------------------------------------------------------------------------------+
-| Force     | N, lbf                                                                              |
+| Force     | N,newton, lbf, kgf                                                                  |
 +-----------+-------------------------------------------------------------------------------------+
-| Pressure  | Pa, bar, atm, psi                                                                   |
+| Pressure | Pa, bar, atm, atmosphere(s), psi, mHg, mH2O                                          |
 +-----------+-------------------------------------------------------------------------------------+
-| Energy    | J, Nm, cal, BTU, eV                                                                 |
+| Energy    | J, joule(s),Nm, cal, BTU, eV, erg                                                   |
 +-----------+-------------------------------------------------------------------------------------+
-| Power     | W, Wh, hp                                                                           |
+| Power     | W, watt(s), Wh, hp, horsepower                                                      |
 +---------- +-------------------------------------------------------------------------------------+
 
 ### Cooking volume
@@ -93,9 +101,10 @@ any base unit or mapped alias. Yes, the kilomile (kmi) is supported.
 +------------------+--------------------------------------------------+
 | Category         | Units                                            |
 +------------------+--------------------------------------------------+
-| spoons           | teaspoon, tablespoon, tsp, sbsp, us_tsp, us_tbsp |
+| spoons           |  teaspoon(s), tablespoon(s), tsp, tbsp, us_tsp,  |
+|                  |                     us_tbsp                      |
 +------------------+--------------------------------------------------+
-| cups             | cup, us_cup                                      |
+| cups             | cup(s),us_cup(s)                                 |
 +------------------+--------------------------------------------------+
 
 ### Electromagnetism
@@ -103,17 +112,18 @@ any base unit or mapped alias. Yes, the kilomile (kmi) is supported.
 +----------------+----------------+
 | Category       | Units          |
 +----------------+----------------+
-| Charge         | C              |
+| Charge         | C, coulomb     |
 +----------------+----------------+
-| Voltage        | V              |
+| Voltage        | V, volt        |
 +----------------+----------------+
 | Resistance     | ohm            |
 +----------------+----------------+
-| Capacitance    | F              |
+| Capacitance    | F, fahrad      |
 +----------------+----------------+
-| Inductance     | H              |
+|     Inductance | H, henry, Oe,  |
+|                | Mx             |
 +----------------+----------------+
-| Mag. Flux      | W              |
+| Mag. Flux      | Wb, weber      |
 +----------------+----------------+
 | Mag. Field     | tesla, T_tesla |
 +----------------+----------------+
@@ -125,11 +135,12 @@ any base unit or mapped alias. Yes, the kilomile (kmi) is supported.
 +-------------+---------------------+
 | radiant     | rad (dimensionless) |
 +-------------+---------------------+
-| degrees     | degrees             |
+| degrees     | degrees, arcmin,    |
+|             |arcsec               |
 +-------------+---------------------+
 | steradian   | sr                  |
 +-------------+---------------------+
-| revolutions | rev (2*pi),rpm      |
+| revolutions | rev (2\*pi),rpm     |
 +-------------+---------------------+
 
 ### Ratios
@@ -141,6 +152,16 @@ any base unit or mapped alias. Yes, the kilomile (kmi) is supported.
 +---------------+---------------+
 | Parts per ... | ppm, ppb, ppt |
 +---------------+---------------+
+
+### Radioactivity
+
++----------+----------------------+
+| Sievert  | sievert, Sv, rem     |
++----------+----------------------+
+| Gray     |  gray, Gy, rad_dose  |
++----------+----------------------+
+| Bequerel | bequerel, Bq, Ci     |
++----------+----------------------+
 
 ### Constants
 
