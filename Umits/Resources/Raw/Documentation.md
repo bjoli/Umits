@@ -5,8 +5,8 @@ Basic Syntax
 
 \[expression\] in \[target_unit\]
 
-if no "in" is found, a suiting unit will be reduced to a suiting unit.
-Sometimes SI base units, sometimes other tings.
+if no "in" is found, a suiting unit will be reduced to a suiting unit. This is usually an SI base unit,
+but it sometimes choses other things. The results can be surprising.
 
 ## Mathematical Operators:
 
@@ -56,18 +56,19 @@ any base unit or mapped alias. Yes, the kilomile (kmi) is supported.
 | Dimension   | Unit  | Aliases                                                         |
 +-------------+-------+-----------------------------------------------------------------+
 | Length      | m     | meter(s), in, inch(es), ft, foot, feet, yd, yard(s), mi, mile,  |
-|             |       |miles, nmi,                                                      |
-|             |       | au, ly, pc, parsec,                                             |
+|             |       | miles, nmi, au, ly, pc, parsec                                  |
 +-------------+-------+-----------------------------------------------------------------+
-| Mass        | kg    | g, gram, t, ton, tonne, lb, pound, oz, ounce, ton, u, amu, slug,|
-|             |       |gr, grain, st, stone, short_ton, long_ton                        |
+| Mass        | kg    | g, gram(s), t, ton, tonne, lb, pound, oz, ounce, ton, u, amu,   |
+|             |       | slug, gr, grain, st, stone, short_ton, long_ton                 |
 +-------------+-------+-----------------------------------------------------------------+
 | Time        | s     | sec, second(s), min, minute(s), h, hr, hour(s), d, day(s), wk,  |
-|             |       |week(s), yr, year(s)                                             |
+|             |       | week(s), yr, year(s), Hertz, Hz, hz                             |
 +-------------+-------+-----------------------------------------------------------------+
-| Current     | A     | Ampere                                                          |
+| Current     | A     | Ampere, amp                                                     |
 +-------------+-------+-----------------------------------------------------------------+
 | Photometry  | cd    | candela                                                         |
++-------------+-------+-----------------------------------------------------------------+
+| Data        | b     | bit(s), B, byte(s)                                              |
 +-------------+-------+-----------------------------------------------------------------+
 | Temperature | K     | kelvin, celsius, degC, fahrenheit, degF                         |
 +-------------+-------+-----------------------------------------------------------------+
@@ -81,101 +82,97 @@ any base unit or mapped alias. Yes, the kilomile (kmi) is supported.
 +-----------+-------------------------------------------------------------------------------------+
 | Area      | m2, in2, ft2, are(s), acre(s), ha, hectare(s), barn                                 |
 +-----------+-------------------------------------------------------------------------------------+
-| Volume    |   m3, in3, ft3, l, liter(s), litre(s), gal, gallon(s), qt, quart(s), pt, pint(s),   |
-|           |                                       fl_oz,                                        |
-|           |                                   fluid_ounce(s),                                   |
-|           |                                       fl_dr,                                        |
-|           |                                         gi                                          |
+| Volume    | m3, in3, ft3, l, liter(s), litre(s), gal, gallon(s), qt, quart(s), pt, pint(s),     |
+|           | fl_oz, fluid_ounce(s), fl_dr, gi                                                    |
 +-----------+-------------------------------------------------------------------------------------+
 | Force     | N,newton, lbf, kgf                                                                  |
 +-----------+-------------------------------------------------------------------------------------+
-| Pressure | Pa, bar, atm, atmosphere(s), psi, mHg, mH2O                                          |
+| Pressure  | Pa, bar, atm, atmosphere(s), psi, mHg, mH2O                                         |
 +-----------+-------------------------------------------------------------------------------------+
 | Energy    | J, joule(s),Nm, cal, BTU, eV, erg                                                   |
 +-----------+-------------------------------------------------------------------------------------+
 | Power     | W, watt(s), Wh, hp, horsepower                                                      |
-+---------- +-------------------------------------------------------------------------------------+
++-----------+-------------------------------------------------------------------------------------+
 
 ### Cooking volume
 
 +------------------+--------------------------------------------------+
 | Category         | Units                                            |
 +------------------+--------------------------------------------------+
-| spoons           |  teaspoon(s), tablespoon(s), tsp, tbsp, us_tsp,  |
-|                  |                     us_tbsp                      |
+| spoons           | teaspoon(s), tablespoon(s), tsp, tbsp, us_tsp,   |
+|                  | us_tbsp                                          |
 +------------------+--------------------------------------------------+
 | cups             | cup(s),us_cup(s)                                 |
 +------------------+--------------------------------------------------+
 
 ### Electromagnetism
 
-+----------------+----------------+
-| Category       | Units          |
-+----------------+----------------+
-| Charge         | C, coulomb     |
-+----------------+----------------+
-| Voltage        | V, volt        |
-+----------------+----------------+
-| Resistance     | ohm            |
-+----------------+----------------+
-| Capacitance    | F, fahrad      |
-+----------------+----------------+
-|     Inductance | H, henry, Oe,  |
-|                | Mx             |
-+----------------+----------------+
-| Mag. Flux      | Wb, weber      |
-+----------------+----------------+
-| Mag. Field     | tesla, T_tesla |
-+----------------+----------------+
++-------------------------------+------------------------------------+
+| Category                      | Units                              |
++-------------------------------+------------------------------------+
+| Charge                        | C, coulomb                         |
++-------------------------------+------------------------------------+
+| Voltage                       | V, volt                            |
++-------------------------------+------------------------------------+
+| Resistance                    | ohm                                |
++-------------------------------+------------------------------------+
+| Capacitance                   | F, fahrad                          |
++-------------------------------+------------------------------------+
+| Inductance                    | H, henry, Oe, Mx                   |
++-------------------------------+------------------------------------+
+| Mag. Flux                     | Wb, weber                          |
++-------------------------------+------------------------------------+
+| Mag. Field                    | tesla, T_tesla                     |
++-------------------------------+------------------------------------+
 
 ### Angles and rotation
 
-+-------------+---------------------+
-| Category    | Units               |
-+-------------+---------------------+
-| radiant     | rad (dimensionless) |
-+-------------+---------------------+
-| degrees     | degrees, arcmin,    |
-|             |arcsec               |
-+-------------+---------------------+
-| steradian   | sr                  |
-+-------------+---------------------+
-| revolutions | rev (2\*pi),rpm     |
-+-------------+---------------------+
++-------------+-----------------------------------------+
+| Category    | Units                                   |
++-------------+-----------------------------------------+
+| radiant     | rad (dimensionless)                     |
++-------------+-----------------------------------------+
+| degrees     | degrees, arcmin, arcsec                 |
+|             |                                         |
++-------------+-----------------------------------------+
+| steradian   | sr                                      |
++-------------+-----------------------------------------+
+| revolutions | rev (2\*pi),rpm                         |
++-------------+-----------------------------------------+
 
 ### Ratios
 
-+---------------+---------------+
-| Category      | Units         |
-+---------------+---------------+
-| percent       | %             |
-+---------------+---------------+
-| Parts per ... | ppm, ppb, ppt |
-+---------------+---------------+
++---------------+-----------------------------------+
+| Category      | Units                             |
++---------------+-----------------------------------+
+| percent       | %                                 |
++---------------+-----------------------------------+
+| Parts per ... | ppm, ppb, ppt                     |
++---------------+-----------------------------------+
 
 ### Radioactivity
 
-+----------+----------------------+
-| Sievert  | sievert, Sv, rem     |
-+----------+----------------------+
-| Gray     |  gray, Gy, rad_dose  |
-+----------+----------------------+
-| Bequerel | bequerel, Bq, Ci     |
-+----------+----------------------+
++----------+------------------------------------------+
+| Sievert  | sievert, Sv, rem                         |
++----------+------------------------------------------+
+| Gray     | gray, Gy, rad_dose                       |
++----------+------------------------------------------+
+| Bequerel | bequerel, Bq, Ci                         |
++----------+------------------------------------------+
 
 ### Constants
 
-+------------------+-------------+
-| Category         | Units       |
-+------------------+-------------+
-| gravity          | gn          |
-+------------------+-------------+
-| pi               | pi          |
-+------------------+-------------+
-| speed of light   | c           |
-+------------------+-------------+
-| plancks constant | plank, hbar |
-+------------------+-------------+
++------------------+---------------------------------+
+| Category         | Units                           |
++------------------+---------------------------------+
+| gravity          | gn                              |
++------------------+---------------------------------+
+| pi               | pi                              |
++------------------+---------------------------------+
+| speed of light   | c                               |
++------------------+---------------------------------+
+| plancks constant | plank, hbar                     |
++------------------+---------------------------------+
 
 ### Logarithmic units
 
@@ -187,6 +184,36 @@ dBW(power), dBM(power) -> reference W and milliW respectively.
 dBV(voltage) -> reference voltage
 
 ```
+
+# Unexpected results
+
+Sometimes you don't get the results you expect. This is usually because you forgot a division or multiplication,
+which leads "in" to select the closest unit matching your expression. "in" is, in most cases, just division that
+retains dimensions. Sometimes however, you might end up with things you did not expect.
+
+Say for example that you get 10l of percipitation on 1m2 in 1 minute, and you want to figure out how many mm that
+is in an hour you would input
+
+    (10l/m2)/1min in mm/h -> 600mm/h
+
+if you forget that last /h you get a weird result:
+
+    (10l/m2)/1min in mm -> 0,16667 Bq (bequerel)
+
+This might seem weird, but Bq is defined as just 1 event per second, just like Hertz. If we reduce the equation, it becomes
+
+    (0.01m3/m2)/60s in mm
+
+which reduces to (since "in" is division)
+
+    (0.01m/60s)/ 0.001m
+
+which becomes
+
+    10/60s -> 0.1666667/s
+
+which is just N per second which reduces to either Hertz or bequerel.
+
 
 # Engine Behavior
 

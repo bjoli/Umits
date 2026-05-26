@@ -519,7 +519,7 @@ module Engine =
               ("bar", "100000 Pa")
               ("atm", "101325 Pa"); ("atmosphere", "1 atm"); ("atmospheres", "1 atm")
               ("psi", "lbf / in2")
-              ("mHg", "133322.39 Pa"); ("mhg", "1 mHq")
+              ("mHg", "133322.39 Pa"); ("mhg", "1 mHg")
               ("mH2O", "9806.65 Pa"); ("mh2o", "1 mH2O")
               ("dyn", "1e-5 N")
               ("kgf", "1 kg * gn")
@@ -554,7 +554,8 @@ module Engine =
               ("St", "1e-4 m2 / s"); ("stokes", "1 St")
 
               // IT
-              ("B", "8 b"); ("byte", "1 B")
+              ("bit", "1 b"); ("bits", "1 b")
+              ("B", "8 b"); ("byte", "1 B"); ("bytes", "1 B")
 
               // Photometry
               ("sr", "1") // Steradian (solid angle)
@@ -586,6 +587,11 @@ module Engine =
 
               // decibel, dimensionless
               ("dB", "1")
+
+              ("amp", "1 A"); ("Amp", "1 A")
+
+              // Hertz
+              ("Hertz", "1/s"); ("Hz", "1 Hertz"); ("hz", "1 Hertz")
 
               // Dimensionless ratios
               ("%", "0.01")
